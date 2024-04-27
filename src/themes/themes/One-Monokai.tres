@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TextEditorTheme" load_steps=2 format=3 uid="uid://bo338h7irqtpm"]
+
+[ext_resource type="Script" path="res://src/themes/text_editor_theme.gd" id="1_ea003"]
+
+[resource]
+script = ExtResource("1_ea003")
+comment_color = Color(0.360784, 0.388235, 0.439216, 1)
+function_color = Color(0.596078, 0.764706, 0.47451, 1)
+keyword_color = Color(0.878431, 0.423529, 0.458824, 1)
+member_variable_color = Color(0.380392, 0.686275, 0.937255, 1)
+number_color = Color(0.776471, 0.470588, 0.866667, 1)
+symbol_color = Color(0.501961, 0.501961, 0.501961, 1)

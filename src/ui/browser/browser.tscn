@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://b45p8nijrvd3v"]
+
+[ext_resource type="Script" path="res://src/ui/browser/browser.gd" id="1_pepdc"]
+[ext_resource type="Script" path="res://src/ui/browser/tree.gd" id="2_3wiph"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l6x4e"]
+
+[node name="Browser" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_l6x4e")
+script = ExtResource("1_pepdc")
+path = "C:\\Users\\Innaias\\AppData\\Roaming\\com.modrinth.theseus\\profiles\\shader\\shaderpacks\\fishy-shaders-3\\shaders"
+
+[node name="BrowserTree" type="Tree" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("2_3wiph")
+
+[connection signal="button_clicked" from="BrowserTree" to="BrowserTree" method="_on_button_clicked"]
+[connection signal="empty_clicked" from="BrowserTree" to="BrowserTree" method="_on_empty_clicked"]
+[connection signal="item_selected" from="BrowserTree" to="BrowserTree" method="_on_item_selected"]

@@ -1,0 +1,243 @@
+[gd_scene load_steps=4 format=3 uid="uid://cpp730e50fn3p"]
+
+[ext_resource type="PackedScene" uid="uid://b45p8nijrvd3v" path="res://src/ui/browser/browser.tscn" id="1_prqn1"]
+[ext_resource type="PackedScene" uid="uid://cfbphdd74su8c" path="res://src/code_edit.tscn" id="1_x2835"]
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_xwcjx"]
+number_color = Color(0.937255, 0.623529, 0.462745, 1)
+symbol_color = Color(0.6, 0.819608, 0.858824, 1)
+function_color = Color(0.54902, 0.666667, 0.933333, 1)
+member_variable_color = Color(0.729412, 0.733333, 0.945098, 1)
+member_keyword_colors = {
+"active": Color(0.792157, 0.619608, 0.901961, 1),
+"asm": Color(0.792157, 0.619608, 0.901961, 1),
+"attribute": Color(0.792157, 0.619608, 0.901961, 1),
+"bvec2": Color(0.792157, 0.619608, 0.901961, 1),
+"bvec3": Color(0.792157, 0.619608, 0.901961, 1),
+"bvec4": Color(0.792157, 0.619608, 0.901961, 1),
+"cast": Color(0.792157, 0.619608, 0.901961, 1),
+"centroid": Color(0.792157, 0.619608, 0.901961, 1),
+"class": Color(0.792157, 0.619608, 0.901961, 1),
+"common": Color(0.792157, 0.619608, 0.901961, 1),
+"discard": Color(0.792157, 0.619608, 0.901961, 1),
+"dmat2": Color(0.792157, 0.619608, 0.901961, 1),
+"dmat2x2": Color(0.792157, 0.619608, 0.901961, 1),
+"dmat2x3": Color(0.792157, 0.619608, 0.901961, 1),
+"dmat2x4": Color(0.792157, 0.619608, 0.901961, 1),
+"dmat3": Color(0.792157, 0.619608, 0.901961, 1),
+"dmat3x2": Color(0.792157, 0.619608, 0.901961, 1),
+"dmat3x3": Color(0.792157, 0.619608, 0.901961, 1),
+"dmat3x4": Color(0.792157, 0.619608, 0.901961, 1),
+"dmat4": Color(0.792157, 0.619608, 0.901961, 1),
+"dmat4x2": Color(0.792157, 0.619608, 0.901961, 1),
+"dmat4x3": Color(0.792157, 0.619608, 0.901961, 1),
+"dmat4x4": Color(0.792157, 0.619608, 0.901961, 1),
+"dvec2": Color(0.792157, 0.619608, 0.901961, 1),
+"dvec3": Color(0.792157, 0.619608, 0.901961, 1),
+"dvec4": Color(0.792157, 0.619608, 0.901961, 1),
+"enum": Color(0.792157, 0.619608, 0.901961, 1),
+"extern": Color(0.792157, 0.619608, 0.901961, 1),
+"external": Color(0.792157, 0.619608, 0.901961, 1),
+"filter": Color(0.792157, 0.619608, 0.901961, 1),
+"fixed": Color(0.792157, 0.619608, 0.901961, 1),
+"flat": Color(0.792157, 0.619608, 0.901961, 1),
+"fvec2": Color(0.792157, 0.619608, 0.901961, 1),
+"fvec3": Color(0.792157, 0.619608, 0.901961, 1),
+"fvec4": Color(0.792157, 0.619608, 0.901961, 1),
+"goto": Color(0.792157, 0.619608, 0.901961, 1),
+"half": Color(0.792157, 0.619608, 0.901961, 1),
+"highp": Color(0.792157, 0.619608, 0.901961, 1),
+"hvec2": Color(0.792157, 0.619608, 0.901961, 1),
+"hvec3": Color(0.792157, 0.619608, 0.901961, 1),
+"hvec4": Color(0.792157, 0.619608, 0.901961, 1),
+"iimage1D": Color(0.792157, 0.619608, 0.901961, 1),
+"iimage1DArray": Color(0.792157, 0.619608, 0.901961, 1),
+"iimage2D": Color(0.792157, 0.619608, 0.901961, 1),
+"iimage2DArray": Color(0.792157, 0.619608, 0.901961, 1),
+"iimage3D": Color(0.792157, 0.619608, 0.901961, 1),
+"iimageBuffer": Color(0.792157, 0.619608, 0.901961, 1),
+"iimageCube": Color(0.792157, 0.619608, 0.901961, 1),
+"image1D": Color(0.792157, 0.619608, 0.901961, 1),
+"image1DArray": Color(0.792157, 0.619608, 0.901961, 1),
+"image1DArrayShadow": Color(0.792157, 0.619608, 0.901961, 1),
+"image1DShadow": Color(0.792157, 0.619608, 0.901961, 1),
+"image2D": Color(0.792157, 0.619608, 0.901961, 1),
+"image2DArray": Color(0.792157, 0.619608, 0.901961, 1),
+"image2DArrayShadow": Color(0.792157, 0.619608, 0.901961, 1),
+"image2DShadow": Color(0.792157, 0.619608, 0.901961, 1),
+"image3D": Color(0.792157, 0.619608, 0.901961, 1),
+"imageBuffer": Color(0.792157, 0.619608, 0.901961, 1),
+"imageCube": Color(0.792157, 0.619608, 0.901961, 1),
+"in": Color(0.792157, 0.619608, 0.901961, 1),
+"inline": Color(0.792157, 0.619608, 0.901961, 1),
+"inout": Color(0.792157, 0.619608, 0.901961, 1),
+"input": Color(0.792157, 0.619608, 0.901961, 1),
+"interface": Color(0.792157, 0.619608, 0.901961, 1),
+"invariant": Color(0.792157, 0.619608, 0.901961, 1),
+"isampler1D": Color(0.792157, 0.619608, 0.901961, 1),
+"isampler1DArray": Color(0.792157, 0.619608, 0.901961, 1),
+"isampler2D": Color(0.792157, 0.619608, 0.901961, 1),
+"isampler2DArray": Color(0.792157, 0.619608, 0.901961, 1),
+"isampler2DMS": Color(0.792157, 0.619608, 0.901961, 1),
+"isampler2DMSArray": Color(0.792157, 0.619608, 0.901961, 1),
+"isampler2DRect": Color(0.792157, 0.619608, 0.901961, 1),
+"isampler3D": Color(0.792157, 0.619608, 0.901961, 1),
+"isamplerBuffer": Color(0.792157, 0.619608, 0.901961, 1),
+"isamplerCube": Color(0.792157, 0.619608, 0.901961, 1),
+"isamplerCubeArray": Color(0.792157, 0.619608, 0.901961, 1),
+"ivec2": Color(0.792157, 0.619608, 0.901961, 1),
+"ivec3": Color(0.792157, 0.619608, 0.901961, 1),
+"ivec4": Color(0.792157, 0.619608, 0.901961, 1),
+"layout": Color(0.792157, 0.619608, 0.901961, 1),
+"long": Color(0.792157, 0.619608, 0.901961, 1),
+"lowp": Color(0.792157, 0.619608, 0.901961, 1),
+"mat2": Color(0.792157, 0.619608, 0.901961, 1),
+"mat2x2": Color(0.792157, 0.619608, 0.901961, 1),
+"mat2x3": Color(0.792157, 0.619608, 0.901961, 1),
+"mat2x4": Color(0.792157, 0.619608, 0.901961, 1),
+"mat3": Color(0.792157, 0.619608, 0.901961, 1),
+"mat3x2": Color(0.792157, 0.619608, 0.901961, 1),
+"mat3x3": Color(0.792157, 0.619608, 0.901961, 1),
+"mat3x4": Color(0.792157, 0.619608, 0.901961, 1),
+"mat4": Color(0.792157, 0.619608, 0.901961, 1),
+"mat4x2": Color(0.792157, 0.619608, 0.901961, 1),
+"mat4x3": Color(0.792157, 0.619608, 0.901961, 1),
+"mat4x4": Color(0.792157, 0.619608, 0.901961, 1),
+"mediump": Color(0.792157, 0.619608, 0.901961, 1),
+"namespace": Color(0.792157, 0.619608, 0.901961, 1),
+"noinline": Color(0.792157, 0.619608, 0.901961, 1),
+"noperspective": Color(0.792157, 0.619608, 0.901961, 1),
+"out": Color(0.792157, 0.619608, 0.901961, 1),
+"output": Color(0.792157, 0.619608, 0.901961, 1),
+"packed": Color(0.792157, 0.619608, 0.901961, 1),
+"partition": Color(0.792157, 0.619608, 0.901961, 1),
+"patch": Color(0.792157, 0.619608, 0.901961, 1),
+"precision": Color(0.792157, 0.619608, 0.901961, 1),
+"public": Color(0.792157, 0.619608, 0.901961, 1),
+"row_major": Color(0.792157, 0.619608, 0.901961, 1),
+"sample": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler1D": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler1DArray": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler1DArrayShadow": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler1DShadow": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler2D": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler2DArray": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler2DArrayShadow": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler2DMS": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler2DMSArray": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler2DRect": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler2DRectShadow": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler2DShadow": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler3D": Color(0.792157, 0.619608, 0.901961, 1),
+"sampler3DRect": Color(0.792157, 0.619608, 0.901961, 1),
+"samplerBuffer": Color(0.792157, 0.619608, 0.901961, 1),
+"samplerCube": Color(0.792157, 0.619608, 0.901961, 1),
+"samplerCubeArray": Color(0.792157, 0.619608, 0.901961, 1),
+"samplerCubeArrayShadow": Color(0.792157, 0.619608, 0.901961, 1),
+"samplerCubeShadow": Color(0.792157, 0.619608, 0.901961, 1),
+"short": Color(0.792157, 0.619608, 0.901961, 1),
+"sizeof": Color(0.792157, 0.619608, 0.901961, 1),
+"smooth": Color(0.792157, 0.619608, 0.901961, 1),
+"static": Color(0.792157, 0.619608, 0.901961, 1),
+"subroutine": Color(0.792157, 0.619608, 0.901961, 1),
+"superp": Color(0.792157, 0.619608, 0.901961, 1),
+"template": Color(0.792157, 0.619608, 0.901961, 1),
+"this": Color(0.792157, 0.619608, 0.901961, 1),
+"typedef": Color(0.792157, 0.619608, 0.901961, 1),
+"uimage1D": Color(0.792157, 0.619608, 0.901961, 1),
+"uimage1DArray": Color(0.792157, 0.619608, 0.901961, 1),
+"uimage2D": Color(0.792157, 0.619608, 0.901961, 1),
+"uimage2DArray": Color(0.792157, 0.619608, 0.901961, 1),
+"uimage3D": Color(0.792157, 0.619608, 0.901961, 1),
+"uimageBuffer": Color(0.792157, 0.619608, 0.901961, 1),
+"uimageCube": Color(0.792157, 0.619608, 0.901961, 1),
+"uniform": Color(0.792157, 0.619608, 0.901961, 1),
+"union": Color(0.792157, 0.619608, 0.901961, 1),
+"unsigned": Color(0.792157, 0.619608, 0.901961, 1),
+"usampler1D": Color(0.792157, 0.619608, 0.901961, 1),
+"usampler1DArray": Color(0.792157, 0.619608, 0.901961, 1),
+"usampler2D": Color(0.792157, 0.619608, 0.901961, 1),
+"usampler2DArray": Color(0.792157, 0.619608, 0.901961, 1),
+"usampler2DMS": Color(0.792157, 0.619608, 0.901961, 1),
+"usampler2DMSArray": Color(0.792157, 0.619608, 0.901961, 1),
+"usampler2DRect": Color(0.792157, 0.619608, 0.901961, 1),
+"usampler3D": Color(0.792157, 0.619608, 0.901961, 1),
+"usamplerBuffer": Color(0.792157, 0.619608, 0.901961, 1),
+"usamplerCube": Color(0.792157, 0.619608, 0.901961, 1),
+"usamplerCubeArray": Color(0.792157, 0.619608, 0.901961, 1),
+"using": Color(0.792157, 0.619608, 0.901961, 1),
+"uvec2": Color(0.792157, 0.619608, 0.901961, 1),
+"uvec3": Color(0.792157, 0.619608, 0.901961, 1),
+"uvec4": Color(0.792157, 0.619608, 0.901961, 1),
+"varying": Color(0.792157, 0.619608, 0.901961, 1),
+"vec2": Color(0.792157, 0.619608, 0.901961, 1),
+"vec3": Color(0.792157, 0.619608, 0.901961, 1),
+"vec4": Color(0.792157, 0.619608, 0.901961, 1),
+"volatile": Color(0.792157, 0.619608, 0.901961, 1)
+}
+color_regions = {
+"\" \"": Color(0.65098, 0.819608, 0.537255, 1),
+"#": Color(0.594118, 0.601961, 0.637255, 1),
+"' '": Color(0.65098, 0.819608, 0.537255, 1),
+"/* */": Color(0.45098, 0.47451, 0.580392, 1),
+"//": Color(0.45098, 0.47451, 0.580392, 1)
+}
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SplitContainer" type="SplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offset = 300
+
+[node name="Browser" parent="SplitContainer" instance=ExtResource("1_prqn1")]
+layout_mode = 2
+path = "C:\\Users\\Innaias\\Documents\\folder\\fishy-shaders-3"
+
+[node name="CodeEdit" parent="SplitContainer" instance=ExtResource("1_x2835")]
+layout_mode = 2
+theme_override_colors/word_highlighted_color = Color(0.384314, 0.407843, 0.501961, 1)
+theme_override_colors/current_line_color = Color(0.776471, 0.815686, 0.960784, 0.0627451)
+theme_override_colors/background_color = Color(0.188235, 0.203922, 0.27451, 1)
+theme_override_colors/selection_color = Color(0.384314, 0.407843, 0.501961, 1)
+theme_override_colors/caret_color = Color(0.94902, 0.835294, 0.811765, 1)
+theme_override_colors/search_result_color = Color(0.384314, 0.407843, 0.501961, 1)
+theme_override_colors/completion_scroll_color = Color(0.254902, 0.270588, 0.34902, 1)
+theme_override_colors/line_number_color = Color(0.513726, 0.545098, 0.654902, 1)
+theme_override_colors/completion_scroll_hovered_color = Color(0.317647, 0.341176, 0.427451, 1)
+theme_override_colors/executing_line_color = Color(0.898039, 0.784314, 0.564706, 1)
+theme_override_colors/completion_background_color = Color(0.160784, 0.172549, 0.235294, 1)
+theme_override_colors/bookmark_color = Color(0.54902, 0.666667, 0.933333, 1)
+theme_override_colors/completion_selected_color = Color(0.254902, 0.270588, 0.34902, 1)
+theme_override_colors/breakpoint_color = Color(0.905882, 0.509804, 0.517647, 1)
+theme_override_colors/completion_existing_color = Color(0.792157, 0.619608, 0.901961, 0.129412)
+theme_override_colors/line_length_guideline_color = Color(0.254902, 0.270588, 0.34902, 1)
+theme_override_colors/brace_mismatch_color = Color(0.905882, 0.509804, 0.517647, 1)
+theme_override_colors/code_folding_color = Color(0.513726, 0.545098, 0.654902, 1)
+text = "#version 450
+
+#include \"/lib/pipeline.inc\"
+
+void main() {
+	albedo = vec4(0.0);
+	// unmatched brace
+	(
+	// single line comment
+	/*
+		multi
+		line
+		comment
+	*/
+}"
+syntax_highlighter = SubResource("CodeHighlighter_xwcjx")
+editor_theme = "res://src/themes/godot-syntax-themes/Catppuccin-Frappé.tet"

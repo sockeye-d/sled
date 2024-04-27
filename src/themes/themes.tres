@@ -1,0 +1,271 @@
+[gd_resource type="Resource" script_class="TextEditorThemeLibrary" load_steps=29 format=3 uid="uid://ba5152uqn2drw"]
+
+[ext_resource type="Script" path="res://src/themes/text_editor_theme_library.gd" id="1_axqwl"]
+[ext_resource type="Script" path="res://src/themes/text_editor_theme.gd" id="2_mn7bx"]
+
+[sub_resource type="Resource" id="Resource_i1ggw"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.423529, 0.423529, 0.423529, 1)
+function_color = Color(1, 1, 1, 1)
+keyword_color = Color(0.560784, 0.686275, 0.843137, 1)
+member_variable_color = Color(0.737255, 0.737255, 0.737255, 1)
+number_color = Color(1, 1, 0.686275, 1)
+symbol_color = Color(0.737255, 0.737255, 0.737255, 1)
+
+[sub_resource type="Resource" id="Resource_evjvx"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.486275, 0.486275, 0.486275, 1)
+function_color = Color(0.854902, 0.815686, 0.521569, 1)
+keyword_color = Color(0.588235, 0.796078, 0.996078, 1)
+member_variable_color = Color(0.776471, 0.772549, 0.996078, 1)
+number_color = Color(1, 0.45098, 0.992157, 1)
+symbol_color = Color(0.772549, 0.784314, 0.776471, 1)
+
+[sub_resource type="Resource" id="Resource_hsvfc"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.360784, 0.403922, 0.45098, 1)
+function_color = Color(0.94902, 0.529412, 0.47451, 1)
+keyword_color = Color(1, 0.654902, 0.34902, 1)
+member_variable_color = Color(1, 0.8, 0.4, 1)
+number_color = Color(1, 0.8, 0.4, 1)
+symbol_color = Color(0.94902, 0.619608, 0.454902, 1)
+
+[sub_resource type="Resource" id="Resource_lw5r5"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.45098, 0.47451, 0.580392, 1)
+function_color = Color(0.54902, 0.666667, 0.933333, 1)
+keyword_color = Color(0.792157, 0.619608, 0.901961, 1)
+member_variable_color = Color(0.729412, 0.733333, 0.945098, 1)
+number_color = Color(0.937255, 0.623529, 0.462745, 1)
+symbol_color = Color(0.6, 0.819608, 0.858824, 1)
+
+[sub_resource type="Resource" id="Resource_igcec"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.611765, 0.627451, 0.690196, 1)
+function_color = Color(0.117647, 0.4, 0.960784, 1)
+keyword_color = Color(0.533333, 0.223529, 0.937255, 1)
+member_variable_color = Color(0.447059, 0.529412, 0.992157, 1)
+number_color = Color(0.996078, 0.392157, 0.0431373, 1)
+symbol_color = Color(0.0156863, 0.647059, 0.898039, 1)
+
+[sub_resource type="Resource" id="Resource_m8aia"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.431373, 0.45098, 0.552941, 1)
+function_color = Color(0.541176, 0.678431, 0.956863, 1)
+keyword_color = Color(0.776471, 0.627451, 0.964706, 1)
+member_variable_color = Color(0.717647, 0.741176, 0.972549, 1)
+number_color = Color(0.960784, 0.662745, 0.498039, 1)
+symbol_color = Color(0.568627, 0.843137, 0.890196, 1)
+
+[sub_resource type="Resource" id="Resource_bwg6x"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.423529, 0.439216, 0.52549, 1)
+function_color = Color(0.537255, 0.705882, 0.980392, 1)
+keyword_color = Color(0.796078, 0.65098, 0.968627, 1)
+member_variable_color = Color(0.705882, 0.745098, 0.996078, 1)
+number_color = Color(0.980392, 0.701961, 0.529412, 1)
+symbol_color = Color(0.537255, 0.862745, 0.921569, 1)
+
+[sub_resource type="Resource" id="Resource_t7614"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.439216, 0.439216, 0.439216, 1)
+function_color = Color(1, 0.776471, 0.427451, 1)
+keyword_color = Color(0.8, 0.509804, 0.258824, 1)
+member_variable_color = Color(0.619608, 0.482353, 0.690196, 1)
+number_color = Color(0.478431, 0.619608, 0.760784, 1)
+symbol_color = Color(0.8, 0.8, 0.8, 1)
+
+[sub_resource type="Resource" id="Resource_5wtjo"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.384314, 0.447059, 0.643137, 1)
+function_color = Color(0.545098, 0.913725, 0.992157, 1)
+keyword_color = Color(1, 0.47451, 0.776471, 1)
+member_variable_color = Color(0.972549, 0.972549, 0.94902, 1)
+number_color = Color(0.741176, 0.576471, 0.976471, 1)
+symbol_color = Color(0.972549, 0.972549, 0.94902, 1)
+
+[sub_resource type="Resource" id="Resource_5064o"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.572549, 0.513726, 0.454902, 1)
+function_color = Color(0.556863, 0.752941, 0.486275, 1)
+keyword_color = Color(0.984314, 0.286275, 0.203922, 1)
+member_variable_color = Color(0.901961, 0.305882, 0.34902, 1)
+number_color = Color(0.827451, 0.52549, 0.607843, 1)
+symbol_color = Color(0.984314, 0.945098, 0.780392, 1)
+
+[sub_resource type="Resource" id="Resource_8vige"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.835294, 0.847059, 0.854902, 0.501961)
+function_color = Color(0.145098, 0.698039, 0.737255, 1)
+keyword_color = Color(0.721569, 0.466667, 0.858824, 0.901961)
+member_variable_color = Color(0.913725, 0.337255, 0.470588, 1)
+number_color = Color(0.980392, 0.717647, 0.584314, 1)
+symbol_color = Color(0.835294, 0.847059, 0.854902, 1)
+
+[sub_resource type="Resource" id="Resource_rrrjy"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.462745, 0.498039, 0.54902, 1)
+function_color = Color(0.890196, 0.419608, 0.282353, 1)
+keyword_color = Color(0.4, 0.541176, 0.819608, 1)
+member_variable_color = Color(0.819608, 0.376471, 0.376471, 1)
+number_color = Color(1, 0.572549, 0.572549, 1)
+symbol_color = Color(0.607843, 0.521569, 0.615686, 1)
+
+[sub_resource type="Resource" id="Resource_swda8"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.458824, 0.443137, 0.368627, 1)
+function_color = Color(0.4, 0.85098, 0.937255, 1)
+keyword_color = Color(0.976471, 0.14902, 0.447059, 1)
+member_variable_color = Color(0.4, 0.85098, 0.937255, 1)
+number_color = Color(0.682353, 0.505882, 1, 1)
+symbol_color = Color(0.972549, 0.972549, 0.94902, 1)
+
+[sub_resource type="Resource" id="Resource_0fvow"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.388235, 0.439216, 0.541176, 1)
+function_color = Color(0.533333, 0.752941, 0.815686, 1)
+keyword_color = Color(0.505882, 0.631373, 0.756863, 1)
+member_variable_color = Color(0.847059, 0.870588, 0.913725, 1)
+number_color = Color(0.705882, 0.556863, 0.678431, 1)
+symbol_color = Color(0.505882, 0.631373, 0.756863, 1)
+
+[sub_resource type="Resource" id="Resource_jgf7r"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.435294, 0.435294, 0.435294, 1)
+function_color = Color(0.376471, 0.682353, 0.929412, 1)
+keyword_color = Color(0.776471, 0.466667, 0.866667, 1)
+member_variable_color = Color(0.878431, 0.423529, 0.458824, 1)
+number_color = Color(0.819608, 0.603922, 0.4, 1)
+symbol_color = Color(0.666667, 0.694118, 0.74902, 1)
+
+[sub_resource type="Resource" id="Resource_ribod"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.360784, 0.388235, 0.439216, 1)
+function_color = Color(0.596078, 0.764706, 0.47451, 1)
+keyword_color = Color(0.878431, 0.423529, 0.458824, 1)
+member_variable_color = Color(0.380392, 0.686275, 0.937255, 1)
+number_color = Color(0.776471, 0.470588, 0.866667, 1)
+symbol_color = Color(0.501961, 0.501961, 0.501961, 1)
+
+[sub_resource type="Resource" id="Resource_xdva6"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.666667, 0.666667, 0.666667, 1)
+function_color = Color(0.666667, 0.215686, 0.192157, 1)
+keyword_color = Color(0.294118, 0.513726, 0.803922, 1)
+member_variable_color = Color(0.478431, 0.243137, 0.615686, 1)
+number_color = Color(0.670588, 0.396078, 0.14902, 1)
+symbol_color = Color(0.466667, 0.466667, 0.466667, 1)
+
+[sub_resource type="Resource" id="Resource_r7drd"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.345098, 0.431373, 0.458824, 1)
+function_color = Color(0.14902, 0.545098, 0.823529, 1)
+keyword_color = Color(0.709804, 0.537255, 0, 1)
+member_variable_color = Color(0.14902, 0.545098, 0.823529, 1)
+number_color = Color(0.827451, 0.211765, 0.509804, 1)
+symbol_color = Color(0.513726, 0.580392, 0.588235, 1)
+
+[sub_resource type="Resource" id="Resource_1sj7v"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.576471, 0.631373, 0.631373, 1)
+function_color = Color(0.14902, 0.545098, 0.823529, 1)
+keyword_color = Color(0.521569, 0.6, 0, 1)
+member_variable_color = Color(0.14902, 0.545098, 0.823529, 1)
+number_color = Color(0.827451, 0.211765, 0.509804, 1)
+symbol_color = Color(0.2, 0.2, 0.2, 1)
+
+[sub_resource type="Resource" id="Resource_ju3mf"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.478431, 0.533333, 0.811765, 1)
+function_color = Color(0.509804, 0.666667, 1, 1)
+keyword_color = Color(0.752941, 0.6, 1, 1)
+member_variable_color = Color(0.309804, 0.839216, 0.745098, 1)
+number_color = Color(1, 0.588235, 0.423529, 1)
+symbol_color = Color(0.52549, 0.882353, 0.988235, 1)
+
+[sub_resource type="Resource" id="Resource_ul0uh"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.337255, 0.372549, 0.537255, 1)
+function_color = Color(0.478431, 0.635294, 0.968627, 1)
+keyword_color = Color(0.733333, 0.603922, 0.968627, 1)
+member_variable_color = Color(0.45098, 0.854902, 0.792157, 1)
+number_color = Color(1, 0.619608, 0.392157, 1)
+symbol_color = Color(0.490196, 0.811765, 1, 1)
+
+[sub_resource type="Resource" id="Resource_8qg7t"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.337255, 0.372549, 0.537255, 1)
+function_color = Color(0.478431, 0.635294, 0.968627, 1)
+keyword_color = Color(0.733333, 0.603922, 0.968627, 1)
+member_variable_color = Color(0.45098, 0.854902, 0.792157, 1)
+number_color = Color(1, 0.619608, 0.392157, 1)
+symbol_color = Color(0.490196, 0.811765, 1, 1)
+
+[sub_resource type="Resource" id="Resource_hmm0y"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.376471, 0.545098, 0.305882, 1)
+function_color = Color(0.862745, 0.862745, 0.666667, 1)
+keyword_color = Color(0.337255, 0.611765, 0.839216, 1)
+member_variable_color = Color(0.611765, 0.862745, 0.996078, 1)
+number_color = Color(0.709804, 0.807843, 0.658824, 1)
+symbol_color = Color(0.831373, 0.831373, 0.831373, 1)
+
+[sub_resource type="Resource" id="Resource_uod46"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0, 0.501961, 0, 1)
+function_color = Color(0.47451, 0.368627, 0.14902, 1)
+keyword_color = Color(0, 0, 1, 1)
+member_variable_color = Color(0, 0.0627451, 0.501961, 1)
+number_color = Color(0.0352941, 0.533333, 0.352941, 1)
+symbol_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Resource" id="Resource_u00pw"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.494118, 0.54902, 0.596078, 1)
+function_color = Color(0.694118, 0.505882, 0.921569, 1)
+keyword_color = Color(1, 0.478431, 0.698039, 1)
+member_variable_color = Color(0.305882, 0.690196, 0.8, 1)
+number_color = Color(0.85098, 0.788235, 0.486275, 1)
+symbol_color = Color(0.890196, 0.890196, 0.890196, 1)
+
+[sub_resource type="Resource" id="Resource_q2pqi"]
+script = ExtResource("2_mn7bx")
+comment_color = Color(0.435294, 0.494118, 0.54902, 1)
+function_color = Color(0.501961, 0.309804, 0.721569, 1)
+keyword_color = Color(0.678431, 0.239216, 0.643137, 1)
+member_variable_color = Color(0.0196078, 0.486275, 0.690196, 1)
+number_color = Color(0.14902, 0.164706, 0.847059, 1)
+symbol_color = Color(0.168627, 0.168627, 0.168627, 1)
+
+[resource]
+script = ExtResource("1_axqwl")
+themes = {
+"Apprentice": SubResource("Resource_i1ggw"),
+"Atom-Dark": SubResource("Resource_evjvx"),
+"Ayu-Mirage": SubResource("Resource_hsvfc"),
+"Catppuccin-Frappé": SubResource("Resource_lw5r5"),
+"Catppuccin-Latte": SubResource("Resource_igcec"),
+"Catppuccin-Macchiato": SubResource("Resource_m8aia"),
+"Catppuccin-Mocha": SubResource("Resource_bwg6x"),
+"Darcula": SubResource("Resource_t7614"),
+"Dracula": SubResource("Resource_5wtjo"),
+"Gruvbox-Dark": SubResource("Resource_5064o"),
+"Horizon": SubResource("Resource_8vige"),
+"Metro": SubResource("Resource_rrrjy"),
+"Monokai": SubResource("Resource_swda8"),
+"Nord": SubResource("Resource_0fvow"),
+"One-Dark": SubResource("Resource_jgf7r"),
+"One-Monokai": SubResource("Resource_ribod"),
+"Quiet-Light": SubResource("Resource_xdva6"),
+"Solarized-Dark": SubResource("Resource_r7drd"),
+"Solarized-Light": SubResource("Resource_1sj7v"),
+"Tokyo-Night-Moon": SubResource("Resource_ju3mf"),
+"Tokyo-Night-Night": SubResource("Resource_ul0uh"),
+"Tokyo-Night-Storm": SubResource("Resource_8qg7t"),
+"VS-Code-Dark": SubResource("Resource_hmm0y"),
+"VS-Code-Light": SubResource("Resource_uod46"),
+"Xcode-Dark": SubResource("Resource_u00pw"),
+"Xcode-Light": SubResource("Resource_q2pqi")
+}
+import_themes = ""
+export_themes = ""

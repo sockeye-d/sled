@@ -1,0 +1,4 @@
+[gd_resource type="SystemFont" format=3 uid="uid://c3ctv52cr2q76"]
+
+[resource]
+font_names = PackedStringArray("Cascadia Code", "Monospace")
