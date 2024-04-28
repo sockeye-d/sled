@@ -1,6 +1,9 @@
 class_name Browser extends Control
 
 
+signal file_opened(path: String)
+
+
 @export var path: String
 
 
@@ -9,6 +12,7 @@ class_name Browser extends Control
 
 func _ready() -> void:
 	refresh_tree()
+	browser_tree.file_opened.connect(func(path: String): file_opened.emit(path))
 
 
 func refresh_tree() -> void:

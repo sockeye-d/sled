@@ -1,0 +1,17 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://b0slpuo2u08uv"]
+
+[ext_resource type="FontFile" uid="uid://byixppdafphgl" path="res://src/assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf" id="1_cpby8"]
+
+[resource]
+base_font = ExtResource("1_cpby8")
+variation_opentype = {
+2003265652: 700
+}
+opentype_features = {
+1684826471: 0,
+1936928817: 0,
+1936928818: 1,
+1936928819: 1,
+1936928822: 1,
+1936928823: 1
+}

@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://pgjdj7ub2337"]
+
+[ext_resource type="Shader" path="res://src/shaders/notification_label_material.gdshader" id="1_d1gde"]
+
+[resource]
+shader = ExtResource("1_d1gde")
+shader_parameter/start = 0.4
+shader_parameter/end = 0.6

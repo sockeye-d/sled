@@ -4,7 +4,12 @@ class_name LineEditDialog extends ConfirmationDialog
 
 signal finished(text: String)
 
+
 var line_edit: LineEdit
+var container: VBoxContainer
+var custom_ui: Dictionary
+
+
 @export var text: String = "":
 	set(value):
 		if line_edit:
@@ -37,7 +42,12 @@ func _init() -> void:
 			)
 	line_edit.text_submitted.connect(func(new_text: String): finished.emit(new_text))
 	line_edit.select_all_on_focus = true
-	add_child(line_edit)
+
+	container = VBoxContainer.new()
+	container.set_anchors_preset(Control.PRESET_FULL_RECT)
+
+	add_child(container)
+	container.add_child(line_edit)
 
 	self.canceled.connect(func(): finished.emit(""))
 	self.confirmed.connect(func(): finished.emit(line_edit.text))
@@ -49,6 +59,12 @@ func _init() -> void:
 			previous_text = line_edit.text
 			size.y = 0
 			).call_deferred)
+
+
+func add_custom_ui(ui: Control, identifier: String) -> void:
+	container.add_child(ui)
+	custom_ui[identifier] = ui
+
 
 ## r':/\?*"|%<>' for filenames
 func _check_text(text: String, pattern: String) -> int:

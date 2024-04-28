@@ -13,7 +13,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_l6x4e")
 script = ExtResource("1_pepdc")
-path = "C:\\Users\\Innaias\\AppData\\Roaming\\com.modrinth.theseus\\profiles\\shader\\shaderpacks\\fishy-shaders-3\\shaders"
+path = "C:\\Users\\Innaias\\Documents\\folder\\fishy-shaders-3"
 
 [node name="BrowserTree" type="Tree" parent="."]
 unique_name_in_owner = true
@@ -23,4 +23,5 @@ script = ExtResource("2_3wiph")
 
 [connection signal="button_clicked" from="BrowserTree" to="BrowserTree" method="_on_button_clicked"]
 [connection signal="empty_clicked" from="BrowserTree" to="BrowserTree" method="_on_empty_clicked"]
+[connection signal="item_collapsed" from="BrowserTree" to="BrowserTree" method="_on_item_collapsed"]
 [connection signal="item_selected" from="BrowserTree" to="BrowserTree" method="_on_item_selected"]
