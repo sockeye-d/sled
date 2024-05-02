@@ -1,0 +1,10 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://b3x3gf6fuhwaq"]
+
+[sub_resource type="SystemFont" id="SystemFont_n7eg1"]
+font_names = PackedStringArray("Monaspace Argon")
+
+[resource]
+base_font = SubResource("SystemFont_n7eg1")
+opentype_features = {
+1936928821: 1
+}

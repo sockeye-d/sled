@@ -1,4 +1,4 @@
-class_name FileSettingItem extends SettingItem
+class_name FileSettingItem extends StringSettingItem
 
 
 var line_edit: LineEdit
@@ -8,7 +8,7 @@ var line_edit: LineEdit
 
 func _create_control() -> Control:
 	var hbox := HBoxContainer.new()
-	line_edit = LineEdit.new()
+	line_edit = super()
 	line_edit.caret_blink = true
 	line_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var button = Button.new()
@@ -34,6 +34,10 @@ func _show_file_dialog() -> void:
 	fd.file_mode = FileDialog.FILE_MODE_OPEN_FILE
 	
 	fd.show()
+
+
+func _get_default_value():
+	return ""
 	
 
 func _on_file_accepted(path: String) -> void:

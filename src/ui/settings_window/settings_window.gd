@@ -3,6 +3,7 @@ class_name SettingsWindow extends Window
 
 
 signal population_complete()
+signal setting_changed(identifier: StringName, new_value)
 
 
 @onready var category_container: VBoxContainer = %CategoryContainer
@@ -26,10 +27,9 @@ func _ready() -> void:
 	close_requested.connect(func(): hide())
 
 
-func _process(delta: float) -> void:
-	return
-	if Input.is_action_just_pressed("save"):
-		save()
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("escape"):
+		hide()
 
 
 func populate_setting_categories() -> void:
@@ -41,7 +41,11 @@ func populate_setting_categories() -> void:
 		
 		for setting in setting_category.settings:
 			settings[setting.identifier] = setting.value if setting.value else setting._get_default_value()
-			setting.setting_changed.connect(func(new_value): settings[setting.identifier] = new_value)
+			setting.setting_changed.connect(
+					func(new_value):
+						settings[setting.identifier] = new_value
+						setting_changed.emit(setting.identifier, new_value)
+						)
 			settings_items[setting.identifier] = setting
 	
 	add_custom_settings()
@@ -52,8 +56,8 @@ func add_custom_settings():
 	var themes := EditorThemeManager.THEMES
 	for t in themes.themes:
 		settings_items.theme.options.append(t)
-	settings_items.theme.setting_changed.connect(
-			func(new_value):
+	settings_items.theme.setting_changed.connect.call_deferred(
+			func(_new_value):
 				var new_theme = settings_items.theme.get_text()
 				if new_theme:
 					EditorThemeManager.change_theme(new_theme)
@@ -65,8 +69,14 @@ func add_custom_settings():
 	
 	settings_items.font.setting_changed.connect(
 			func(new_value: int):
-				EditorThemeManager.set_font(settings_items.font.get_text())
+				EditorThemeManager.set_font(settings_items.font.get_text(), settings.ligatures)
 				)
+	
+	settings_items.ligatures.setting_changed.connect(
+			func(_new_value: String):
+				EditorThemeManager.set_font(settings_items.font.get_text(), settings.ligatures)
+				)
+	
 	settings_items.font.select_text((theme.get_font(&"font", &"CodeEdit") as SystemFont).get_font_name())
 
 func populate_settings(category: SettingCategory) -> void:
@@ -100,33 +110,7 @@ func add_setting_category(category: SettingCategory) -> void:
 	button.pressed.connect(populate_settings.bind(category))
 
 
-func save() -> void:
-	print(settings)
-	
-	var path = "user://settings.tres"
-	#var error = ResourceSaver.save(SettingsResourceaaa.new(setting_categories), path)
-	var file_handle: FileAccess = FileAccess.open(path, FileAccess.WRITE_READ)
-	file_handle.store_var(settings)
-	file_handle.close()
-	
-	await get_tree().create_timer(0.1).timeout
-	
-	open()
-
-
-func open() -> void:
-	var path = "user://settings.tres"
-	var setting_dict: Dictionary = { }
-	
-	var file_handle: FileAccess = FileAccess.open(path, FileAccess.READ_WRITE)
-	setting_dict = file_handle.get_var()
-	file_handle.close()
-	
-	print(setting_dict)
-
-
-class SettingsResourceaaa extends Resource:
-	var settings: Array[SettingCategory]
-	
-	func _init(_settings: Array[SettingCategory] = []):
-		settings = _settings
+func load_settings(new_settings: Dictionary) -> void:
+	for s in settings:
+		if s in settings_items:
+			settings_items[s].value = new_settings[s]

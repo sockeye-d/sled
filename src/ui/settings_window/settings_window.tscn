@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bhh21mxu6765g"]
+[gd_scene load_steps=18 format=3 uid="uid://bhh21mxu6765g"]
 
 [ext_resource type="Theme" uid="uid://brmolr535bgtw" path="res://src/main.theme" id="1_8ki8x"]
 [ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="1_k1b4t"]
@@ -16,7 +16,18 @@ options = PackedStringArray()
 value = null
 name = "Theme"
 identifier = &"theme"
-tooltip = ""
+tooltip = "The code editor theme.
+Import your own using the \"Load custom theme\" setting"
+
+[sub_resource type="Resource" id="Resource_t67iy"]
+script = ExtResource("5_5bcjm")
+filters = PackedStringArray()
+button_text = "📁"
+default_value = ""
+value = null
+name = "Load custom theme"
+identifier = &"custom_theme_path"
+tooltip = "Import a path to load a theme. Supports the themes in the godotengine/godot-syntax-themes repository"
 
 [sub_resource type="Resource" id="Resource_fbn8t"]
 script = ExtResource("3_afdq8")
@@ -33,41 +44,56 @@ default_value = "ss01,ss02,ss03,ss06,ss07,dlig"
 value = null
 name = "Coding ligatures"
 identifier = &"ligatures"
-tooltip = ""
-
-[sub_resource type="Resource" id="Resource_t67iy"]
-script = ExtResource("5_5bcjm")
-filters = PackedStringArray()
-button_text = "📁"
-value = null
-name = "Load custom theme"
-identifier = &"custom_theme_path"
-tooltip = ""
+tooltip = "The ligatures to use. Most are contained within the ssXX format.
+For example, the GitHub Monaspace font supports ss01 through ss08.
+Cascadia Code font supports a slashed zero using the ss19 set."
 
 [sub_resource type="Resource" id="Resource_moc02"]
 script = ExtResource("2_qdoe0")
 name = "Theme"
-settings = Array[Resource("res://src/classes/setting/setting_item.gd")]([SubResource("Resource_3kvck"), SubResource("Resource_fbn8t"), SubResource("Resource_42da8"), SubResource("Resource_t67iy")])
+settings = Array[Resource("res://src/classes/setting/setting_item.gd")]([SubResource("Resource_3kvck"), SubResource("Resource_t67iy"), SubResource("Resource_fbn8t"), SubResource("Resource_42da8")])
 
-[sub_resource type="Resource" id="Resource_th7o1"]
+[sub_resource type="Resource" id="Resource_pv3ng"]
 script = ExtResource("4_cg4by")
 default_value = false
 text_on = "On"
 text_off = "Off"
 value = null
-name = "my_checkbox_setting"
-identifier = &"my_checkbox_setting"
-tooltip = ""
+name = "Auto code completion"
+identifier = &"auto_code_completion"
+tooltip = "If turned off code completion can still be activated with Ctrl+Space"
+
+[sub_resource type="Resource" id="Resource_1uxen"]
+script = ExtResource("4_cg4by")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Include absolute paths"
+identifier = &"inc_absolute_paths"
+tooltip = "#include directives support absolute paths with a preceding slash \"/path\".
+Disabling this will disable searching for a base path."
+
+[sub_resource type="Resource" id="Resource_6tmdd"]
+script = ExtResource("4_p6htm")
+default_value = "shaders"
+value = null
+name = "Absolute path"
+identifier = &""
+tooltip = "The folder names to look for as the base path for absolute #include declarations.
+Supports multiple paths, comma-separated."
 
 [sub_resource type="Resource" id="Resource_ydeaw"]
 script = ExtResource("2_qdoe0")
-name = "other_category"
-settings = Array[Resource("res://src/classes/setting/setting_item.gd")]([SubResource("Resource_th7o1")])
+name = "Behavior"
+settings = Array[Resource("res://src/classes/setting/setting_item.gd")]([SubResource("Resource_pv3ng"), SubResource("Resource_1uxen"), SubResource("Resource_6tmdd")])
 
 [node name="SettingsWindow" type="Window"]
 title = "Settings"
 initial_position = 2
 size = Vector2i(700, 500)
+transient = true
+exclusive = true
 theme = ExtResource("1_8ki8x")
 script = ExtResource("1_qsncc")
 setting_categories = Array[ExtResource("2_qdoe0")]([SubResource("Resource_moc02"), SubResource("Resource_ydeaw")])
@@ -78,9 +104,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-split_offset = 350
+split_offset = 175
 script = ExtResource("1_k1b4t")
-relative_split_offset = 0.5
+relative_split_offset = 0.25
 
 [node name="PanelContainer2" type="PanelContainer" parent="SplitContainer"]
 layout_mode = 2

@@ -18,7 +18,6 @@ var on_create_control_callback: Callable
 
 
 func _init(_name: String = "", _on_create_control_callback: Callable = Callable()) -> void:
-	print(_get_default_value())
 	name = _name
 	on_create_control_callback = _on_create_control_callback
 	value = _get_default_value()
@@ -37,4 +36,3 @@ func _create_control() -> Control:
 
 func _get_default_value():
 	return -1000
-

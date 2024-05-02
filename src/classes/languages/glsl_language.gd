@@ -194,10 +194,10 @@ static func _static_init() -> void:
 	string_regions = []
 
 
-static func get_code_completion_suggestions(path: String, file: String, line: int = -1) -> Array[CodeCompletionSuggestion]:
+static func get_code_completion_suggestions(path: String, file: String, line: int = -1, base_path: String = path) -> Array[CodeCompletionSuggestion]:
 	# Takes a little effort to convert an untyped array to a typed one
-	var untyped_array: Array = _get_code_completion_suggestions(path, file, line).values()
-	var typed_array: Array[CodeCompletionSuggestion]
+	var untyped_array: Array = _get_code_completion_suggestions(path, file, line, 0, base_path).values()
+	var typed_array: Array[CodeCompletionSuggestion] = []
 	typed_array.assign(untyped_array)
 	return typed_array
 
@@ -207,9 +207,7 @@ static func _get_code_completion_suggestions(path: String, file: String, editing
 	# Dictionary[value, CodeCompletionSuggestion]
 	var suggestions: Dictionary = { }
 	var included_files: PackedStringArray = []
-	var methods: PackedStringArray = []
 	var definitions: Dictionary = { }
-	var local_vars: PackedStringArray = []
 	var file_split = file.replace(";", "\n").split("\n", false)
 	if not editing_line == -1:
 		file_split.resize(editing_line)
@@ -279,6 +277,8 @@ static func _get_code_completion_suggestions(path: String, file: String, editing
 
 	for included_file in included_files:
 		var new_path = path.get_base_dir().path_join(included_file).simplify_path()
+		if included_file.begins_with("/") or included_file.begins_with("\\"):
+			new_path = base_path
 		if not included_file in visited_files and FileAccess.file_exists(new_path):
 			suggestions.merge(_get_code_completion_suggestions(
 					new_path,

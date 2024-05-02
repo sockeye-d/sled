@@ -32,14 +32,12 @@ signal _continue(action_taken: ConfirmationAction)
 
 
 var file_handle: FileAccess
-var panel_stylebox: StyleBoxFlat = StyleBoxFlat.new()
 var last_saved_text: String
 var file_path: String = ""
 var old_text: String
 
 
 func _ready() -> void:
-	panel_container.add_theme_stylebox_override(&"panel", panel_stylebox)
 	load_theme(editor_theme)
 	
 	confirmation_dialog.add_button("Discard", true, "discarded")
@@ -69,8 +67,8 @@ func load_file(path: String) -> void:
 	var old_file_handle = file_handle
 	file_handle = FileAccess.open(path, FileAccess.READ_WRITE)
 
-	var err: Error = file_handle.get_open_error()
-	if err:
+	if file_handle == null:
+		var err: Error = FileAccess.get_open_error()
 		NotificationManager.notify("%s failed to open" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_ERROR)
 		file_handle = old_file_handle
 		return
@@ -87,7 +85,7 @@ func load_file(path: String) -> void:
 
 func save(path: String = "") -> void:
 	if path:
-		file_handle.open(path, FileAccess.READ_WRITE)
+		file_handle = FileAccess.open(path, FileAccess.READ_WRITE)
 	file_handle.seek(0)
 	file_handle.store_string(code_editor.text)
 	file_handle.flush()
@@ -101,12 +99,9 @@ func save(path: String = "") -> void:
 
 func load_theme(file: String) -> void:
 	if file and code_editor:
-		ThemeImporter.import_theme(code_editor, file, GLSLLanguage.base_types, GLSLLanguage.keywords, GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
-		panel_stylebox.bg_color = code_editor.get_theme_color(&"background_color")
-		panel_stylebox.corner_radius_top_left = 8
-		panel_stylebox.corner_radius_top_right = 8
-		RenderingServer.set_default_clear_color(panel_stylebox.bg_color.darkened(0.1))
-		code_editor.syntax_highlighter.add_color_region("#", "", get_theme_color("background_color").lightened(0.5))
+		ThemeImporter.import_theme(file, code_editor, GLSLLanguage.base_types, GLSLLanguage.keywords, GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
+		if not code_editor.syntax_highlighter.has_color_region("#"):
+			code_editor.syntax_highlighter.add_color_region("#", "", get_theme_color("background_color").lightened(0.5))
 
 
 func _on_confirmation_dialog_canceled() -> void:

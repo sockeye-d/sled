@@ -12,7 +12,7 @@ signal file_opened(path: String)
 
 func _ready() -> void:
 	refresh_tree()
-	browser_tree.file_opened.connect(func(path: String): file_opened.emit(path))
+	browser_tree.file_opened.connect(func(opened_path: String): file_opened.emit(opened_path))
 
 
 func refresh_tree() -> void:

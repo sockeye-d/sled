@@ -67,9 +67,9 @@ func add_custom_ui(ui: Control, identifier: String) -> void:
 
 
 ## r':/\?*"|%<>' for filenames
-func _check_text(text: String, pattern: String) -> int:
+func _check_text(bad_text: String, pattern: String) -> int:
 	for pattern_char in pattern:
-		var pos = text.find(pattern_char)
+		var pos = bad_text.find(pattern_char)
 		if not pos == -1:
 			return pos
 	return -1

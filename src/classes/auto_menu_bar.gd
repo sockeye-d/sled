@@ -9,5 +9,5 @@ func _init() -> void:
 					)
 
 
-func _item_pressed(menu_name: String, index: int) -> void:
+func _item_pressed(_menu_name: String, _index: int) -> void:
 	pass

@@ -7,5 +7,5 @@ static var comment_regions: PackedStringArray
 static var string_regions: PackedStringArray
 
 
-static func get_code_completion_suggestions(path: String, file: String) -> Array[CodeCompletionSuggestion]:
+static func get_code_completion_suggestions(_path: String, _file: String) -> Array[CodeCompletionSuggestion]:
 	return []

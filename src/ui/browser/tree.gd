@@ -30,7 +30,7 @@ func _init() -> void:
 	scroll_bar.visibility_changed.connect((func(node): node.hide()).bind(scroll_bar))
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("refresh"):
 		repopulate_tree()
 
@@ -82,11 +82,11 @@ func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
 	return item
 
 
-func _on_empty_clicked(position: Vector2, mouse_button_index: int) -> void:
+func _on_empty_clicked(_position: Vector2, _mouse_button_index: int) -> void:
 	deselect_all()
 
 
-func _on_button_clicked(item: TreeItem, column: int, id: int, mouse_button_index: int) -> void:
+func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_index: int) -> void:
 	match id:
 		Buttons.ADD_FILE:
 			_add_file(item)
