@@ -1,0 +1,9 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://dfq21lxtduren"]
+
+[ext_resource type="FontFile" uid="uid://d3d41e0x8vdo0" path="res://src/assets/fonts/Noto Emoji/NotoEmoji-VariableFont_wght.ttf" id="1_llxa5"]
+
+[resource]
+base_font = ExtResource("1_llxa5")
+variation_opentype = {
+2003265652: 700
+}

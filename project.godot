@@ -11,13 +11,16 @@ config_version=5
 [application]
 
 config/name="sled"
-run/main_scene="res://src/main.tscn"
+run/main_scene="res://src/ui/main/main.tscn"
 config/features=PackedStringArray("4.3")
+run/low_processor_mode=true
 config/icon="res://icon.svg"
 
 [autoload]
 
 NotificationManager="*res://src/autoloads/notification_manager.gd"
+EditorThemeManager="*res://src/autoloads/editor_theme_manager.gd"
+Settings="*res://src/autoloads/settings_manager.gd"
 
 [display]
 
@@ -30,6 +33,10 @@ project/assembly_name="shader-editor"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/fishy_utils/plugin.cfg")
+
+[global_group]
+
+theme_popup_menu=""
 
 [godots]
 

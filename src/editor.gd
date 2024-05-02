@@ -17,13 +17,13 @@ signal _continue(action_taken: ConfirmationAction)
 
 @onready var panel_container: PanelContainer = %PanelContainer
 @onready var save_button: Button = %SaveButton
-@onready var path_label: Label = %PathLabel
+@onready var path_button: Button = %PathButton
 @onready var code_editor: CodeEdit = %CodeEditor
 @onready var confirmation_dialog: ConfirmationDialog = %ConfirmationDialog
 @onready var code_completion_timer: Timer = %CodeCompletionTimer
 
 
-@export_file var editor_theme: String:
+@export var editor_theme: String:
 	set(value):
 		editor_theme = value
 		load_theme(editor_theme)
@@ -41,18 +41,15 @@ var old_text: String
 func _ready() -> void:
 	panel_container.add_theme_stylebox_override(&"panel", panel_stylebox)
 	load_theme(editor_theme)
-
+	
 	confirmation_dialog.add_button("Discard", true, "discarded")
-
+	
+	if EditorThemeManager:
+		EditorThemeManager.theme_changed.connect(load_theme)
+	
 	#for char in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split():
 		#code_editor.code_completion_prefixes.append(char)
 	#code_editor.code_completion_prefixes.append_array([".", ",", "(", "=", "$", "@", "\"", "\'"])
-
-
-func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("q"):
-		print()
-		GLSLLanguage.get_code_completion_suggestions(file_handle.get_path_absolute(), code_editor.text)
 
 
 func load_file(path: String) -> void:
@@ -85,7 +82,7 @@ func load_file(path: String) -> void:
 	last_saved_text = code_editor.text
 	old_text = code_editor.text
 
-	path_label.text = path.get_file()
+	path_button.text = path.get_file()
 
 
 func save(path: String = "") -> void:
@@ -98,14 +95,17 @@ func save(path: String = "") -> void:
 	last_saved_text = code_editor.text
 
 	NotificationManager.notify("Saved %s" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_NORMAL)
-	path_label.remove_theme_font_override(&"font")
-	path_label.text = file_handle.get_path_absolute().get_file()
+	path_button.remove_theme_font_override(&"font")
+	path_button.text = file_handle.get_path_absolute().get_file()
 
 
-func load_theme(path: String) -> void:
-	if code_editor:
-		ThemeImporter.import_theme(code_editor, path, GLSLLanguage.base_types, GLSLLanguage.keywords, GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
+func load_theme(file: String) -> void:
+	if file and code_editor:
+		ThemeImporter.import_theme(code_editor, file, GLSLLanguage.base_types, GLSLLanguage.keywords, GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
 		panel_stylebox.bg_color = code_editor.get_theme_color(&"background_color")
+		panel_stylebox.corner_radius_top_left = 8
+		panel_stylebox.corner_radius_top_right = 8
+		RenderingServer.set_default_clear_color(panel_stylebox.bg_color.darkened(0.1))
 		code_editor.syntax_highlighter.add_color_region("#", "", get_theme_color("background_color").lightened(0.5))
 
 
@@ -133,11 +133,11 @@ func _on_code_editor_text_changed() -> void:
 			code_completion_timer.stop()
 
 	if code_editor.text == last_saved_text:
-		path_label.remove_theme_font_override(&"font")
-		path_label.text = file_handle.get_path_absolute().get_file()
+		path_button.remove_theme_font_override(&"font")
+		path_button.text = file_handle.get_path_absolute().get_file()
 	else:
-		path_label.add_theme_font_override(&"font", MAIN_FONT_ITALICS)
-		path_label.text = file_handle.get_path_absolute().get_file() + "*"
+		path_button.add_theme_font_override(&"font", MAIN_FONT_ITALICS)
+		path_button.text = file_handle.get_path_absolute().get_file() + "*"
 
 	old_text = code_editor.text
 
@@ -157,3 +157,8 @@ func _get_completion_suggestions() -> void:
 		code_editor.add_code_completion_option(CodeEdit.KIND_CLASS, keyword, keyword, Color.WHITE, null, null, 1)
 	for keyword in GLSLLanguage.keywords:
 		code_editor.add_code_completion_option(CodeEdit.KIND_PLAIN_TEXT, keyword, keyword, Color.WHITE, null, null, 2)
+
+
+func _on_save_button_pressed() -> void:
+	if code_editor.has_focus() or panel_container.has_focus():
+		save()

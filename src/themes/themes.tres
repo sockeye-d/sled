@@ -1,271 +1,1033 @@
-[gd_resource type="Resource" script_class="TextEditorThemeLibrary" load_steps=29 format=3 uid="uid://ba5152uqn2drw"]
+[gd_resource type="Resource" script_class="ThemeLibrary" load_steps=2 format=3 uid="uid://ba5152uqn2drw"]
 
-[ext_resource type="Script" path="res://src/themes/text_editor_theme_library.gd" id="1_axqwl"]
-[ext_resource type="Script" path="res://src/themes/text_editor_theme.gd" id="2_mn7bx"]
-
-[sub_resource type="Resource" id="Resource_i1ggw"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.423529, 0.423529, 0.423529, 1)
-function_color = Color(1, 1, 1, 1)
-keyword_color = Color(0.560784, 0.686275, 0.843137, 1)
-member_variable_color = Color(0.737255, 0.737255, 0.737255, 1)
-number_color = Color(1, 1, 0.686275, 1)
-symbol_color = Color(0.737255, 0.737255, 0.737255, 1)
-
-[sub_resource type="Resource" id="Resource_evjvx"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.486275, 0.486275, 0.486275, 1)
-function_color = Color(0.854902, 0.815686, 0.521569, 1)
-keyword_color = Color(0.588235, 0.796078, 0.996078, 1)
-member_variable_color = Color(0.776471, 0.772549, 0.996078, 1)
-number_color = Color(1, 0.45098, 0.992157, 1)
-symbol_color = Color(0.772549, 0.784314, 0.776471, 1)
-
-[sub_resource type="Resource" id="Resource_hsvfc"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.360784, 0.403922, 0.45098, 1)
-function_color = Color(0.94902, 0.529412, 0.47451, 1)
-keyword_color = Color(1, 0.654902, 0.34902, 1)
-member_variable_color = Color(1, 0.8, 0.4, 1)
-number_color = Color(1, 0.8, 0.4, 1)
-symbol_color = Color(0.94902, 0.619608, 0.454902, 1)
-
-[sub_resource type="Resource" id="Resource_lw5r5"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.45098, 0.47451, 0.580392, 1)
-function_color = Color(0.54902, 0.666667, 0.933333, 1)
-keyword_color = Color(0.792157, 0.619608, 0.901961, 1)
-member_variable_color = Color(0.729412, 0.733333, 0.945098, 1)
-number_color = Color(0.937255, 0.623529, 0.462745, 1)
-symbol_color = Color(0.6, 0.819608, 0.858824, 1)
-
-[sub_resource type="Resource" id="Resource_igcec"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.611765, 0.627451, 0.690196, 1)
-function_color = Color(0.117647, 0.4, 0.960784, 1)
-keyword_color = Color(0.533333, 0.223529, 0.937255, 1)
-member_variable_color = Color(0.447059, 0.529412, 0.992157, 1)
-number_color = Color(0.996078, 0.392157, 0.0431373, 1)
-symbol_color = Color(0.0156863, 0.647059, 0.898039, 1)
-
-[sub_resource type="Resource" id="Resource_m8aia"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.431373, 0.45098, 0.552941, 1)
-function_color = Color(0.541176, 0.678431, 0.956863, 1)
-keyword_color = Color(0.776471, 0.627451, 0.964706, 1)
-member_variable_color = Color(0.717647, 0.741176, 0.972549, 1)
-number_color = Color(0.960784, 0.662745, 0.498039, 1)
-symbol_color = Color(0.568627, 0.843137, 0.890196, 1)
-
-[sub_resource type="Resource" id="Resource_bwg6x"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.423529, 0.439216, 0.52549, 1)
-function_color = Color(0.537255, 0.705882, 0.980392, 1)
-keyword_color = Color(0.796078, 0.65098, 0.968627, 1)
-member_variable_color = Color(0.705882, 0.745098, 0.996078, 1)
-number_color = Color(0.980392, 0.701961, 0.529412, 1)
-symbol_color = Color(0.537255, 0.862745, 0.921569, 1)
-
-[sub_resource type="Resource" id="Resource_t7614"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.439216, 0.439216, 0.439216, 1)
-function_color = Color(1, 0.776471, 0.427451, 1)
-keyword_color = Color(0.8, 0.509804, 0.258824, 1)
-member_variable_color = Color(0.619608, 0.482353, 0.690196, 1)
-number_color = Color(0.478431, 0.619608, 0.760784, 1)
-symbol_color = Color(0.8, 0.8, 0.8, 1)
-
-[sub_resource type="Resource" id="Resource_5wtjo"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.384314, 0.447059, 0.643137, 1)
-function_color = Color(0.545098, 0.913725, 0.992157, 1)
-keyword_color = Color(1, 0.47451, 0.776471, 1)
-member_variable_color = Color(0.972549, 0.972549, 0.94902, 1)
-number_color = Color(0.741176, 0.576471, 0.976471, 1)
-symbol_color = Color(0.972549, 0.972549, 0.94902, 1)
-
-[sub_resource type="Resource" id="Resource_5064o"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.572549, 0.513726, 0.454902, 1)
-function_color = Color(0.556863, 0.752941, 0.486275, 1)
-keyword_color = Color(0.984314, 0.286275, 0.203922, 1)
-member_variable_color = Color(0.901961, 0.305882, 0.34902, 1)
-number_color = Color(0.827451, 0.52549, 0.607843, 1)
-symbol_color = Color(0.984314, 0.945098, 0.780392, 1)
-
-[sub_resource type="Resource" id="Resource_8vige"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.835294, 0.847059, 0.854902, 0.501961)
-function_color = Color(0.145098, 0.698039, 0.737255, 1)
-keyword_color = Color(0.721569, 0.466667, 0.858824, 0.901961)
-member_variable_color = Color(0.913725, 0.337255, 0.470588, 1)
-number_color = Color(0.980392, 0.717647, 0.584314, 1)
-symbol_color = Color(0.835294, 0.847059, 0.854902, 1)
-
-[sub_resource type="Resource" id="Resource_rrrjy"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.462745, 0.498039, 0.54902, 1)
-function_color = Color(0.890196, 0.419608, 0.282353, 1)
-keyword_color = Color(0.4, 0.541176, 0.819608, 1)
-member_variable_color = Color(0.819608, 0.376471, 0.376471, 1)
-number_color = Color(1, 0.572549, 0.572549, 1)
-symbol_color = Color(0.607843, 0.521569, 0.615686, 1)
-
-[sub_resource type="Resource" id="Resource_swda8"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.458824, 0.443137, 0.368627, 1)
-function_color = Color(0.4, 0.85098, 0.937255, 1)
-keyword_color = Color(0.976471, 0.14902, 0.447059, 1)
-member_variable_color = Color(0.4, 0.85098, 0.937255, 1)
-number_color = Color(0.682353, 0.505882, 1, 1)
-symbol_color = Color(0.972549, 0.972549, 0.94902, 1)
-
-[sub_resource type="Resource" id="Resource_0fvow"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.388235, 0.439216, 0.541176, 1)
-function_color = Color(0.533333, 0.752941, 0.815686, 1)
-keyword_color = Color(0.505882, 0.631373, 0.756863, 1)
-member_variable_color = Color(0.847059, 0.870588, 0.913725, 1)
-number_color = Color(0.705882, 0.556863, 0.678431, 1)
-symbol_color = Color(0.505882, 0.631373, 0.756863, 1)
-
-[sub_resource type="Resource" id="Resource_jgf7r"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.435294, 0.435294, 0.435294, 1)
-function_color = Color(0.376471, 0.682353, 0.929412, 1)
-keyword_color = Color(0.776471, 0.466667, 0.866667, 1)
-member_variable_color = Color(0.878431, 0.423529, 0.458824, 1)
-number_color = Color(0.819608, 0.603922, 0.4, 1)
-symbol_color = Color(0.666667, 0.694118, 0.74902, 1)
-
-[sub_resource type="Resource" id="Resource_ribod"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.360784, 0.388235, 0.439216, 1)
-function_color = Color(0.596078, 0.764706, 0.47451, 1)
-keyword_color = Color(0.878431, 0.423529, 0.458824, 1)
-member_variable_color = Color(0.380392, 0.686275, 0.937255, 1)
-number_color = Color(0.776471, 0.470588, 0.866667, 1)
-symbol_color = Color(0.501961, 0.501961, 0.501961, 1)
-
-[sub_resource type="Resource" id="Resource_xdva6"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.666667, 0.666667, 0.666667, 1)
-function_color = Color(0.666667, 0.215686, 0.192157, 1)
-keyword_color = Color(0.294118, 0.513726, 0.803922, 1)
-member_variable_color = Color(0.478431, 0.243137, 0.615686, 1)
-number_color = Color(0.670588, 0.396078, 0.14902, 1)
-symbol_color = Color(0.466667, 0.466667, 0.466667, 1)
-
-[sub_resource type="Resource" id="Resource_r7drd"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.345098, 0.431373, 0.458824, 1)
-function_color = Color(0.14902, 0.545098, 0.823529, 1)
-keyword_color = Color(0.709804, 0.537255, 0, 1)
-member_variable_color = Color(0.14902, 0.545098, 0.823529, 1)
-number_color = Color(0.827451, 0.211765, 0.509804, 1)
-symbol_color = Color(0.513726, 0.580392, 0.588235, 1)
-
-[sub_resource type="Resource" id="Resource_1sj7v"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.576471, 0.631373, 0.631373, 1)
-function_color = Color(0.14902, 0.545098, 0.823529, 1)
-keyword_color = Color(0.521569, 0.6, 0, 1)
-member_variable_color = Color(0.14902, 0.545098, 0.823529, 1)
-number_color = Color(0.827451, 0.211765, 0.509804, 1)
-symbol_color = Color(0.2, 0.2, 0.2, 1)
-
-[sub_resource type="Resource" id="Resource_ju3mf"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.478431, 0.533333, 0.811765, 1)
-function_color = Color(0.509804, 0.666667, 1, 1)
-keyword_color = Color(0.752941, 0.6, 1, 1)
-member_variable_color = Color(0.309804, 0.839216, 0.745098, 1)
-number_color = Color(1, 0.588235, 0.423529, 1)
-symbol_color = Color(0.52549, 0.882353, 0.988235, 1)
-
-[sub_resource type="Resource" id="Resource_ul0uh"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.337255, 0.372549, 0.537255, 1)
-function_color = Color(0.478431, 0.635294, 0.968627, 1)
-keyword_color = Color(0.733333, 0.603922, 0.968627, 1)
-member_variable_color = Color(0.45098, 0.854902, 0.792157, 1)
-number_color = Color(1, 0.619608, 0.392157, 1)
-symbol_color = Color(0.490196, 0.811765, 1, 1)
-
-[sub_resource type="Resource" id="Resource_8qg7t"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.337255, 0.372549, 0.537255, 1)
-function_color = Color(0.478431, 0.635294, 0.968627, 1)
-keyword_color = Color(0.733333, 0.603922, 0.968627, 1)
-member_variable_color = Color(0.45098, 0.854902, 0.792157, 1)
-number_color = Color(1, 0.619608, 0.392157, 1)
-symbol_color = Color(0.490196, 0.811765, 1, 1)
-
-[sub_resource type="Resource" id="Resource_hmm0y"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.376471, 0.545098, 0.305882, 1)
-function_color = Color(0.862745, 0.862745, 0.666667, 1)
-keyword_color = Color(0.337255, 0.611765, 0.839216, 1)
-member_variable_color = Color(0.611765, 0.862745, 0.996078, 1)
-number_color = Color(0.709804, 0.807843, 0.658824, 1)
-symbol_color = Color(0.831373, 0.831373, 0.831373, 1)
-
-[sub_resource type="Resource" id="Resource_uod46"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0, 0.501961, 0, 1)
-function_color = Color(0.47451, 0.368627, 0.14902, 1)
-keyword_color = Color(0, 0, 1, 1)
-member_variable_color = Color(0, 0.0627451, 0.501961, 1)
-number_color = Color(0.0352941, 0.533333, 0.352941, 1)
-symbol_color = Color(0, 0, 0, 1)
-
-[sub_resource type="Resource" id="Resource_u00pw"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.494118, 0.54902, 0.596078, 1)
-function_color = Color(0.694118, 0.505882, 0.921569, 1)
-keyword_color = Color(1, 0.478431, 0.698039, 1)
-member_variable_color = Color(0.305882, 0.690196, 0.8, 1)
-number_color = Color(0.85098, 0.788235, 0.486275, 1)
-symbol_color = Color(0.890196, 0.890196, 0.890196, 1)
-
-[sub_resource type="Resource" id="Resource_q2pqi"]
-script = ExtResource("2_mn7bx")
-comment_color = Color(0.435294, 0.494118, 0.54902, 1)
-function_color = Color(0.501961, 0.309804, 0.721569, 1)
-keyword_color = Color(0.678431, 0.239216, 0.643137, 1)
-member_variable_color = Color(0.0196078, 0.486275, 0.690196, 1)
-number_color = Color(0.14902, 0.164706, 0.847059, 1)
-symbol_color = Color(0.168627, 0.168627, 0.168627, 1)
+[ext_resource type="Script" path="res://src/themes/theme_library.gd" id="1_rb6fd"]
 
 [resource]
-script = ExtResource("1_axqwl")
+script = ExtResource("1_rb6fd")
+theme_path = "res://src/themes/godot-syntax-themes"
 themes = {
-"Apprentice": SubResource("Resource_i1ggw"),
-"Atom-Dark": SubResource("Resource_evjvx"),
-"Ayu-Mirage": SubResource("Resource_hsvfc"),
-"Catppuccin-Frappé": SubResource("Resource_lw5r5"),
-"Catppuccin-Latte": SubResource("Resource_igcec"),
-"Catppuccin-Macchiato": SubResource("Resource_m8aia"),
-"Catppuccin-Mocha": SubResource("Resource_bwg6x"),
-"Darcula": SubResource("Resource_t7614"),
-"Dracula": SubResource("Resource_5wtjo"),
-"Gruvbox-Dark": SubResource("Resource_5064o"),
-"Horizon": SubResource("Resource_8vige"),
-"Metro": SubResource("Resource_rrrjy"),
-"Monokai": SubResource("Resource_swda8"),
-"Nord": SubResource("Resource_0fvow"),
-"One-Dark": SubResource("Resource_jgf7r"),
-"One-Monokai": SubResource("Resource_ribod"),
-"Quiet-Light": SubResource("Resource_xdva6"),
-"Solarized-Dark": SubResource("Resource_r7drd"),
-"Solarized-Light": SubResource("Resource_1sj7v"),
-"Tokyo-Night-Moon": SubResource("Resource_ju3mf"),
-"Tokyo-Night-Night": SubResource("Resource_ul0uh"),
-"Tokyo-Night-Storm": SubResource("Resource_8qg7t"),
-"VS-Code-Dark": SubResource("Resource_hmm0y"),
-"VS-Code-Light": SubResource("Resource_uod46"),
-"Xcode-Dark": SubResource("Resource_u00pw"),
-"Xcode-Light": SubResource("Resource_q2pqi")
+"apprentice": "[color_theme]
+
+symbol_color=\"bcbcbcff\"
+keyword_color=\"8fafd7ff\"
+
+base_type_color=\"8787afff\"
+engine_type_color=\"8787afff\"
+user_type_color=\"8787afff\"
+
+comment_color=\"6c6c6cff\"
+string_color=\"87af87ff\"
+background_color=\"262626ff\"
+
+completion_background_color=\"444444ff\"
+completion_selected_color=\"6c6c6cff\"
+completion_existing_color=\"5fafaf59\"
+completion_scroll_color=\"6c6c6cff\"
+completion_font_color=\"bcbcbcff\"
+
+text_color=\"bcbcbcff\"
+line_number_color=\"444444ff\"
+safe_line_number_color=\"5f875f59\"
+
+caret_color=\"5fafafff\"
+caret_background_color=\"444444ff\"
+
+text_selected_color=\"ccccccff\"
+selection_color=\"00c3ff30\"
+brace_mismatch_color=\"ff3333ff\"
+current_line_color=\"ffffff0b\"
+line_length_guideline_color=\"444444ff\"
+
+word_highlighted_color=\"ffffff1a\"
+
+number_color=\"ffffafff\"
+function_color=\"ffffffff\"
+member_variable_color=\"bcbcbcff\"
+
+mark_color=\"ff323238\"
+bookmark_color=\"87af87ff\"
+breakpoint_color=\"ff8700ff\"
+code_folding_color=\"6c6c6cff\"
+
+search_result_color=\"5fafaf59\"
+search_result_border_color=\"00000000\"
+
+gdscript/function_definition_color=\"ffffafff\"
+gdscript/node_path_color=\"5fafafff\"
+",
+"atom dark": "[color_theme]
+
+background_color=\"1d1f21ff\"
+base_type_color=\"99cc99ff\"
+bookmark_color=\"147dfaff\"
+brace_mismatch_color=\"ff3333ff\"
+breakpoint_color=\"ff4d56ff\"
+caret_background_color=\"000000ff\"
+caret_color=\"ffffffff\"
+code_folding_color=\"808080ff\"
+comment_color=\"7c7c7cff\"
+completion_background_color=\"3d3d3dff\"
+completion_existing_color=\"ffffff23\"
+completion_font_color=\"cececeff\"
+completion_scroll_color=\"ffffff11\"
+completion_selected_color=\"ffffff11\"
+current_line_color=\"ffffff12\"
+engine_type_color=\"f9ee98ff\"
+executing_line_color=\"33cc3366\"
+function_color=\"dad085ff\"
+gdscript/function_definition_color=\"f9ee98ff\"
+gdscript/node_path_color=\"99cc99ff\"
+keyword_color=\"96cbfeff\"
+line_length_guideline_color=\"2d2f31ff\"
+line_number_color=\"656866ff\"
+mark_color=\"ff323238\"
+member_variable_color=\"c6c5feff\"
+number_color=\"ff73fdff\"
+safe_line_number_color=\"ccf7d3bf\"
+search_result_border_color=\"ffffffb2\"
+search_result_color=\"ffffff11\"
+selection_color=\"444444ff\"
+string_color=\"a8ff60ff\"
+symbol_color=\"c5c8c6ff\"
+text_color=\"c5c8c6ff\"
+text_selected_color=\"eeeeeeff\"
+user_type_color=\"c6ffedff\"
+word_highlighted_color=\"343434ff\"
+",
+"ayu mirage": "[color_theme]
+
+background_color=\"1f2430ff\"
+base_type_color=\"5ce6ccff\"
+bookmark_color=\"73d0ffff\"
+brace_mismatch_color=\"ff786bff\"
+breakpoint_color=\"f28779ff\"
+caret_background_color=\"1f2430ff\"
+caret_color=\"ffcc66ff\"
+code_folding_color=\"ffffffb3\"
+comment_color=\"5c6773ff\"
+completion_background_color=\"333b4fff\"
+completion_existing_color=\"ffffff24\"
+completion_font_color=\"ccced3ff\"
+completion_scroll_color=\"ffffff12\"
+completion_selected_color=\"ffffff12\"
+current_line_color=\"0000002b\"
+engine_type_color=\"5ccfe6ff\"
+executing_line_color=\"33cc3366\"
+function_color=\"f28779ff\"
+gdscript/function_definition_color=\"f29e74ff\"
+gdscript/node_path_color=\"73b7ffff\"
+keyword_color=\"ffa759ff\"
+line_length_guideline_color=\"2e3547ff\"
+line_number_color=\"3f4654ff\"
+mark_color=\"80231b83\"
+member_variable_color=\"ffcc66ff\"
+number_color=\"ffcc66ff\"
+safe_line_number_color=\"33664dff\"
+search_result_border_color=\"ffcc66ff\"
+search_result_color=\"25272dff\"
+selection_color=\"2a3546ff\"
+string_color=\"bae67eff\"
+symbol_color=\"f29e74ff\"
+text_color=\"cbccc6ff\"
+text_selected_color=\"cbccc6ff\"
+user_type_color=\"73d0ffff\"
+word_highlighted_color=\"262f3eff\"
+",
+"catppuccin frappé": "[color_theme]
+
+symbol_color=\"99d1dbff\"
+keyword_color=\"ca9ee6ff\"
+control_flow_keyword_color=\"ca9ee6ff\"
+base_type_color=\"e5c890ff\"
+engine_type_color=\"e5c890ff\"
+user_type_color=\"e5c890ff\"
+comment_color=\"737994ff\"
+string_color=\"a6d189ff\"
+background_color=\"303446ff\"
+completion_background_color=\"292c3cff\"
+completion_selected_color=\"414559ff\"
+completion_existing_color=\"ca9ee621\"
+completion_scroll_color=\"414559ff\"
+completion_scroll_hovered_color=\"51576dff\"
+completion_font_color=\"c6d0f5ff\"
+text_color=\"c6d0f5ff\"
+line_number_color=\"838ba7ff\"
+safe_line_number_color=\"a6d189ff\"
+caret_color=\"f2d5cfff\"
+caret_background_color=\"000000ff\"
+text_selected_color=\"c6d0f5ff\"
+selection_color=\"626880ff\"
+brace_mismatch_color=\"e78284ff\"
+current_line_color=\"c6d0f510\"
+line_length_guideline_color=\"414559ff\"
+word_highlighted_color=\"626880ff\"
+number_color=\"ef9f76ff\"
+function_color=\"8caaeeff\"
+member_variable_color=\"babbf1ff\"
+mark_color=\"e7828438\"
+bookmark_color=\"8caaeeff\"
+breakpoint_color=\"e78284ff\"
+executing_line_color=\"e5c890ff\"
+code_folding_color=\"838ba7ff\"
+search_result_color=\"626880ff\"
+search_result_border_color=\"00000000\"
+gdscript/function_definition_color=\"8caaeeff\"
+gdscript/global_function_color=\"e78284ff\"
+gdscript/node_path_color=\"81c8beff\"
+gdscript/node_reference_color=\"81c8beff\"
+gdscript/annotation_color=\"ef9f76ff\"
+gdscript/string_name_color=\"c6d0f5ff\"
+",
+"catppuccin latte": "[color_theme]
+
+symbol_color=\"04a5e5ff\"
+keyword_color=\"8839efff\"
+control_flow_keyword_color=\"8839efff\"
+base_type_color=\"df8e1dff\"
+engine_type_color=\"df8e1dff\"
+user_type_color=\"df8e1dff\"
+comment_color=\"9ca0b0ff\"
+string_color=\"40a02bff\"
+background_color=\"eff1f5ff\"
+completion_background_color=\"e6e9efff\"
+completion_selected_color=\"ccd0daff\"
+completion_existing_color=\"8839ef21\"
+completion_scroll_color=\"ccd0daff\"
+completion_scroll_hovered_color=\"bcc0ccff\"
+completion_font_color=\"4c4f69ff\"
+text_color=\"4c4f69ff\"
+line_number_color=\"8c8fa1ff\"
+safe_line_number_color=\"40a02bff\"
+caret_color=\"dc8a78ff\"
+caret_background_color=\"000000ff\"
+text_selected_color=\"4c4f69ff\"
+selection_color=\"acb0beff\"
+brace_mismatch_color=\"d20f39ff\"
+current_line_color=\"4c4f6910\"
+line_length_guideline_color=\"ccd0daff\"
+word_highlighted_color=\"acb0beff\"
+number_color=\"fe640bff\"
+function_color=\"1e66f5ff\"
+member_variable_color=\"7287fdff\"
+mark_color=\"d20f3938\"
+bookmark_color=\"1e66f5ff\"
+breakpoint_color=\"d20f39ff\"
+executing_line_color=\"df8e1dff\"
+code_folding_color=\"8c8fa1ff\"
+search_result_color=\"acb0beff\"
+search_result_border_color=\"00000000\"
+gdscript/function_definition_color=\"1e66f5ff\"
+gdscript/global_function_color=\"d20f39ff\"
+gdscript/node_path_color=\"179299ff\"
+gdscript/node_reference_color=\"179299ff\"
+gdscript/annotation_color=\"fe640bff\"
+gdscript/string_name_color=\"4c4f69ff\"
+",
+"catppuccin macchiato": "[color_theme]
+
+symbol_color=\"91d7e3ff\"
+keyword_color=\"c6a0f6ff\"
+control_flow_keyword_color=\"c6a0f6ff\"
+base_type_color=\"eed49fff\"
+engine_type_color=\"eed49fff\"
+user_type_color=\"eed49fff\"
+comment_color=\"6e738dff\"
+string_color=\"a6da95ff\"
+background_color=\"24273aff\"
+completion_background_color=\"1e2030ff\"
+completion_selected_color=\"363a4fff\"
+completion_existing_color=\"c6a0f621\"
+completion_scroll_color=\"363a4fff\"
+completion_scroll_hovered_color=\"494d64ff\"
+completion_font_color=\"cad3f5ff\"
+text_color=\"cad3f5ff\"
+line_number_color=\"8087a2ff\"
+safe_line_number_color=\"a6da95ff\"
+caret_color=\"f4dbd6ff\"
+caret_background_color=\"000000ff\"
+text_selected_color=\"cad3f5ff\"
+selection_color=\"5b6078ff\"
+brace_mismatch_color=\"ed8796ff\"
+current_line_color=\"cad3f510\"
+line_length_guideline_color=\"363a4fff\"
+word_highlighted_color=\"5b6078ff\"
+number_color=\"f5a97fff\"
+function_color=\"8aadf4ff\"
+member_variable_color=\"b7bdf8ff\"
+mark_color=\"ed879638\"
+bookmark_color=\"8aadf4ff\"
+breakpoint_color=\"ed8796ff\"
+executing_line_color=\"eed49fff\"
+code_folding_color=\"8087a2ff\"
+search_result_color=\"5b6078ff\"
+search_result_border_color=\"00000000\"
+gdscript/function_definition_color=\"8aadf4ff\"
+gdscript/global_function_color=\"ed8796ff\"
+gdscript/node_path_color=\"8bd5caff\"
+gdscript/node_reference_color=\"8bd5caff\"
+gdscript/annotation_color=\"f5a97fff\"
+gdscript/string_name_color=\"cad3f5ff\"
+",
+"catppuccin mocha": "[color_theme]
+
+symbol_color=\"89dcebff\"
+keyword_color=\"cba6f7ff\"
+control_flow_keyword_color=\"cba6f7ff\"
+base_type_color=\"f9e2afff\"
+engine_type_color=\"f9e2afff\"
+user_type_color=\"f9e2afff\"
+comment_color=\"6c7086ff\"
+string_color=\"a6e3a1ff\"
+background_color=\"1e1e2eff\"
+completion_background_color=\"181825ff\"
+completion_selected_color=\"313244ff\"
+completion_existing_color=\"cba6f721\"
+completion_scroll_color=\"313244ff\"
+completion_scroll_hovered_color=\"45475aff\"
+completion_font_color=\"cdd6f4ff\"
+text_color=\"cdd6f4ff\"
+line_number_color=\"7f849cff\"
+safe_line_number_color=\"a6e3a1ff\"
+caret_color=\"f5e0dcff\"
+caret_background_color=\"000000ff\"
+text_selected_color=\"cdd6f4ff\"
+selection_color=\"585b70ff\"
+brace_mismatch_color=\"f38ba8ff\"
+current_line_color=\"cdd6f410\"
+line_length_guideline_color=\"313244ff\"
+word_highlighted_color=\"585b70ff\"
+number_color=\"fab387ff\"
+function_color=\"89b4faff\"
+member_variable_color=\"b4befeff\"
+mark_color=\"f38ba838\"
+bookmark_color=\"89b4faff\"
+breakpoint_color=\"f38ba8ff\"
+executing_line_color=\"f9e2afff\"
+code_folding_color=\"7f849cff\"
+search_result_color=\"585b70ff\"
+search_result_border_color=\"00000000\"
+gdscript/function_definition_color=\"89b4faff\"
+gdscript/global_function_color=\"f38ba8ff\"
+gdscript/node_path_color=\"94e2d5ff\"
+gdscript/node_reference_color=\"94e2d5ff\"
+gdscript/annotation_color=\"fab387ff\"
+gdscript/string_name_color=\"cdd6f4ff\"
+",
+"darcula": "[color_theme]
+
+background_color=\"242424ff\"
+completion_background_color=\"343434ff\"
+completion_selected_color=\"464646ff\"
+completion_existing_color=\"dfdfdf21\"
+completion_scroll_color=\"ffffffff\"
+completion_font_color=\"aaaaaaff\"
+caret_color=\"aaaaaaff\"
+caret_background_color=\"2c2c2cff\"
+line_number_color=\"666666ff\"
+text_color=\"ccccccff\"
+text_selected_color=\"ccccccff\"
+keyword_color=\"cc8242ff\"
+base_type_color=\"a5c261ff\"
+engine_type_color=\"ffc66dff\"
+function_color=\"ffc66dff\"
+member_variable_color=\"9e7bb0ff\"
+comment_color=\"707070ff\"
+string_color=\"6a8759ff\"
+number_color=\"7a9ec2ff\"
+symbol_color=\"ccccccff\"
+selection_color=\"00c3ff30\"
+brace_mismatch_color=\"ff3333ff\"
+current_line_color=\"ffffff0b\"
+line_length_guideline_color=\"333333ff\"
+mark_color=\"ff323238\"
+breakpoint_color=\"cccc6633\"
+code_folding_color=\"808080ff\"
+word_highlighted_color=\"00c2ff14\"
+search_result_color=\"653618ff\"
+search_result_border_color=\"00000000\"
+gdscript/function_definition_color=\"ffc66dff\"
+gdscript/node_path_color=\"bbb529ff\"
+",
+"dracula": "[color_theme]
+
+background_color=\"282a36ff\"
+completion_background_color=\"2c2a32ff\"
+completion_selected_color=\"434244ff\"
+completion_existing_color=\"dfdfdf21\"
+completion_scroll_color=\"ffffffff\"
+completion_font_color=\"aaaaaaff\"
+caret_color=\"aeafadff\"
+caret_background_color=\"000000ff\"
+line_number_color=\"6272a4ff\"
+text_color=\"f8f8f2ff\"
+text_selected_color=\"f8f8f2ff\"
+keyword_color=\"ff79c6ff\"
+base_type_color=\"50fa7bff\"
+engine_type_color=\"8be9fdff\"
+function_color=\"8be9fdff\"
+member_variable_color=\"f8f8f2ff\"
+comment_color=\"6272a4ff\"
+string_color=\"f1fa8cff\"
+number_color=\"bd93f9ff\"
+symbol_color=\"f8f8f2ff\"
+selection_color=\"44475aff\"
+brace_mismatch_color=\"ff3333ff\"
+current_line_color=\"2f3245ff\"
+line_length_guideline_color=\"393c4fff\"
+mark_color=\"ff323238\"
+breakpoint_color=\"cccc6633\"
+code_folding_color=\"808080ff\"
+word_highlighted_color=\"424450ff\"
+search_result_color=\"5e6069ff\"
+search_result_border_color=\"00000000\"
+gdscript/function_definition_color=\"50fa7bff\"
+gdscript/node_path_color=\"ffb86cff\"
+",
+"gruvbox dark": "[color_theme]
+
+background_color=\"282828ff\"
+completion_background_color=\"3d3d3dff\"
+completion_selected_color=\"ffffff11\"
+completion_existing_color=\"ffffff23\"
+completion_scroll_color=\"ffffff11\"
+completion_font_color=\"cececeff\"
+caret_color=\"a89984ff\"
+caret_background_color=\"000000ff\"
+line_number_color=\"928374ff\"
+text_color=\"fbf1c7ff\"
+text_selected_color=\"ebdbb2ff\"
+keyword_color=\"fb4934ff\"
+base_type_color=\"fabd2fff\"
+engine_type_color=\"83a598ff\"
+function_color=\"8ec07cff\"
+member_variable_color=\"e64e59ff\"
+comment_color=\"928374ff\"
+string_color=\"b8bb26ff\"
+number_color=\"d3869bff\"
+symbol_color=\"fbf1c7ff\"
+selection_color=\"504945ff\"
+brace_mismatch_color=\"ff3333ff\"
+current_line_color=\"3c3836ff\"
+line_length_guideline_color=\"383838ff\"
+mark_color=\"ff323238\"
+breakpoint_color=\"ff4d56ff\"
+code_folding_color=\"808080ff\"
+word_highlighted_color=\"2f2c2bff\"
+search_result_color=\"68391bff\"
+search_result_border_color=\"ffffff00\"
+gdscript/function_definition_color=\"b8bb26ff\"
+gdscript/node_path_color=\"d3869bff\"
+",
+"horizon": "[color_theme]
+
+background_color=\"1C1E26ff\"
+completion_background_color=\"2E303E80\"
+completion_selected_color=\"6C6F9380\"
+completion_existing_color=\"D5D8DA20\"
+completion_scroll_color=\"232530ff\"
+completion_font_color=\"D5D8DAff\"
+caret_color=\"e95378ff\"
+caret_background_color=\"1C1E26ff\"
+line_number_color=\"D5D8DA80\"
+text_color=\"D5D8DAff\"
+text_selected_color=\"6C6F9380\"
+keyword_color=\"B877DBE6\"
+base_type_color=\"FAC29Aff\"
+engine_type_color=\"FAC29Aff\"
+user_type_color=\"FAC29Aff\"
+function_color=\"25B2BCff\"
+member_variable_color=\"E95678ff\"
+comment_color=\"D5D8DA80\"
+string_color=\"FAB795ff\"
+number_color=\"FAB795ff\"
+symbol_color=\"D5D8DAff\"
+selection_color=\"6C6F9380\"
+brace_mismatch_color=\"E95678B3\"
+current_line_color=\"1C1E2680\"
+line_length_guideline_color=\"ffffffff\"
+mark_color=\"E9567820\"
+breakpoint_color=\"ff0000ff\"
+code_folding_color=\"ffffffff\"
+word_highlighted_color=\"6C6F9330\"
+search_result_color=\"6C6F9380\"
+search_result_border_color=\"6C6F9380\"
+gdscript/function_definition_color=\"25B2BCff\"
+gdscript/node_path_color=\"F09383ff\"
+",
+"metro": "[color_theme]
+
+background_color=\"25252aff\"
+completion_background_color=\"2c2a32ff\"
+completion_selected_color=\"434244ff\"
+completion_existing_color=\"dfdfdf21\"
+completion_scroll_color=\"ffffffff\"
+completion_font_color=\"aaaaaaff\"
+caret_color=\"ffffffff\"
+caret_background_color=\"000000ff\"
+line_number_color=\"aaaaaa66\"
+text_color=\"ffffffff\"
+text_selected_color=\"ffffffff\"
+keyword_color=\"668ad1ff\"
+base_type_color=\"4da941ff\"
+engine_type_color=\"cf7d34ff\"
+function_color=\"e36b48ff\"
+member_variable_color=\"d16060ff\"
+comment_color=\"767f8cff\"
+string_color=\"ffc35aff\"
+number_color=\"ff9292ff\"
+symbol_color=\"9b859dff\"
+selection_color=\"333539ff\"
+brace_mismatch_color=\"ff3333ff\"
+current_line_color=\"1e1e23ff\"
+line_length_guideline_color=\"35353aff\"
+mark_color=\"ff323238\"
+breakpoint_color=\"cccc6633\"
+code_folding_color=\"808080ff\"
+word_highlighted_color=\"cce5e526\"
+search_result_color=\"0c3f0cff\"
+search_result_border_color=\"197219ff\"
+gdscript/function_definition_color=\"ffc35aff\"
+gdscript/node_path_color=\"ff9292ff\"
+",
+"monokai": "[color_theme]
+
+background_color=\"282828ff\"
+completion_background_color=\"3d3d3dff\"
+completion_selected_color=\"ffffff11\"
+completion_existing_color=\"ffffff23\"
+completion_scroll_color=\"ffffff11\"
+completion_font_color=\"cececeff\"
+caret_color=\"f8f8f0ff\"
+caret_background_color=\"000000ff\"
+line_number_color=\"aaaaaa66\"
+text_color=\"f8f8f2ff\"
+text_selected_color=\"f8f8f2ff\"
+keyword_color=\"f92672ff\"
+base_type_color=\"a6e22eff\"
+engine_type_color=\"ae81ffff\"
+function_color=\"66d9efff\"
+member_variable_color=\"66d9efff\"
+comment_color=\"75715eff\"
+string_color=\"e6db74ff\"
+number_color=\"ae81ffff\"
+symbol_color=\"f8f8f2ff\"
+selection_color=\"49483eff\"
+brace_mismatch_color=\"ff3333ff\"
+current_line_color=\"323232ff\"
+line_length_guideline_color=\"393939ff\"
+mark_color=\"ff323238\"
+breakpoint_color=\"ff4d56ff\"
+code_folding_color=\"808080ff\"
+word_highlighted_color=\"3e4141ff\"
+search_result_color=\"673917ff\"
+search_result_border_color=\"00000000\"
+gdscript/function_definition_color=\"a6e22eff\"
+gdscript/node_path_color=\"fd971fff\"
+",
+"nord": "[color_theme]
+
+background_color=\"2e3440ff\"
+base_type_color=\"8fbcbbff\"
+bookmark_color=\"147dfaff\"
+brace_mismatch_color=\"ff786bff\"
+breakpoint_color=\"ff786bff\"
+caret_background_color=\"000000ff\"
+caret_color=\"ffffffff\"
+code_folding_color=\"ffffffb3\"
+comment_color=\"63708aff\"
+completion_background_color=\"333b4fff\"
+completion_existing_color=\"ffffff24\"
+completion_font_color=\"ccced3ff\"
+completion_scroll_color=\"ffffff12\"
+completion_selected_color=\"ffffff12\"
+current_line_color=\"434c5e6a\"
+engine_type_color=\"8fbcbbff\"
+executing_line_color=\"33cc3366\"
+function_color=\"88c0d0ff\"
+gdscript/function_definition_color=\"88c0d0ff\"
+gdscript/node_path_color=\"ebcb8bff\"
+keyword_color=\"81a1c1ff\"
+line_length_guideline_color=\"4d576b80\"
+line_number_color=\"4c566aff\"
+mark_color=\"bf626b60\"
+member_variable_color=\"d8dee9ff\"
+number_color=\"b48eadff\"
+safe_line_number_color=\"507358ff\"
+search_result_border_color=\"699ce861\"
+search_result_color=\"ffffff12\"
+selection_color=\"434c5eff\"
+string_color=\"a3be8cff\"
+symbol_color=\"81a1c1ff\"
+text_color=\"eceff4ff\"
+text_selected_color=\"1a1d28ff\"
+user_type_color=\"8fbcbbff\"
+word_highlighted_color=\"4c566aff\"
+",
+"one dark": "[color_theme]
+
+background_color=\"282b34ff\"
+completion_background_color=\"3d3d3dff\"
+completion_selected_color=\"ffffff11\"
+completion_existing_color=\"ffffff23\"
+completion_scroll_color=\"ffffff11\"
+completion_font_color=\"cececeff\"
+caret_color=\"528affff\"
+caret_background_color=\"000000ff\"
+line_number_color=\"6a717eff\"
+text_color=\"aab1bfff\"
+text_selected_color=\"aab1bfff\"
+keyword_color=\"c677ddff\"
+base_type_color=\"e6bf7bff\"
+engine_type_color=\"56b6c1ff\"
+function_color=\"60aeedff\"
+member_variable_color=\"e06c75ff\"
+comment_color=\"6f6f6fff\"
+string_color=\"97c379ff\"
+number_color=\"d19a66ff\"
+symbol_color=\"aab1bfff\"
+selection_color=\"404859ff\"
+brace_mismatch_color=\"ff3333ff\"
+current_line_color=\"30353eff\"
+line_length_guideline_color=\"383b44ff\"
+mark_color=\"ff323238\"
+breakpoint_color=\"ff4d56ff\"
+code_folding_color=\"808080ff\"
+word_highlighted_color=\"353840ff\"
+search_result_color=\"314365ff\"
+search_result_border_color=\"4982ffff\"
+gdscript/function_definition_color=\"60aeedff\"
+gdscript/node_path_color=\"d19a66ff\"
+",
+"one monokai": "[color_theme]
+
+background_color=\"282c34ff\"
+completion_background_color=\"21252bff\"
+completion_selected_color=\"2c313aff\"
+completion_existing_color=\"314365ff\"
+completion_scroll_color=\"2c313aff\"
+completion_font_color=\"abb2bfff\"
+caret_color=\"f8f8f0ff\"
+caret_background_color=\"000000ff\"
+line_number_color=\"495162ff\"
+safe_line_number_color=\"808080ff\"
+text_color=\"abb2bfff\"
+text_selected_color=\"abb2bfff\"
+keyword_color=\"e06c75ff\"
+base_type_color=\"d19a66ff\"
+engine_type_color=\"61afefff\"
+user_type_color=\"56b6c2ff\"
+function_color=\"98c379ff\"
+member_variable_color=\"61afefff\"
+comment_color=\"5c6370ff\"
+string_color=\"e5c07bff\"
+number_color=\"c678ddff\"
+symbol_color=\"808080ff\"
+selection_color=\"3e4451ff\"
+brace_mismatch_color=\"c24038ff\"
+current_line_color=\"383e4aff\"
+line_length_guideline_color=\"3b4048ff\"
+mark_color=\"ff323238\"
+breakpoint_color=\"c24038ff\"
+code_folding_color=\"808080ff\"
+word_highlighted_color=\"3e4141ff\"
+search_result_color=\"314365ff\"
+search_result_border_color=\"00000000\"
+gdscript/function_definition_color=\"98c379ff\"
+gdscript/node_path_color=\"d19a66ff\"
+",
+"quiet light": "[color_theme]
+
+background_color=\"f5f5f5ff\"
+completion_background_color=\"e5e5e5ff\"
+completion_selected_color=\"d5d5d5ff\"
+completion_existing_color=\"dfdfdf21\"
+completion_scroll_color=\"959595ff\"
+completion_font_color=\"454545ff\"
+caret_color=\"54494bff\"
+caret_background_color=\"000000ff\"
+line_number_color=\"9da39aff\"
+text_color=\"333333ff\"
+text_selected_color=\"333333ff\"
+keyword_color=\"4b83cdff\"
+base_type_color=\"aa3731ff\"
+engine_type_color=\"7a3e9dff\"
+function_color=\"aa3731ff\"
+member_variable_color=\"7a3e9dff\"
+comment_color=\"aaaaaaff\"
+string_color=\"448c27ff\"
+number_color=\"ab6526ff\"
+symbol_color=\"777777ff\"
+selection_color=\"c9d0d9ff\"
+brace_mismatch_color=\"ff3333ff\"
+current_line_color=\"e4f6d4ff\"
+line_length_guideline_color=\"e4e4e4ff\"
+mark_color=\"ff323230\"
+breakpoint_color=\"cccc6633\"
+code_folding_color=\"808080ff\"
+word_highlighted_color=\"e8ebeeff\"
+search_result_color=\"edc9d8ff\"
+search_result_border_color=\"00000000\"
+gdscript/function_definition_color=\"aa3731ff\"
+gdscript/node_path_color=\"ab6526ff\"
+",
+"solarized dark": "[color_theme]
+
+background_color=\"002b36ff\"
+completion_background_color=\"3d3d3dff\"
+completion_selected_color=\"ffffff11\"
+completion_existing_color=\"ffffff23\"
+completion_scroll_color=\"ffffff11\"
+completion_font_color=\"cececeff\"
+caret_color=\"ffffffff\"
+caret_background_color=\"000000ff\"
+line_number_color=\"586e75ff\"
+text_color=\"839496ff\"
+text_selected_color=\"eee8d5ff\"
+keyword_color=\"b58900ff\"
+base_type_color=\"dc322fff\"
+engine_type_color=\"d33682ff\"
+function_color=\"268bd2ff\"
+member_variable_color=\"268bd2ff\"
+comment_color=\"586e75ff\"
+string_color=\"2aa198ff\"
+number_color=\"d33682ff\"
+symbol_color=\"839496ff\"
+selection_color=\"274642ff\"
+brace_mismatch_color=\"ff3333ff\"
+current_line_color=\"073642ff\"
+line_length_guideline_color=\"103b46ff\"
+mark_color=\"ff323238\"
+breakpoint_color=\"ff4d56ff\"
+code_folding_color=\"808080ff\"
+word_highlighted_color=\"004a5cff\"
+search_result_color=\"4d3b24ff\"
+search_result_border_color=\"00000000\"
+gdscript/function_definition_color=\"2aa198ff\"
+gdscript/node_path_color=\"d33682ff\"
+",
+"solarized light": "[color_theme]
+
+background_color=\"fdf6e3ff\"
+completion_background_color=\"ede6d3ff\"
+completion_selected_color=\"ddd6b3ff\"
+completion_existing_color=\"dfdfdf21\"
+completion_scroll_color=\"657b83ff\"
+completion_font_color=\"444444ff\"
+caret_color=\"657b83ff\"
+caret_background_color=\"000000ff\"
+line_number_color=\"2b91afff\"
+text_color=\"333333ff\"
+text_selected_color=\"333333ff\"
+keyword_color=\"859900ff\"
+base_type_color=\"073642ff\"
+engine_type_color=\"cb4b16ff\"
+function_color=\"268bd2ff\"
+member_variable_color=\"268bd2ff\"
+comment_color=\"93a1a1ff\"
+string_color=\"2aa198ff\"
+number_color=\"d33682ff\"
+symbol_color=\"333333ff\"
+selection_color=\"dad3c1ff\"
+brace_mismatch_color=\"ff3333ff\"
+current_line_color=\"f5eedcff\"
+line_length_guideline_color=\"e5deccff\"
+mark_color=\"ff323230\"
+breakpoint_color=\"cccc6633\"
+code_folding_color=\"808080ff\"
+word_highlighted_color=\"eee8d5ff\"
+search_result_color=\"f7c399ff\"
+search_result_border_color=\"00000000\"
+gdscript/function_definition_color=\"268bd2ff\"
+gdscript/node_path_color=\"cb4b16ff\"
+",
+"tokyo night moon": "[color_theme]
+
+symbol_color = \"86e1fc\"
+keyword_color = \"c099ff\"
+control_flow_keyword_color = \"fca7ea\"
+base_type_color = \"41a6b5\"
+engine_type_color = \"41a6b5\"
+user_type_color = \"4fd6be\"
+comment_color = \"7a88cf\"
+string_color = \"c3e88d\"
+background_color = \"222436\"
+completion_background_color = \"2f334d\"
+completion_selected_color = \"ffffff12\"
+completion_existing_color = \"ffffff24\"
+completion_font_color = \"c8d3f5\"
+text_color = \"c8d3f5\"
+line_number_color = \"545c7e\"
+safe_line_number_color = \"737aa2\"
+caret_color = \"b4f9f8\"
+caret_background_color = \"ffffff00\"
+selection_color = \"394b70\"
+brace_mismatch_color = \"ff757f\"
+line_length_guideline_color = \"444a73\"
+word_highlighted_color = \"ffffff18\"
+number_color = \"ff966c\"
+function_color = \"82aaff\"
+member_variable_color = \"4fd6be\"
+mark_color = \"c53b5344\"
+bookmark_color = \"89ddff\"
+breakpoint_color = \"c53b53\"
+executing_line_color = \"ffc777\"
+search_result_color = \"4fd6be\"
+
+gdscript/function_definition_color = \"0db9d7\"
+gdscript/global_function_color = \"c099ff\"
+gdscript/node_path_color = \"4fd6be\"
+gdscript/node_reference_color = \"41a6b5\"
+gdscript/annotation_color = \"ffc777\"
+gdscript/string_name_color = \"c3e88d\"
+",
+"tokyo night night": "[color_theme]
+
+symbol_color = \"7dcfff\"
+keyword_color = \"bb9af7\"
+control_flow_keyword_color = \"9d7cd8\"
+base_type_color = \"41a6b5\"
+engine_type_color = \"41a6b5\"
+user_type_color = \"73daca\"
+comment_color = \"565f89\"
+string_color = \"9ece6a\"
+background_color = \"1a1b26\"
+completion_background_color = \"292e42\"
+completion_selected_color = \"ffffff12\"
+completion_existing_color = \"ffffff24\"
+completion_font_color = \"c0caf5\"
+text_color = \"c0caf5\"
+line_number_color = \"545c7e\"
+safe_line_number_color = \"737aa2\"
+caret_color = \"b4f9f8\"
+caret_background_color = \"ffffff00\"
+selection_color = \"394b70\"
+brace_mismatch_color = \"f7768e\"
+line_length_guideline_color = \"414868\"
+word_highlighted_color = \"ffffff18\"
+number_color = \"ff9e64\"
+function_color = \"7aa2f7\"
+member_variable_color = \"73daca\"
+mark_color = \"db4b4b44\"
+bookmark_color = \"89ddff\"
+breakpoint_color = \"db4b4b\"
+executing_line_color = \"e0af68\"
+search_result_color = \"1abc9c\"
+
+gdscript/function_definition_color = \"0db9d7\"
+gdscript/global_function_color = \"bb9af7\"
+gdscript/node_path_color = \"1abc9c\"
+gdscript/node_reference_color = \"41a6b5\"
+gdscript/annotation_color = \"e0af68\"
+gdscript/string_name_color = \"9ece6a\"
+",
+"tokyo night storm": "[color_theme]
+
+symbol_color = \"7dcfff\"
+keyword_color = \"bb9af7\"
+control_flow_keyword_color = \"9d7cd8\"
+base_type_color = \"41a6b5\"
+engine_type_color = \"41a6b5\"
+user_type_color = \"73daca\"
+comment_color = \"565f89\"
+string_color = \"9ece6a\"
+background_color = \"24283b\"
+completion_background_color = \"292e42\"
+completion_selected_color = \"ffffff12\"
+completion_existing_color = \"ffffff24\"
+completion_font_color = \"c0caf5\"
+text_color = \"c0caf5\"
+line_number_color = \"545c7e\"
+safe_line_number_color = \"737aa2\"
+caret_color = \"b4f9f8\"
+caret_background_color = \"ffffff00\"
+selection_color = \"394b70\"
+brace_mismatch_color = \"f7768e\"
+line_length_guideline_color = \"414868\"
+word_highlighted_color = \"ffffff18\"
+number_color = \"ff9e64\"
+function_color = \"7aa2f7\"
+member_variable_color = \"73daca\"
+mark_color = \"db4b4b44\"
+bookmark_color = \"89ddff\"
+breakpoint_color = \"db4b4b\"
+executing_line_color = \"e0af68\"
+search_result_color = \"1abc9c\"
+
+gdscript/function_definition_color = \"0db9d7\"
+gdscript/global_function_color = \"bb9af7\"
+gdscript/node_path_color = \"1abc9c\"
+gdscript/node_reference_color = \"41a6b5\"
+gdscript/annotation_color = \"e0af68\"
+gdscript/string_name_color = \"9ece6a\"
+",
+"vs code dark": "[color_theme]
+
+background_color=\"1e1e1eff\"
+base_type_color=\"c586c0ff\"
+bookmark_color=\"147dfaff\"
+brace_mismatch_color=\"ff3333ff\"
+breakpoint_color=\"cccc6633\"
+caret_background_color=\"000000ff\"
+caret_color=\"aeafadff\"
+code_folding_color=\"808080ff\"
+comment_color=\"608b4eff\"
+completion_background_color=\"2c2a32ff\"
+completion_existing_color=\"dfdfdf21\"
+completion_font_color=\"aaaaaaff\"
+completion_scroll_color=\"ffffffff\"
+completion_selected_color=\"434244ff\"
+control_flow_keyword_color=\"bf88beff\"
+current_line_color=\"ffffff0b\"
+engine_type_color=\"4ec9b0ff\"
+executing_line_color=\"33cc3366\"
+function_color=\"dcdcaaff\"
+gdscript/function_definition_color=\"dcdcaaff\"
+gdscript/node_path_color=\"6bbcfbff\"
+keyword_color=\"569cd6ff\"
+line_length_guideline_color=\"333333ff\"
+line_number_color=\"aaaaaa66\"
+mark_color=\"ff323238\"
+member_variable_color=\"9cdcfeff\"
+number_color=\"b5cea8ff\"
+safe_line_number_color=\"ccf7d3bf\"
+search_result_border_color=\"00000000\"
+search_result_color=\"613214ff\"
+selection_color=\"264f78ff\"
+string_color=\"ce9178ff\"
+symbol_color=\"d4d4d4ff\"
+text_color=\"d4d4d4ff\"
+text_selected_color=\"d4d4d4ff\"
+user_type_color=\"c6ffedff\"
+word_highlighted_color=\"343a40ff\"
+",
+"vs code light": "[color_theme]
+
+background_color=\"ffffffff\"
+base_type_color=\"af00dbff\"
+bookmark_color=\"147dfaff\"
+brace_mismatch_color=\"ff3333ff\"
+breakpoint_color=\"cccc6633\"
+caret_background_color=\"000000ff\"
+caret_color=\"000000ff\"
+code_folding_color=\"808080ff\"
+comment_color=\"008000ff\"
+completion_background_color=\"eeeeeeff\"
+completion_existing_color=\"dfdfdf21\"
+completion_font_color=\"333333ff\"
+completion_scroll_color=\"aaaaaaff\"
+completion_selected_color=\"ccccccff\"
+control_flow_keyword_color=\"a70edcff\"
+current_line_color=\"0000000c\"
+engine_type_color=\"267f99ff\"
+executing_line_color=\"33cc3366\"
+function_color=\"795e26ff\"
+gdscript/function_definition_color=\"795e26ff\"
+gdscript/node_path_color=\"2f6bbdff\"
+keyword_color=\"0000ffff\"
+line_length_guideline_color=\"eeeeeeff\"
+line_number_color=\"397591ff\"
+mark_color=\"ff323230\"
+member_variable_color=\"001080ff\"
+number_color=\"09885aff\"
+safe_line_number_color=\"77a35dff\"
+search_result_border_color=\"00000000\"
+search_result_color=\"f8c9abff\"
+selection_color=\"add6ffff\"
+string_color=\"a31515ff\"
+symbol_color=\"000000ff\"
+text_color=\"000000ff\"
+text_selected_color=\"000000ff\"
+user_type_color=\"09885aff\"
+word_highlighted_color=\"d9e9feff\"
+",
+"xcode dark": "[color_theme]
+
+background_color=\"1d2229ff\"
+base_type_color=\"acf2e4ff\"
+bookmark_color=\"147dfaff\"
+brace_mismatch_color=\"ff786bff\"
+breakpoint_color=\"ff786bff\"
+caret_background_color=\"000000ff\"
+caret_color=\"ffffffff\"
+code_folding_color=\"ffffff45\"
+comment_color=\"7e8c98ff\"
+completion_background_color=\"363d4aff\"
+completion_existing_color=\"ffffff24\"
+completion_font_color=\"cdcfd2ff\"
+completion_scroll_color=\"ffffff4a\"
+completion_scroll_hovered_color=\"ffffff66\"
+completion_selected_color=\"ffffff12\"
+control_flow_keyword_color=\"ff7ab2ff\"
+current_line_color=\"ffffff12\"
+engine_type_color=\"6bdfffff\"
+executing_line_color=\"fae345ff\"
+function_color=\"b181ebff\"
+gdscript/annotation_color=\"ffa14fff\"
+gdscript/function_definition_color=\"4eb0ccff\"
+gdscript/global_function_color=\"e581ebff\"
+gdscript/node_path_color=\"e7d1ffff\"
+gdscript/node_reference_color=\"dabaffff\"
+gdscript/string_name_color=\"ffb370ff\"
+keyword_color=\"ff7ab2ff\"
+line_length_guideline_color=\"363d4aff\"
+line_number_color=\"7c7c7fff\"
+mark_color=\"ff786b4d\"
+member_variable_color=\"4eb0ccff\"
+number_color=\"d9c97cff\"
+safe_line_number_color=\"cdf8d2bf\"
+search_result_border_color=\"699ce861\"
+search_result_color=\"ffffff12\"
+selection_color=\"646e83ff\"
+string_color=\"ff8170ff\"
+symbol_color=\"e3e3e3ff\"
+text_color=\"e3e3e3ff\"
+text_selected_color=\"00000000\"
+user_type_color=\"b5efffff\"
+word_highlighted_color=\"ffffff12\"
+",
+"xcode light": "[color_theme]
+
+background_color=\"ffffffff\"
+base_type_color=\"22575cff\"
+bookmark_color=\"147dfaff\"
+brace_mismatch_color=\"ff1400ff\"
+breakpoint_color=\"ff4533ff\"
+caret_background_color=\"ffffffff\"
+caret_color=\"000000ff\"
+code_folding_color=\"00000045\"
+comment_color=\"6f7e8cff\"
+completion_background_color=\"ffffffff\"
+completion_existing_color=\"00000024\"
+completion_font_color=\"393939ff\"
+completion_scroll_color=\"0000004a\"
+completion_scroll_hovered_color=\"00000066\"
+completion_selected_color=\"00000012\"
+control_flow_keyword_color=\"ad3da4ff\"
+current_line_color=\"0078ff13\"
+engine_type_color=\"03638cff\"
+executing_line_color=\"fae345ff\"
+function_color=\"804fb8ff\"
+gdscript/annotation_color=\"78492aff\"
+gdscript/function_definition_color=\"057cb0ff\"
+gdscript/global_function_color=\"aa4fb8ff\"
+gdscript/node_path_color=\"34187dff\"
+gdscript/node_reference_color=\"4a21b0ff\"
+gdscript/string_name_color=\"d18419ff\"
+keyword_color=\"ad3da4ff\"
+line_length_guideline_color=\"ffffffff\"
+line_number_color=\"39393980\"
+mark_color=\"bf5a504d\"
+member_variable_color=\"057cb0ff\"
+number_color=\"262ad8ff\"
+safe_line_number_color=\"006600bf\"
+search_result_border_color=\"0066ff61\"
+search_result_color=\"00000012\"
+selection_color=\"2e92ff5e\"
+string_color=\"d12f1aff\"
+symbol_color=\"2b2b2bff\"
+text_color=\"2b2b2bff\"
+text_selected_color=\"00000000\"
+user_type_color=\"02435eff\"
+word_highlighted_color=\"00000012\"
+"
 }
-import_themes = ""
-export_themes = ""

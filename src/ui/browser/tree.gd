@@ -76,6 +76,7 @@ func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
 	item.add_button(0, Icons.add_folder, Buttons.ADD_FOLDER)
 	item.add_button(0, Icons.rename, Buttons.RENAME_FOLDER)
 	item.add_button(0, Icons.delete, Buttons.DELETE_FOLDER)
+	item.set_selectable(0, false)
 	paths.add(item, path)
 
 	return item

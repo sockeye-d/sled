@@ -6,8 +6,8 @@ var values_dict: Dictionary
 
 
 func _init() -> void:
-	keys_dict = {}
-	values_dict = {}
+	keys_dict = { }
+	values_dict = { }
 
 
 func get_value(key: Variant) -> Variant:

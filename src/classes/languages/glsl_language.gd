@@ -170,6 +170,24 @@ static func _static_init() -> void:
 		"namespace",
 		"using",
 		"row_major",
+		"location",
+		# Preprocessor stuff
+		"#define",
+		"defined",
+		"#undef",
+
+		"#if",
+		"#ifdef",
+		"#ifndef",
+		"#else",
+		"#elif",
+		"#endif",
+
+		"#version",
+		"compatibility",
+		"#line",
+		"#pragma",
+		"#extension",
 	]
 	comment_regions = ["//", "/* */"]
 	# GLSL has no strings
@@ -187,10 +205,10 @@ static func get_code_completion_suggestions(path: String, file: String, line: in
 static func _get_code_completion_suggestions(path: String, file: String, editing_line: int = -1, depth: int = 0, base_path: String = path, visited_files: PackedStringArray = []) -> Dictionary:
 	visited_files.append(path)
 	# Dictionary[value, CodeCompletionSuggestion]
-	var suggestions: Dictionary = {}
+	var suggestions: Dictionary = { }
 	var included_files: PackedStringArray = []
 	var methods: PackedStringArray = []
-	var definitions: Dictionary = {}
+	var definitions: Dictionary = { }
 	var local_vars: PackedStringArray = []
 	var file_split = file.replace(";", "\n").split("\n", false)
 	if not editing_line == -1:
@@ -273,20 +291,19 @@ static func _get_code_completion_suggestions(path: String, file: String, editing
 	return suggestions
 
 
-static func _split_string_into_symbols(str: String, allow_empty: bool = false) -> PackedStringArray:
-	str = str.lstrip(" ")
+static func _split_string_into_symbols(string: String, allow_empty: bool = false) -> PackedStringArray:
+	string = string.lstrip(" ")
 	var arr: PackedStringArray = []
 	var begin: int = 0
-	for end in range(1, str.length()):
-		var is_alphabet: bool = str[end] in _ALPHABET
+	for end in range(1, string.length()):
 
-		if (str[end - 1] in _ALPHABET) != (str[end] in _ALPHABET):
-			var sub: String = str.substr(begin, end - begin).lstrip(" ").rstrip(" ")
+		if (string[end - 1] in _ALPHABET) != (string[end] in _ALPHABET):
+			var sub: String = string.substr(begin, end - begin).lstrip(" ").rstrip(" ")
 			if allow_empty or sub:
 				arr.append(sub)
 			begin = end
 
-	arr.append(str.substr(begin))
+	arr.append(string.substr(begin))
 	return arr
 
 
@@ -303,8 +320,8 @@ static func _is_valid_var_name(name: String) -> bool:
 	if name in keywords:
 		return false
 
-	for char in name:
-		if not char.to_lower() in "abcdefghijklmnopqrstuvwxyz0123456789":
+	for ch in name:
+		if not ch.to_lower() in "abcdefghijklmnopqrstuvwxyz0123456789":
 			return false
 
 	return true

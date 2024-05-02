@@ -4,19 +4,17 @@ class_name ThemeImporter extends Object
 
 static func import_theme(
 		code_edit: CodeEdit,
-		path: String,
+		file: String,
 		types: PackedStringArray,
 		keywords: PackedStringArray,
 		comment_regions: PackedStringArray,
 		string_regions: PackedStringArray,
 		) -> void:
 
-	var file = FileAccess.open(path, FileAccess.READ).get_as_text(true)
-	var theme: TextEditorTheme = TextEditorTheme.new()
 	var highlighter = CodeHighlighter.new()
 
-	var theme_dict: Dictionary = {}
-	var theme_overrides: Dictionary = {}
+	var theme_dict: Dictionary = { }
+	var theme_overrides: Dictionary = { }
 	for line in file.split("\n", false).slice(1):
 		var key_value: PackedStringArray = line.replace(" ", "") .split("=")
 		if not key_value.size() == 2:
@@ -33,8 +31,10 @@ static func import_theme(
 
 	for type in types:
 		highlighter.add_member_keyword_color(type, theme_dict.base_type_color)
+	
 	for keyword in keywords:
 		highlighter.add_member_keyword_color(keyword, theme_dict.keyword_color)
+	
 	for region in comment_regions:
 		var region_split = region.split(" ")
 		var single_line = not " " in region
