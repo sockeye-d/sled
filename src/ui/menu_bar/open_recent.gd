@@ -2,7 +2,8 @@ extends PopupMenu
 
 
 func _ready() -> void:
-	FileManager.changed_paths.connect(func(): _refresh_recently_opened())
+	FileManager.paths_changed.connect(func(): _refresh_recently_opened())
+	_refresh_recently_opened()
 
 
 func _refresh_recently_opened():

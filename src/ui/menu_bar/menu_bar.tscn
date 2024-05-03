@@ -10,6 +10,7 @@ script = ExtResource("1_j76tb")
 
 [node name="File" type="PopupMenu" parent="."]
 auto_translate_mode = 1
+size = Vector2i(152, 100)
 item_count = 2
 item_0/text = "Save all"
 item_1/text = "Open new folder"

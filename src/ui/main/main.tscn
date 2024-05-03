@@ -23,37 +23,51 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MenuBar" parent="VBoxContainer" instance=ExtResource("2_xxxww")]
-layout_mode = 2
-
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="SplitContainer" type="SplitContainer" parent="VBoxContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer"]
 layout_mode = 2
+
+[node name="MenuBar" parent="VBoxContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_xxxww")]
+layout_mode = 2
+
+[node name="NothingToShowLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+text = "Open a folder with Ctrl+Shift+O or with the menu at the top"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MainContainer" type="SplitContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
 theme_override_constants/separation = 0
 theme_override_constants/autohide = 1
 split_offset = 227
 script = ExtResource("3_3bsis")
 relative_split_offset = 0.2
 
-[node name="Browser" parent="VBoxContainer/MarginContainer/SplitContainer" instance=ExtResource("1_prqn1")]
+[node name="Browser" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer" instance=ExtResource("1_prqn1")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Editors" type="SplitContainer" parent="VBoxContainer/MarginContainer/SplitContainer"]
+[node name="Editors" type="SplitContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 split_offset = 450
 script = ExtResource("3_3bsis")
 relative_split_offset = 0.5
 
-[node name="LeftEditor" parent="VBoxContainer/MarginContainer/SplitContainer/Editors" instance=ExtResource("1_x2835")]
+[node name="LeftEditor" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer/Editors" instance=ExtResource("1_x2835")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="RightEditor" parent="VBoxContainer/MarginContainer/SplitContainer/Editors" instance=ExtResource("1_x2835")]
+[node name="RightEditor" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer/Editors" instance=ExtResource("1_x2835")]
 unique_name_in_owner = true
 auto_translate_mode = 1
 layout_mode = 2
@@ -67,4 +81,4 @@ alignment = 2
 [node name="Label" type="Label" parent="VBoxContainer/NotificationTray"]
 layout_mode = 2
 
-[connection signal="file_opened" from="VBoxContainer/MarginContainer/SplitContainer/Browser" to="." method="open_file"]
+[connection signal="file_opened" from="VBoxContainer/MarginContainer/VBoxContainer/MainContainer/Browser" to="." method="open_file"]

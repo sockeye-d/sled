@@ -76,6 +76,11 @@ func add_custom_settings():
 			func(_new_value: String):
 				EditorThemeManager.set_font(settings_items.font.get_text(), settings.ligatures)
 				)
+	settings_items.gui_scale.setting_changed.connect(
+			func(new_value: float):
+				EditorThemeManager.theme.default_font_size = 16 * new_value as int
+				EditorThemeManager.theme.default_base_scale = new_value
+				)
 	
 	settings_items.font.select_text((theme.get_font(&"font", &"CodeEdit") as SystemFont).get_font_name())
 
@@ -91,6 +96,7 @@ func populate_settings(category: SettingCategory) -> void:
 		button.text = setting.name
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.tooltip_text = setting.tooltip
+		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		
 		var container = HBoxContainer.new()
 		container.add_child(button)
@@ -104,6 +110,7 @@ func add_setting_category(category: SettingCategory) -> void:
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.text = category.name
+	button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	
 	category_container.add_child(button)
 	
@@ -112,5 +119,5 @@ func add_setting_category(category: SettingCategory) -> void:
 
 func load_settings(new_settings: Dictionary) -> void:
 	for s in settings:
-		if s in settings_items:
+		if s in settings_items and s in new_settings:
 			settings_items[s].value = new_settings[s]

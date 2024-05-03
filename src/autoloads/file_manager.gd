@@ -6,6 +6,8 @@ const MAX_RECENT_ITEMS: int = 8
 
 
 signal changed_paths()
+signal paths_changed()
+signal loaded_recent_paths(found_any: bool)
 
 
 var last_opened_paths: PackedStringArray = []
@@ -18,7 +20,10 @@ func _ready() -> void:
 	
 	await RenderingServer.frame_post_draw
 	if last_opened_paths:
+		loaded_recent_paths.emit(true)
 		change_path(last_opened_paths[0])
+	else:
+		loaded_recent_paths.emit(false)
 
 
 func change_path(new_path: String) -> void:
@@ -29,9 +34,9 @@ func change_path(new_path: String) -> void:
 	if index > -1:
 		last_opened_paths.remove_at(index)
 	last_opened_paths.insert(0, current_path)
-	
 	if last_opened_paths.size() > MAX_RECENT_ITEMS:
 		last_opened_paths.resize(MAX_RECENT_ITEMS)
+	paths_changed.emit()
 	
 	File.save_variant(LAST_OPENED_PATHS_PATH, last_opened_paths)
 	absolute_base_path = get_base_path(new_path)
@@ -71,4 +76,5 @@ func get_base_path(path: String, valid_names: PackedStringArray = Settings.setti
 
 func clear_recent() -> void:
 	last_opened_paths = []
+	paths_changed.emit()
 	File.save_variant(LAST_OPENED_PATHS_PATH, last_opened_paths)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bhh21mxu6765g"]
+[gd_scene load_steps=20 format=3 uid="uid://bhh21mxu6765g"]
 
 [ext_resource type="Theme" uid="uid://brmolr535bgtw" path="res://src/main.theme" id="1_8ki8x"]
 [ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="1_k1b4t"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://src/classes/setting/checkbox_setting_item.gd" id="4_cg4by"]
 [ext_resource type="Script" path="res://src/classes/setting/string_setting_item.gd" id="4_p6htm"]
 [ext_resource type="Script" path="res://src/classes/setting/file_setting_item.gd" id="5_5bcjm"]
+[ext_resource type="Script" path="res://src/classes/setting/slider_setting_item.gd" id="7_mc558"]
 
 [sub_resource type="Resource" id="Resource_3kvck"]
 script = ExtResource("3_afdq8")
@@ -48,10 +49,24 @@ tooltip = "The ligatures to use. Most are contained within the ssXX format.
 For example, the GitHub Monaspace font supports ss01 through ss08.
 Cascadia Code font supports a slashed zero using the ss19 set."
 
+[sub_resource type="Resource" id="Resource_jjevf"]
+script = ExtResource("7_mc558")
+default_value = 1.0
+min_value = 0.25
+max_value = 3.0
+step = 0.001
+allow_greater = false
+allow_lesser = false
+value = null
+name = "GUI scale"
+identifier = &"gui_scale"
+tooltip = "Changes the overall scale of the interface.
+Useful for hiDPI displays, if the text and buttons are too small."
+
 [sub_resource type="Resource" id="Resource_moc02"]
 script = ExtResource("2_qdoe0")
 name = "Theme"
-settings = Array[Resource("res://src/classes/setting/setting_item.gd")]([SubResource("Resource_3kvck"), SubResource("Resource_t67iy"), SubResource("Resource_fbn8t"), SubResource("Resource_42da8")])
+settings = Array[Resource("res://src/classes/setting/setting_item.gd")]([SubResource("Resource_3kvck"), SubResource("Resource_t67iy"), SubResource("Resource_fbn8t"), SubResource("Resource_42da8"), SubResource("Resource_jjevf")])
 
 [sub_resource type="Resource" id="Resource_pv3ng"]
 script = ExtResource("4_cg4by")
