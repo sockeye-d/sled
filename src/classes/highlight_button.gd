@@ -41,21 +41,9 @@ func _init() -> void:
 
 func _update_styles() -> void:
 	empty_stylebox = StyleBoxEmpty.new()
-	focused_stylebox = StyleBoxFlat.new()
+	focused_stylebox = StyleBoxUtil.new_flat(Color(1.0, 1.0, 1.0, 0.1), [4], [2])
 	
 	empty_stylebox.content_margin_left = get_theme_stylebox("normal", "Button").content_margin_left
 	empty_stylebox.content_margin_top = get_theme_stylebox("normal", "Button").content_margin_top
 	empty_stylebox.content_margin_right = get_theme_stylebox("normal", "Button").content_margin_right
 	empty_stylebox.content_margin_bottom = get_theme_stylebox("normal", "Button").content_margin_bottom
-	
-	focused_stylebox.corner_radius_bottom_left = get_theme_stylebox("normal", "Button").corner_radius_bottom_left
-	focused_stylebox.corner_radius_bottom_right = get_theme_stylebox("normal", "Button").corner_radius_bottom_right
-	focused_stylebox.corner_radius_top_left = get_theme_stylebox("normal", "Button").corner_radius_top_left
-	focused_stylebox.corner_radius_top_right = get_theme_stylebox("normal", "Button").corner_radius_top_right
-	
-	focused_stylebox.content_margin_left = get_theme_stylebox("normal", "Button").content_margin_left
-	focused_stylebox.content_margin_top = get_theme_stylebox("normal", "Button").content_margin_top
-	focused_stylebox.content_margin_right = get_theme_stylebox("normal", "Button").content_margin_right
-	focused_stylebox.content_margin_bottom = get_theme_stylebox("normal", "Button").content_margin_bottom
-	
-	focused_stylebox.set_bg_color.call_deferred(Color(1.0, 1.0, 1.0, 0.1))

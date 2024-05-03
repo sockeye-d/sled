@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://src/ui/main/main.gd" id="1_86qe4"]
 [ext_resource type="PackedScene" uid="uid://b45p8nijrvd3v" path="res://src/ui/browser/browser.tscn" id="1_prqn1"]
 [ext_resource type="PackedScene" uid="uid://cfbphdd74su8c" path="res://src/editor.tscn" id="1_x2835"]
-[ext_resource type="Script" path="res://src/ui/main/menu_bar.gd" id="2_gwx3i"]
+[ext_resource type="PackedScene" uid="uid://dfkt6ernbrafa" path="res://src/ui/menu_bar/menu_bar.tscn" id="2_xxxww"]
 [ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="3_3bsis"]
 
 [node name="Main" type="Control"]
@@ -23,21 +23,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MenuBar" type="MenuBar" parent="VBoxContainer"]
+[node name="MenuBar" parent="VBoxContainer" instance=ExtResource("2_xxxww")]
 layout_mode = 2
-script = ExtResource("2_gwx3i")
-
-[node name="File" type="PopupMenu" parent="VBoxContainer/MenuBar"]
-item_count = 2
-item_0/text = "Save all"
-item_1/text = "Open new folder"
-item_1/id = 1
-
-[node name="Edit" type="PopupMenu" parent="VBoxContainer/MenuBar"]
-auto_translate_mode = 1
-size = Vector2i(121, 133)
-item_count = 1
-item_0/text = "Preferences"
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -47,23 +34,26 @@ size_flags_vertical = 3
 layout_mode = 2
 theme_override_constants/separation = 0
 theme_override_constants/autohide = 1
-split_offset = 300
+split_offset = 227
+script = ExtResource("3_3bsis")
+relative_split_offset = 0.2
 
 [node name="Browser" parent="VBoxContainer/MarginContainer/SplitContainer" instance=ExtResource("1_prqn1")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="SplitContainer" type="SplitContainer" parent="VBoxContainer/MarginContainer/SplitContainer"]
+[node name="Editors" type="SplitContainer" parent="VBoxContainer/MarginContainer/SplitContainer"]
+unique_name_in_owner = true
 layout_mode = 2
-split_offset = 414
+split_offset = 450
 script = ExtResource("3_3bsis")
 relative_split_offset = 0.5
 
-[node name="LeftEditor" parent="VBoxContainer/MarginContainer/SplitContainer/SplitContainer" instance=ExtResource("1_x2835")]
+[node name="LeftEditor" parent="VBoxContainer/MarginContainer/SplitContainer/Editors" instance=ExtResource("1_x2835")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="RightEditor" parent="VBoxContainer/MarginContainer/SplitContainer/SplitContainer" instance=ExtResource("1_x2835")]
+[node name="RightEditor" parent="VBoxContainer/MarginContainer/SplitContainer/Editors" instance=ExtResource("1_x2835")]
 unique_name_in_owner = true
 auto_translate_mode = 1
 layout_mode = 2
@@ -77,4 +67,4 @@ alignment = 2
 [node name="Label" type="Label" parent="VBoxContainer/NotificationTray"]
 layout_mode = 2
 
-[connection signal="file_opened" from="VBoxContainer/MarginContainer/SplitContainer/Browser" to="." method="_on_browser_file_opened"]
+[connection signal="file_opened" from="VBoxContainer/MarginContainer/SplitContainer/Browser" to="." method="open_file"]

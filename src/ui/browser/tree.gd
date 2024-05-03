@@ -35,11 +35,12 @@ func _process(_delta: float) -> void:
 		repopulate_tree()
 
 
-func populate_tree(path: String, parent: TreeItem = create_item(), first: bool = true) -> TreeItem:
+func populate_tree(path: String, parent: TreeItem = null, first: bool = true) -> TreeItem:
 	if first:
 		paths.clear()
 		last_path = path
-	path = path.replace("\\", "/").trim_suffix("/")
+		clear()
+		parent = create_item()
 	var item = _create_folder_item(path, parent)
 
 	for dir in DirAccess.get_directories_at(path):
@@ -97,8 +98,18 @@ func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_ind
 		Buttons.RENAME_FOLDER:
 			_rename_item(item, "Rename folder")
 		Buttons.DELETE_FILE:
-			item.get_parent().remove_child(item)
-			OS.move_to_trash(paths.get_value(item))
+			var cd := ConfirmationDialog.new()
+			cd.dialog_text = "Delete %s?" % item.get_text(0)
+			cd.ok_button_text = "Delete"
+			cd.title = "Confirm deletion"
+			add_child(cd)
+			cd.popup_centered()
+			cd.confirmed.connect(
+					func():
+						item.get_parent().remove_child(item)
+						OS.move_to_trash(paths.get_value(item))
+						)
+			cd.visibility_changed.connect(func(): if not cd.visible: cd.queue_free())
 		Buttons.DELETE_FOLDER:
 			item.get_parent().remove_child(item)
 			OS.move_to_trash(paths.get_value(item))

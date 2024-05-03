@@ -78,8 +78,8 @@ Disabling this will disable searching for a base path."
 script = ExtResource("4_p6htm")
 default_value = "shaders"
 value = null
-name = "Absolute path"
-identifier = &""
+name = "Base path names"
+identifier = &"base_paths"
 tooltip = "The folder names to look for as the base path for absolute #include declarations.
 Supports multiple paths, comma-separated."
 

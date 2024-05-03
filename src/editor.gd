@@ -33,8 +33,13 @@ signal _continue(action_taken: ConfirmationAction)
 
 var file_handle: FileAccess
 var last_saved_text: String
-var file_path: String = ""
+var file_path: String:
+	get:
+		if file_handle:
+			return file_handle.get_path_absolute()
+		return ""
 var old_text: String
+var base_path: String
 
 
 func _ready() -> void:
@@ -146,7 +151,8 @@ func _get_completion_suggestions() -> void:
 	CodeCompletionSuggestion.add_arr_to(GLSLLanguage.get_code_completion_suggestions(
 			file_handle.get_path_absolute(),
 			code_editor.text,
-			code_editor.get_caret_line(code_editor.get_caret_count() - 1)
+			code_editor.get_caret_line(code_editor.get_caret_count() - 1),
+			FileManager.absolute_base_path
 			), code_editor)
 	for keyword in GLSLLanguage.base_types:
 		code_editor.add_code_completion_option(CodeEdit.KIND_CLASS, keyword, keyword, Color.WHITE, null, null, 1)

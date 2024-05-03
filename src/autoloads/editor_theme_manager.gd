@@ -80,7 +80,6 @@ func convert_tags_to_names(dict: Dictionary) -> Dictionary:
 func _convert_ligatures(features: Dictionary, ligatures: String, shorthands: Dictionary = LIGATURE_SHORTHANDS) -> Dictionary:
 	var filtered: Dictionary = {}
 	var replaced: String = StringUtil.replace_all(ligatures, shorthands)
-	#print(TextServerManager.get_primary_interface().name_to_tag("discretionary_ligatures"))
 	for lig in replaced.split(","):
 		if lig in features:
 			filtered[TextServerManager.get_primary_interface().name_to_tag(lig)] = 1

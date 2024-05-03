@@ -1,7 +1,7 @@
 extends Node
 
 
-const SETTINGS_PATH: String = "user://settings.sledsettings"
+const SETTINGS_PATH: String = "user://settings.sled"
 
 
 @onready var settings_window: SettingsWindow = preload("res://src/ui/settings_window/settings_window.tscn").instantiate()
@@ -24,9 +24,6 @@ func _ready() -> void:
 	await RenderingServer.frame_pre_draw
 	load_settings()
 	
-	EditorThemeManager.change_theme(EditorThemeManager.THEMES.themes[settings_items.theme.get_text()])
-	EditorThemeManager.set_font(settings_items.font.get_text(), settings.ligatures)
-	
 	settings_window.setting_changed.connect(func(_identifier: String, _new_value): save_settings())
 
 
@@ -35,7 +32,7 @@ func show_settings_window():
 
 
 func _get(property: StringName) -> Variant:
-	if property in settings_items:
+	if property in settings:
 		return settings_items[property].value
 	
 	return get(property)
@@ -60,4 +57,3 @@ func load_settings(path: String = SETTINGS_PATH) -> Error:
 		return OK
 	else:
 		return FileAccess.get_open_error()
-	

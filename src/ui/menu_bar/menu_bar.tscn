@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://dfkt6ernbrafa"]
+
+[ext_resource type="Script" path="res://src/ui/menu_bar/menu_bar.gd" id="1_j76tb"]
+[ext_resource type="Script" path="res://src/ui/menu_bar/file.gd" id="2_6qdxv"]
+[ext_resource type="Script" path="res://src/ui/menu_bar/open_recent.gd" id="3_errp1"]
+
+[node name="MenuBar" type="MenuBar"]
+auto_translate_mode = 1
+script = ExtResource("1_j76tb")
+
+[node name="File" type="PopupMenu" parent="."]
+auto_translate_mode = 1
+item_count = 2
+item_0/text = "Save all"
+item_1/text = "Open new folder"
+item_1/id = 1
+script = ExtResource("2_6qdxv")
+
+[node name="Open recent" type="PopupMenu" parent="File"]
+auto_translate_mode = 1
+script = ExtResource("3_errp1")
+
+[node name="Edit" type="PopupMenu" parent="."]
+auto_translate_mode = 1
+size = Vector2i(121, 133)
+item_count = 1
+item_0/text = "Preferences"
+
+[node name="FileDialog" type="FileDialog" parent="."]

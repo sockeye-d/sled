@@ -242,17 +242,6 @@ auto_translate_mode = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "void main() {
-	albedo = vec4(0.0);
-	// unmatched brace
-	(
-	// single line comment
-	/*
-		multi
-		line
-		comment
-	*/
-}"
 scroll_smooth = true
 caret_blink = true
 syntax_highlighter = SubResource("CodeHighlighter_i4v8i")
@@ -277,9 +266,6 @@ dialog_text = "There are unsaved changes"
 unique_name_in_owner = true
 wait_time = 0.1
 one_shot = true
-
-[node name="OptionButton" type="OptionButton" parent="."]
-layout_mode = 2
 
 [connection signal="pressed" from="PanelContainer/MarginContainer/MenuBar/LeftBar/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="code_completion_requested" from="CodeEditor" to="." method="_on_code_editor_code_completion_requested"]

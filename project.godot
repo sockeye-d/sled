@@ -14,13 +14,17 @@ config/name="sled"
 run/main_scene="res://src/ui/main/main.tscn"
 config/features=PackedStringArray("4.3")
 run/low_processor_mode=true
-config/icon="res://icon.svg"
+boot_splash/image="res://src/assets/icons/boot.png"
+boot_splash/fullsize=false
+config/icon="res://src/assets/icons/icon.png"
+boot_splash/minimum_display_time=250
 
 [autoload]
 
 NotificationManager="*res://src/autoloads/notification_manager.gd"
 EditorThemeManager="*res://src/autoloads/editor_theme_manager.gd"
 Settings="*res://src/autoloads/settings_manager.gd"
+FileManager="*res://src/autoloads/file_manager.gd"
 
 [display]
 
