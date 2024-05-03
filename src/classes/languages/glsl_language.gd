@@ -120,6 +120,7 @@ static func _static_init() -> void:
 		"q",
 		# Other
 		"attribute",
+		"const",
 		"uniform",
 		"varying",
 		"layout",
@@ -129,65 +130,43 @@ static func _static_init() -> void:
 		"noperspective",
 		"patch",
 		"sample",
+		"break",
+		"continue",
+		"do",
+		"for",
+		"while",
+		"switch",
+		"case",
+		"default",
+		"if",
+		"else",
 		"subroutine",
 		"in",
 		"out",
 		"inout",
-		"invariant",
-		"discard",
 		"lowp",
 		"mediump",
 		"highp",
 		"precision",
-		"common",
-		"partition",
-		"active",
-		"asm",
-		"class",
-		"union",
-		"enum",
-		"typedef",
-		"template",
-		"this",
-		"packed",
-		"goto",
-		"inline",
-		"noinline",
-		"volatile",
-		"public",
-		"static",
-		"extern",
-		"external",
-		"interface",
-		"fixed",
-		"unsigned",
-		"superp",
-		"input",
-		"output",
-		"filter",
-		"sizeof",
-		"cast",
-		"namespace",
-		"using",
-		"row_major",
-		"location",
+		"struct",
 		# Preprocessor stuff
-		"#define",
+		"define",
 		"defined",
-		"#undef",
-
+		"undef",
+		
 		"#if",
 		"#ifdef",
 		"#ifndef",
 		"#else",
 		"#elif",
 		"#endif",
-
+		
 		"#version",
-		"compatibility",
+		"#compatibility",
 		"#line",
 		"#pragma",
 		"#extension",
+		"#include",
 	]
 	comment_regions = ["//", "/* */"]
 	# GLSL has no strings
@@ -202,7 +181,7 @@ static func get_code_completion_suggestions(path: String, file: String, line: in
 	return typed_array
 
 
-static func _get_code_completion_suggestions(path: String, file: String, editing_line: int = -1, depth: int = 0, base_path: String = path, visited_files: PackedStringArray = []) -> Dictionary:
+static func _get_code_completion_suggestions(path: String, file: String, editing_line: int = -1, depth: int = 0, base_path: String = "", visited_files: PackedStringArray = []) -> Dictionary:
 	visited_files.append(path)
 	# Dictionary[value, CodeCompletionSuggestion]
 	var suggestions: Dictionary = { }
@@ -278,7 +257,9 @@ static func _get_code_completion_suggestions(path: String, file: String, editing
 	for included_file in included_files:
 		var new_path = path.get_base_dir().path_join(included_file).simplify_path()
 		if included_file.begins_with("/") or included_file.begins_with("\\"):
-			new_path = base_path
+			if not base_path:
+				continue
+			new_path = base_path.path_join(included_file).simplify_path()
 		if not included_file in visited_files and FileAccess.file_exists(new_path):
 			suggestions.merge(_get_code_completion_suggestions(
 					new_path,

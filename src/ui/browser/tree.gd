@@ -41,7 +41,10 @@ func populate_tree(path: String, parent: TreeItem = null, first: bool = true) ->
 		last_path = path
 		clear()
 		parent = create_item()
+		parent.disable_folding = true
 	var item = _create_folder_item(path, parent)
+	if first:
+		item.disable_folding = true
 
 	for dir in DirAccess.get_directories_at(path):
 		populate_tree(path.path_join(dir), item, false)

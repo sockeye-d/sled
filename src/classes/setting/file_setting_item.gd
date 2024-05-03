@@ -22,6 +22,8 @@ func _create_control() -> Control:
 	hbox.add_child(line_edit)
 	hbox.add_child(button)
 	
+	self.setting_changed.connect(func(new_value): line_edit.text = new_value)
+	
 	return hbox
 
 

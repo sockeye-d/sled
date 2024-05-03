@@ -125,13 +125,16 @@ func _on_confirmation_dialog_custom_action(action: StringName) -> void:
 
 
 func _on_code_editor_text_changed() -> void:
-	if old_text.length() < code_editor.text.length():
-		code_completion_timer.start()
-		#_on_code_editor_code_completion_requested()
-	else:
-		if not code_completion_timer.is_stopped():
-			code_completion_timer.stop()
-
+	if Settings.auto_code_completion:
+		if old_text.length() < code_editor.text.length():
+			if Settings.code_completion_delay < 0.0001:
+				_on_code_editor_code_completion_requested()
+			else:
+				code_completion_timer.start(Settings.code_completion_delay)
+		else:
+			if not code_completion_timer.is_stopped():
+				code_completion_timer.stop()
+	
 	if code_editor.text == last_saved_text:
 		path_button.remove_theme_font_override(&"font")
 		path_button.text = file_handle.get_path_absolute().get_file()
@@ -152,7 +155,7 @@ func _get_completion_suggestions() -> void:
 			file_handle.get_path_absolute(),
 			code_editor.text,
 			code_editor.get_caret_line(code_editor.get_caret_count() - 1),
-			FileManager.absolute_base_path
+			FileManager.absolute_base_path if Settings.inc_absolute_paths else "",
 			), code_editor)
 	for keyword in GLSLLanguage.base_types:
 		code_editor.add_code_completion_option(CodeEdit.KIND_CLASS, keyword, keyword, Color.WHITE, null, null, 1)

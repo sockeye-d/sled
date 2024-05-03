@@ -12,6 +12,8 @@ func _create_control() -> Control:
 	
 	new_control.text_changed.connect(func(new_text: String): value = new_text)
 	
+	self.setting_changed.connect(func(new_value): new_control.text = new_value)
+	
 	return new_control
 
 

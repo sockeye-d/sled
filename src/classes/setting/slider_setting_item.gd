@@ -16,13 +16,15 @@ func _create_control() -> Control:
 	new_control.step = step
 	new_control.allow_lesser = allow_lesser
 	new_control.allow_greater = allow_greater
-	new_control.slider_value = default_value
-	new_control.changed.emit()
+	new_control._on_changed()
 	
 	if value:
 		new_control.slider_value = value as float
+	else:
+		new_control.slider_value = _get_default_value()
 	
 	new_control.changed_ended.connect(func(): value = new_control.slider_value)
+	self.setting_changed.connect(func(new_value): new_control.slider_value = new_value)
 	
 	return new_control
 

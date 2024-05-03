@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://bhh21mxu6765g"]
+[gd_scene load_steps=21 format=3 uid="uid://bhh21mxu6765g"]
 
 [ext_resource type="Theme" uid="uid://brmolr535bgtw" path="res://src/main.theme" id="1_8ki8x"]
 [ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="1_k1b4t"]
@@ -70,13 +70,26 @@ settings = Array[Resource("res://src/classes/setting/setting_item.gd")]([SubReso
 
 [sub_resource type="Resource" id="Resource_pv3ng"]
 script = ExtResource("4_cg4by")
-default_value = false
+default_value = true
 text_on = "On"
 text_off = "Off"
 value = null
 name = "Auto code completion"
 identifier = &"auto_code_completion"
 tooltip = "If turned off code completion can still be activated with Ctrl+Space"
+
+[sub_resource type="Resource" id="Resource_k580q"]
+script = ExtResource("7_mc558")
+default_value = 0.0
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+allow_greater = true
+allow_lesser = false
+value = null
+name = "Code completion delay"
+identifier = &"code_completion_delay"
+tooltip = "The time between starting to type and the code completion popup appearing"
 
 [sub_resource type="Resource" id="Resource_1uxen"]
 script = ExtResource("4_cg4by")
@@ -101,7 +114,7 @@ Supports multiple paths, comma-separated."
 [sub_resource type="Resource" id="Resource_ydeaw"]
 script = ExtResource("2_qdoe0")
 name = "Behavior"
-settings = Array[Resource("res://src/classes/setting/setting_item.gd")]([SubResource("Resource_pv3ng"), SubResource("Resource_1uxen"), SubResource("Resource_6tmdd")])
+settings = Array[Resource("res://src/classes/setting/setting_item.gd")]([SubResource("Resource_pv3ng"), SubResource("Resource_k580q"), SubResource("Resource_1uxen"), SubResource("Resource_6tmdd")])
 
 [node name="SettingsWindow" type="Window"]
 title = "Settings"

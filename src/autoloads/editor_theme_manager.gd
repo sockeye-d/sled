@@ -7,7 +7,6 @@ signal theme_changed(new_theme: String)
 
 const DEFAULT_THEME: String = "vs code dark"
 const THEMES: ThemeLibrary = preload("res://src/themes/themes.tres")
-const NEW_FONT_VARIATION_2 = preload("res://src/new_font_variation2.tres")
 const LIGATURE_SHORTHANDS: Dictionary = {
 	"ss": "stylistic_set_",
 	"dlig": "discretionary_ligatures",
@@ -48,16 +47,15 @@ func change_theme(theme_name: String):
 
 
 func set_font(font_name: String, ligatures: String = ""):
-	if font_name in OS.get_system_fonts():
-		var sys_font: SystemFont = create_system_font(font_name, "Monospace")
-		var new_font: FontVariation = FontVariation.new()
-		new_font.base_font = sys_font
-		
-		var features: Dictionary = convert_tags_to_names(new_font.get_supported_feature_list())
-		new_font.opentype_features = _convert_ligatures(features, ligatures)
+	var sys_font: SystemFont = create_system_font(font_name, "Monospace")
+	var new_font: FontVariation = FontVariation.new()
+	new_font.base_font = sys_font
+	
+	var features: Dictionary = convert_tags_to_names(new_font.get_supported_feature_list())
+	new_font.opentype_features = _convert_ligatures(features, ligatures)
 
-		# Have to load it because it's just a path
-		theme.set_font(&"font", &"CodeEdit", new_font)
+	# Have to load it because it's just a path
+	theme.set_font(&"font", &"CodeEdit", new_font)
 
 
 func create_system_font(font_name: String, fallback: String = "") -> SystemFont:

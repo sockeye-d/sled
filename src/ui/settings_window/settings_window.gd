@@ -63,9 +63,18 @@ func add_custom_settings():
 					EditorThemeManager.change_theme(new_theme)
 				)
 	settings_items.theme.select_text(EditorThemeManager.DEFAULT_THEME)
+	settings_items.theme.default_value = settings_items.theme.value
 	
-	for font in OS.get_system_fonts():
-		settings_items.font.options.append(font)
+	settings_items.font.options.append("Monospace")
+	var fonts = OS.get_system_fonts()
+	var cascadia_code_index = -1
+	for font_index in fonts.size():
+		print(fonts[font_index].to_lower())
+		if fonts[font_index].to_lower() == "cascadia code":
+			cascadia_code_index = font_index
+		settings_items.font.options.append(fonts[font_index])
+	
+	settings_items.font.default_value = cascadia_code_index + 1
 	
 	settings_items.font.setting_changed.connect(
 			func(new_value: int):
@@ -98,9 +107,18 @@ func populate_settings(category: SettingCategory) -> void:
 		button.tooltip_text = setting.tooltip
 		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		
+		var reset_button = HighlightButton.new()
+		reset_button.icon = Icons.reset_value
+		reset_button.tooltip_text = "Reset to default"
+		reset_button.visible = not setting.value == setting._get_default_value()
+		reset_button.pressed.connect(func(): setting.value = setting._get_default_value())
+		
 		var container = HBoxContainer.new()
 		container.add_child(button)
+		container.add_child(reset_button)
 		container.add_child(setting.control)
+		setting.setting_changed.connect(func(new_value): reset_button.visible = not new_value == setting._get_default_value())
+		
 		setting_option_container.add_child(container)
 
 

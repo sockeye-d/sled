@@ -118,8 +118,6 @@ func _init() -> void:
 		changed.connect(_on_changed)
 	
 	slider_value = value
-	
-	changed_ended.connect(func(): print(slider_value))
 
 
 func _ready() -> void:

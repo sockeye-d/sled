@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="SettingItem" load_steps=2 format=3 uid="uid://cx5xggs5814ek"]
-
-[ext_resource type="Script" path="res://src/classes/setting/setting_item.gd" id="1_0ig53"]
-
-[resource]
-script = ExtResource("1_0ig53")
-name = ""

@@ -18,6 +18,8 @@ func _create_control() -> Control:
 				value = index
 				)
 	
+	self.setting_changed.connect(func(new_value): new_control.selected = new_value)
+	
 	return new_control
 
 
