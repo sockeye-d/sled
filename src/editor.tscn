@@ -215,15 +215,19 @@ layout_mode = 2
 
 [node name="LeftBar" type="HBoxContainer" parent="PanelContainer/MarginContainer/MenuBar"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="SaveButton" type="Button" parent="PanelContainer/MarginContainer/MenuBar/LeftBar"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 3
+tooltip_text = "[bold]Hello in bold![/bold] Hello in normal text!"
 theme_override_styles/focus = SubResource("StyleBoxEmpty_fdh43")
 shortcut = SubResource("Shortcut_i45nw")
 text = "Save"
 flat = true
+alignment = 0
+text_overrun_behavior = 3
 
 [node name="RightBar" type="HBoxContainer" parent="PanelContainer/MarginContainer/MenuBar"]
 layout_mode = 2
@@ -233,8 +237,11 @@ alignment = 2
 [node name="PathButton" type="Button" parent="PanelContainer/MarginContainer/MenuBar/RightBar"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "path"
 flat = true
+alignment = 2
+text_overrun_behavior = 3
 
 [node name="CodeEditor" type="CodeEdit" parent="."]
 unique_name_in_owner = true
@@ -242,6 +249,7 @@ auto_translate_mode = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+text = "hello there"
 scroll_smooth = true
 caret_blink = true
 syntax_highlighter = SubResource("CodeHighlighter_i4v8i")

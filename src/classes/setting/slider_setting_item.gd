@@ -23,8 +23,8 @@ func _create_control() -> Control:
 	else:
 		new_control.slider_value = _get_default_value()
 	
-	new_control.changed_ended.connect(func(): value = new_control.slider_value)
-	self.setting_changed.connect(func(new_value): new_control.slider_value = new_value)
+	new_control.changed_ended.connect(func(): value = control.slider_value)
+	self.setting_changed.connect(func(new_value): control.slider_value = new_value)
 	
 	return new_control
 

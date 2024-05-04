@@ -30,7 +30,7 @@ static func import_theme(
 			var key_value: PackedStringArray = line.replace(" ", "") .split("=")
 			if not key_value.size() == 2:
 				continue
-			var value = Color(key_value[1].trim_prefix('"').trim_suffix('"'))
+			var value = Color(key_value[1].strip_edges().trim_prefix('"').trim_suffix('"'))
 			theme_dict[key_value[0]] = value
 			if highlighter.get(key_value[0]) == null:
 				theme_overrides[key_value[0]] = value

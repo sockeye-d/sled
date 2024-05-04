@@ -25,6 +25,7 @@ NotificationManager="*res://src/autoloads/notification_manager.gd"
 EditorThemeManager="*res://src/autoloads/editor_theme_manager.gd"
 Settings="*res://src/autoloads/settings_manager.gd"
 FileManager="*res://src/autoloads/file_manager.gd"
+TooltipManager="*res://src/autoloads/tooltip_manager.gd"
 
 [display]
 

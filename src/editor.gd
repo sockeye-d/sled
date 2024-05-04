@@ -50,9 +50,7 @@ func _ready() -> void:
 	if EditorThemeManager:
 		EditorThemeManager.theme_changed.connect(load_theme)
 	
-	#for char in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split():
-		#code_editor.code_completion_prefixes.append(char)
-	#code_editor.code_completion_prefixes.append_array([".", ",", "(", "=", "$", "@", "\"", "\'"])
+	Settings.settings_window.setting_changed.connect(_on_setting_changed)
 
 
 func load_file(path: String) -> void:
@@ -94,7 +92,6 @@ func save(path: String = "") -> void:
 	file_handle.seek(0)
 	file_handle.store_string(code_editor.text)
 	file_handle.flush()
-
 	last_saved_text = code_editor.text
 
 	NotificationManager.notify("Saved %s" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_NORMAL)
@@ -107,6 +104,16 @@ func load_theme(file: String) -> void:
 		ThemeImporter.import_theme(file, code_editor, GLSLLanguage.base_types, GLSLLanguage.keywords, GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
 		if not code_editor.syntax_highlighter.has_color_region("#"):
 			code_editor.syntax_highlighter.add_color_region("#", "", get_theme_color("background_color").lightened(0.5))
+
+
+func _on_setting_changed(identifier: StringName, new_value) -> void:
+	match identifier:
+		&"show_line_numbers":
+			code_editor.gutters_draw_line_numbers = new_value
+		&"zero_pad_line_numbers":
+			code_editor.gutters_zero_pad_line_numbers = new_value
+		&"caret_style":
+			code_editor.caret_type = new_value as TextEdit.CaretType
 
 
 func _on_confirmation_dialog_canceled() -> void:

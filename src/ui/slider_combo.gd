@@ -75,10 +75,10 @@ func _init() -> void:
 	if margin_container == null:
 		margin_container = MarginContainer.new()
 		margin_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		margin_container.add_theme_constant_override("margin_left",   4)
-		margin_container.add_theme_constant_override("margin_right",  4)
-		margin_container.add_theme_constant_override("margin_top",    4)
-		margin_container.add_theme_constant_override("margin_bottom", 4)
+		margin_container.add_theme_constant_override("margin_left",   0)
+		margin_container.add_theme_constant_override("margin_right",  0)
+		margin_container.add_theme_constant_override("margin_top",    0)
+		margin_container.add_theme_constant_override("margin_bottom", 0)
 		outer_container.add_child(margin_container)
 	
 	if container == null:

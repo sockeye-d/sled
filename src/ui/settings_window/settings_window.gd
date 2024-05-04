@@ -54,11 +54,16 @@ func populate_setting_categories() -> void:
 
 func add_custom_settings():
 	var themes := EditorThemeManager.THEMES
+	settings_items.theme.options.append("Custom")
 	for t in themes.themes:
 		settings_items.theme.options.append(t)
 	settings_items.theme.setting_changed.connect.call_deferred(
-			func(_new_value):
-				var new_theme = settings_items.theme.get_text()
+			func(new_value):
+				var new_theme: String = settings_items.theme.options[new_value]
+				if new_theme == "Custom":
+					await RenderingServer.frame_post_draw
+					EditorThemeManager.change_theme_from_path.call_deferred(settings.custom_theme_path)
+					return
 				if new_theme:
 					EditorThemeManager.change_theme(new_theme)
 				)
@@ -69,7 +74,6 @@ func add_custom_settings():
 	var fonts = OS.get_system_fonts()
 	var cascadia_code_index = -1
 	for font_index in fonts.size():
-		print(fonts[font_index].to_lower())
 		if fonts[font_index].to_lower() == "cascadia code":
 			cascadia_code_index = font_index
 		settings_items.font.options.append(fonts[font_index])
@@ -78,7 +82,7 @@ func add_custom_settings():
 	
 	settings_items.font.setting_changed.connect(
 			func(new_value: int):
-				EditorThemeManager.set_font(settings_items.font.get_text(), settings.ligatures)
+				EditorThemeManager.set_font(settings_items.font.options[new_value], settings.ligatures)
 				)
 	
 	settings_items.ligatures.setting_changed.connect(
@@ -117,7 +121,14 @@ func populate_settings(category: SettingCategory) -> void:
 		container.add_child(button)
 		container.add_child(reset_button)
 		container.add_child(setting.control)
-		setting.setting_changed.connect(func(new_value): reset_button.visible = not new_value == setting._get_default_value())
+		setting.setting_changed.connect(
+			func(new_value):
+				if reset_button:
+					reset_button.visible = not new_value == setting._get_default_value()
+				)
+		
+		if setting is DividerSettingItem:
+			button.add_theme_font_override(&"font", Fonts.main_font_bold)
 		
 		setting_option_container.add_child(container)
 

@@ -12,10 +12,16 @@ func _create_control() -> Control:
 	
 	new_control.text_changed.connect(func(new_text: String): value = new_text)
 	
-	self.setting_changed.connect(func(new_value): new_control.text = new_value)
+	if not setting_changed.is_connected(_on_setting_changed):
+		setting_changed.connect(_on_setting_changed)
 	
 	return new_control
 
 
 func _get_default_value() -> String:
 	return default_value
+
+
+func _on_setting_changed(new_value: String) -> void:
+	if not new_value == control.text:
+		control.text = new_value

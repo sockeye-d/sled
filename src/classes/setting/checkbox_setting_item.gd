@@ -18,10 +18,10 @@ func _create_control() -> Control:
 	new_control.toggled.connect(
 		func(toggled_on: bool):
 			value = toggled_on
-			new_control.text = text_on if new_control.button_pressed else text_off
+			control.text = text_on if control.button_pressed else text_off
 			)
 	
-	self.setting_changed.connect(func(new_value): new_control.set_pressed_no_signal(new_value))
+	self.setting_changed.connect(func(new_value): control.set_pressed_no_signal(new_value))
 	
 	return new_control
 

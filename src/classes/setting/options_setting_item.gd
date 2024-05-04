@@ -6,7 +6,8 @@ class_name OptionsSettingItem extends SettingItem
 
 
 func _create_control() -> Control:
-	var new_control = OptionButton.new()
+	var new_control := OptionButton.new()
+	new_control.allow_reselect = true
 	for option in options:
 		new_control.add_item(option)
 	
@@ -17,8 +18,10 @@ func _create_control() -> Control:
 			func(index: int):
 				value = index
 				)
-	
-	self.setting_changed.connect(func(new_value): new_control.selected = new_value)
+	setting_changed.connect(
+			func(new_value):
+				control.select(new_value)
+				)
 	
 	return new_control
 
@@ -28,7 +31,9 @@ func _get_default_value() -> int:
 
 
 func get_text() -> String:
-	return options[value if value else default_value]
+	if control:
+		return options[control.selected]
+	return options[value]
 
 
 func select_text(text: String) -> bool:
