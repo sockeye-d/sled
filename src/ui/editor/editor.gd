@@ -18,7 +18,7 @@ signal _continue(action_taken: ConfirmationAction)
 @onready var panel_container: PanelContainer = %PanelContainer
 @onready var save_button: Button = %SaveButton
 @onready var path_button: Button = %PathButton
-@onready var code_editor: CodeEdit = %CodeEditor
+@onready var code_editor: CodeEditor = %CodeEditor
 @onready var confirmation_dialog: ConfirmationDialog = %ConfirmationDialog
 @onready var code_completion_timer: Timer = %CodeCompletionTimer
 
@@ -49,6 +49,12 @@ func _ready() -> void:
 	
 	if EditorThemeManager:
 		EditorThemeManager.theme_changed.connect(load_theme)
+	
+	if EditorManager:
+		EditorManager.save_requested.connect(_on_save_button_pressed)
+	
+	if code_editor:
+		code_editor.save_requested.connect(_on_save_button_pressed)
 	
 	Settings.settings_window.setting_changed.connect(_on_setting_changed)
 
@@ -114,6 +120,17 @@ func _on_setting_changed(identifier: StringName, new_value) -> void:
 			code_editor.gutters_zero_pad_line_numbers = new_value
 		&"caret_style":
 			code_editor.caret_type = new_value as TextEdit.CaretType
+		&"scroll_past_eof":
+			code_editor.scroll_past_end_of_file = new_value
+		&"text_wrapping_mode":
+			if new_value == 0:
+				code_editor.wrap_mode = TextEdit.LINE_WRAPPING_NONE
+			else:
+				code_editor.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+				code_editor.autowrap_mode = new_value as TextServer.AutowrapMode
+				print(new_value as TextServer.AutowrapMode)
+		&"indent_wrapped_lines":
+			code_editor.indent_wrapped_lines = new_value
 
 
 func _on_confirmation_dialog_canceled() -> void:
@@ -171,5 +188,4 @@ func _get_completion_suggestions() -> void:
 
 
 func _on_save_button_pressed() -> void:
-	if code_editor.has_focus() or panel_container.has_focus():
-		save()
+	save()

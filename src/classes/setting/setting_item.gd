@@ -7,7 +7,7 @@ signal setting_changed(new_value)
 @export_storage var value:
 	set(v):
 		value = v
-		setting_changed.emit(v)
+		setting_changed.emit(value)
 	get:
 		return value
 var control: Control
@@ -30,4 +30,4 @@ func _create_control() -> Control:
 
 
 func _get_default_value():
-	return -1000
+	return null

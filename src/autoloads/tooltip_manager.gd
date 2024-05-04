@@ -3,7 +3,7 @@ extends Node
 
 func _ready() -> void:
 	get_tree().node_added.connect(
-			(func(node: Node):
+			func(node: Node):
 				if (
 					node is Label
 					and node.get_parent() is PopupPanel
@@ -24,11 +24,10 @@ func _ready() -> void:
 					
 					new_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 					
-					
-					p.add_child(new_label)
 					# Hide instead of freeing to avoid artifacts
 					node.hide()
-					new_label.update_minimum_size()
+					p.add_child.call_deferred(new_label)
+					new_label.update_minimum_size.call_deferred()
 					
 					await RenderingServer.frame_post_draw
 					
@@ -37,8 +36,5 @@ func _ready() -> void:
 					# Fanciness
 					new_label.visible_ratio = 0.0
 					new_label.modulate.a = 1.0
-					var t = new_label.create_tween()
-					t.tween_property(new_label, "visible_ratio", 1.0, 0.0025 * text.length())
-					
-					).call_deferred
+					new_label.create_tween().tween_property(new_label, "visible_ratio", 1.0, 0.0025 * text.length())
 					)

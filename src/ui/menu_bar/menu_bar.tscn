@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dfkt6ernbrafa"]
+[gd_scene load_steps=5 format=3 uid="uid://dfkt6ernbrafa"]
 
 [ext_resource type="Script" path="res://src/ui/menu_bar/menu_bar.gd" id="1_j76tb"]
 [ext_resource type="Script" path="res://src/ui/menu_bar/file.gd" id="2_6qdxv"]
 [ext_resource type="Script" path="res://src/ui/menu_bar/open_recent.gd" id="3_errp1"]
+[ext_resource type="Script" path="res://src/ui/menu_bar/view.gd" id="4_7pvbc"]
 
 [node name="MenuBar" type="MenuBar"]
 auto_translate_mode = 1
@@ -26,5 +27,21 @@ auto_translate_mode = 1
 size = Vector2i(121, 133)
 item_count = 1
 item_0/text = "Preferences"
+
+[node name="View" type="PopupMenu" parent="."]
+auto_translate_mode = 1
+size = Vector2i(121, 133)
+hide_on_checkable_item_selection = false
+item_count = 2
+item_0/text = "Left editor visibility"
+item_0/checkable = 1
+item_0/checked = true
+item_0/disabled = true
+item_1/text = "Right editor visibility"
+item_1/checkable = 1
+item_1/checked = true
+item_1/id = 1
+item_1/disabled = true
+script = ExtResource("4_7pvbc")
 
 [node name="FileDialog" type="FileDialog" parent="."]

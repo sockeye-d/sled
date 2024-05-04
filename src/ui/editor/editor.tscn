@@ -1,14 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://cfbphdd74su8c"]
+[gd_scene load_steps=5 format=3 uid="uid://cfbphdd74su8c"]
 
-[ext_resource type="Script" path="res://src/editor.gd" id="1_rsqc6"]
+[ext_resource type="Script" path="res://src/ui/editor/editor.gd" id="1_rsqc6"]
+[ext_resource type="Script" path="res://src/ui/editor/code_editor.gd" id="2_didrn"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fdh43"]
-
-[sub_resource type="InputEventAction" id="InputEventAction_ryvtn"]
-action = &"save"
-
-[sub_resource type="Shortcut" id="Shortcut_i45nw"]
-events = [SubResource("InputEventAction_ryvtn")]
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_i4v8i"]
 number_color = Color(0.682353, 0.505882, 1, 1)
@@ -223,7 +218,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "[bold]Hello in bold![/bold] Hello in normal text!"
 theme_override_styles/focus = SubResource("StyleBoxEmpty_fdh43")
-shortcut = SubResource("Shortcut_i45nw")
 text = "Save"
 flat = true
 alignment = 0
@@ -262,6 +256,7 @@ indent_use_spaces = true
 indent_automatic = true
 indent_automatic_prefixes = Array[String](["{", "("])
 auto_brace_completion_highlight_matching = true
+script = ExtResource("2_didrn")
 
 [node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true

@@ -21,7 +21,11 @@ func _create_control() -> Control:
 			control.text = text_on if control.button_pressed else text_off
 			)
 	
-	self.setting_changed.connect(func(new_value): control.set_pressed_no_signal(new_value))
+	self.setting_changed.connect(
+		func(new_value):
+			control.set_pressed_no_signal(new_value)
+			control.text = text_on if control.button_pressed else text_off
+			)
 	
 	return new_control
 

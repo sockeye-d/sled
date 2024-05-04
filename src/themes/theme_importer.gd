@@ -39,8 +39,6 @@ static func import_theme(
 		
 		for key in theme_overrides:
 			_add_color(key, &"CodeEdit", theme_overrides[key])
-		
-		RenderingServer.set_default_clear_color(theme_dict.background_color.darkened(0.2))
 	
 		for type in types:
 			highlighter.add_member_keyword_color(type, theme_dict.base_type_color)

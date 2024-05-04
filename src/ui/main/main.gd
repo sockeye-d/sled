@@ -9,6 +9,9 @@ class_name Main extends Control
 @onready var right_editor: Editor = %RightEditor
 
 
+var sbs_open: bool = false
+
+
 func _ready() -> void:
 	editors.hide()
 	FileManager.changed_paths.connect(
@@ -23,17 +26,37 @@ func _ready() -> void:
 				nothing_to_show_label.visible = not found_any
 				main_container.visible = found_any
 				)
+	
+	if EditorManager:
+		EditorManager.editor_visible_change_requested.connect(
+				func(index: int, new_visible: bool):
+					match index:
+						0:
+							left_editor.visible = new_visible
+						1:
+							right_editor.visible = new_visible
+					)
 
 
 func open_file(path: String) -> void:
 	if path.get_extension() == "":
 		return
 	editors.show()
-	if path.get_extension() in "fshvsh":
-		var path_no_ext = path.get_basename()
-		left_editor.load_file(path_no_ext + ".fsh")
-		right_editor.load_file(path_no_ext + ".vsh")
-		right_editor.show()
-	else:
-		left_editor.load_file(path)
-		right_editor.hide()
+	
+	var ext: String = path.get_extension().to_lower()
+	for pair in Settings.sbs_opening_file_exts.split(","):
+		var pair_arr: PackedStringArray = pair.split(":", false, 2)
+		
+		if pair_arr[0].to_lower() == ext or pair_arr[-1].to_lower() == ext:
+			var path_no_ext = path.get_basename()
+			left_editor.load_file("%s.%s" % [path_no_ext, pair_arr[0]])
+			right_editor.load_file("%s.%s" % [path_no_ext, pair_arr[-1]])
+			right_editor.show()
+			sbs_open = true
+			EditorManager.opened_side_by_side.emit()
+			return
+
+	left_editor.load_file(path)
+	right_editor.hide()
+	sbs_open = false
+	EditorManager.opened_single.emit()
