@@ -78,7 +78,6 @@ func load_file(path: String) -> void:
 	file_handle = FileAccess.open(path, FileAccess.READ_WRITE)
 
 	if file_handle == null:
-		var err: Error = FileAccess.get_open_error()
 		NotificationManager.notify("%s failed to open" % path.get_file(), NotificationManager.TYPE_ERROR)
 		file_handle = old_file_handle
 		code_editor.editable = false

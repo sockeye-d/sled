@@ -60,7 +60,7 @@ func _confirmed():
 
 func _on_search_box_text_changed(new_text: String) -> void:
 	string_items.sort_custom(
-			func(a: WeightedText, b: WeightedText):
+			func(a: WeightedText, b: WeightedText) -> bool:
 				if not a.query_text == new_text:
 					a.query_text = new_text
 					a.weight = _search_ranking(new_text, a.text)
@@ -68,6 +68,7 @@ func _on_search_box_text_changed(new_text: String) -> void:
 				if not b.query_text == new_text:
 					b.query_text = new_text
 					b.weight = _search_ranking(new_text, b.text)
+				
 				return a.weight > b.weight
 				)
 	
@@ -75,7 +76,8 @@ func _on_search_box_text_changed(new_text: String) -> void:
 	if item_list.item_count > 0:
 		item_list.select(0)
 		_on_item_list_item_selected(0)
-
+	item_list.get_v_scroll_bar().value = 0.0
+	
 
 func _set_item_list_items(arr: Array[WeightedText]) -> void:
 	item_list.clear()
@@ -109,38 +111,39 @@ func _on_search_box_gui_input(event: InputEvent) -> void:
 				return
 			
 			if event.is_action_pressed("ui_text_caret_up"):
-				var selected: int = item_list.get_selected_items()[0]
-				item_list.select(posmod(selected - 1, item_list.item_count))
-				_on_item_list_item_selected(item_list.get_selected_items()[0])
-				search_box.grab_focus.call_deferred()
-				set_input_as_handled()
+				if item_list.get_selected_items():
+					var selected: int = item_list.get_selected_items()[0]
+					item_list.select(posmod(selected - 1, item_list.item_count))
+					_on_item_list_item_selected(item_list.get_selected_items()[0])
+					search_box.grab_focus.call_deferred()
+					set_input_as_handled()
+				else:
+					item_list.select(0)
 			
 			if event.is_action_pressed("ui_text_caret_down"):
-				var selected: int = item_list.get_selected_items()[0]
-				item_list.select(posmod(selected + 1, item_list.item_count))
-				_on_item_list_item_selected(item_list.get_selected_items()[0])
-				search_box.grab_focus.call_deferred()
-				set_input_as_handled()
+				if item_list.get_selected_items():
+					var selected: int = item_list.get_selected_items()[0]
+					item_list.select(posmod(selected + 1, item_list.item_count))
+					_on_item_list_item_selected(item_list.get_selected_items()[0])
+					search_box.grab_focus.call_deferred()
+					set_input_as_handled()
+				else:
+					item_list.select(0)
 
 
 func _search_ranking(query: String, text: String) -> float:
-	query = query.to_lower()
-	text = text.to_lower()
 	var weight: float = 0.0
 	for text_i in text.length():
-		var weight_weight: float = 1.0
 		for query_i in query.length():
 			if query_i + text_i > text.length() - 1:
 				break
 			
-			#if query[query_i] in text:
-				#weight += weight_weight / text.length()
-			
-			if query[query_i] == text[text_i + query_i]:
-				weight += query_i
-				weight_weight += 0.5
+			if query[query_i].nocasecmp_to(text[text_i + query_i]) == 0:
+				weight += (query_i - 1)
+			else:
+				break
 	
-	return weight / text.length()
+	return weight
 
 
 class WeightedText extends RefCounted:

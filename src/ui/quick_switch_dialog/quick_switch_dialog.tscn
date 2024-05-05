@@ -33,12 +33,7 @@ size_flags_vertical = 3
 vertical = true
 script = ExtResource("2_l1gdf")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/RelativeSplitContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="ItemList" type="ItemList" parent="VBoxContainer/RelativeSplitContainer/ScrollContainer"]
+[node name="ItemList" type="ItemList" parent="VBoxContainer/RelativeSplitContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -52,6 +47,7 @@ size_flags_vertical = 3
 [node name="PreviewScrollContainer" type="ScrollContainer" parent="VBoxContainer/RelativeSplitContainer/PreviewContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+follow_focus = true
 
 [node name="Preview" type="RichTextLabel" parent="VBoxContainer/RelativeSplitContainer/PreviewContainer/PreviewScrollContainer"]
 unique_name_in_owner = true
@@ -63,5 +59,5 @@ autowrap_mode = 0
 [connection signal="gui_input" from="VBoxContainer/SearchBox" to="." method="_on_search_box_gui_input"]
 [connection signal="text_changed" from="VBoxContainer/SearchBox" to="." method="_on_search_box_text_changed"]
 [connection signal="text_submitted" from="VBoxContainer/SearchBox" to="." method="_on_search_box_text_submitted"]
-[connection signal="item_activated" from="VBoxContainer/RelativeSplitContainer/ScrollContainer/ItemList" to="." method="_on_item_list_item_activated"]
-[connection signal="item_selected" from="VBoxContainer/RelativeSplitContainer/ScrollContainer/ItemList" to="." method="_on_item_list_item_selected"]
+[connection signal="item_activated" from="VBoxContainer/RelativeSplitContainer/ItemList" to="." method="_on_item_list_item_activated"]
+[connection signal="item_selected" from="VBoxContainer/RelativeSplitContainer/ItemList" to="." method="_on_item_list_item_selected"]
