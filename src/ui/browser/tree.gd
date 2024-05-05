@@ -11,6 +11,7 @@ enum Buttons {
 	RENAME_FOLDER,
 	DELETE_FILE,
 	DELETE_FOLDER,
+	SHOW_IN_FILE_MANAGER,
 }
 
 
@@ -28,6 +29,27 @@ func _init() -> void:
 			scroll_bar = child
 			break
 	scroll_bar.visibility_changed.connect((func(node): node.hide()).bind(scroll_bar))
+
+
+func _get_drag_data(at_position: Vector2) -> Variant:
+	if Settings.browser_drag_drop_mode == 0:
+		return
+	var data := paths.get_value(get_selected()) as String
+	
+	if data.begins_with(FileManager.absolute_base_path) and Settings.browser_drag_drop_mode == 2:
+		data = data.trim_prefix(FileManager.absolute_base_path)
+		data = '#include "%s"' % data
+	elif data.begins_with(FileManager.current_path):
+		data = data.trim_prefix(FileManager.current_path)
+	else:
+		return
+	
+	var preview: Label = Label.new()
+	preview.text = data
+	
+	set_drag_preview(preview)
+	
+	return data
 
 
 func _process(_delta: float) -> void:
@@ -65,6 +87,7 @@ func repopulate_tree() -> void:
 
 func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
 	var file_item = create_item(parent)
+	file_item.add_button(0, Icons.open_dir, Buttons.SHOW_IN_FILE_MANAGER)
 	file_item.add_button(0, Icons.rename, Buttons.RENAME_FILE)
 	file_item.add_button(0, Icons.delete, Buttons.DELETE_FILE)
 	file_item.set_text(0, path.get_file())
@@ -76,6 +99,7 @@ func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
 func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
 	var item = create_item(parent)
 	item.set_text(0, path.substr(path.rfind("/") + 1))
+	item.add_button(0, Icons.open_dir, Buttons.SHOW_IN_FILE_MANAGER)	
 	item.add_button(0, Icons.add_file, Buttons.ADD_FILE)
 	item.add_button(0, Icons.add_folder, Buttons.ADD_FOLDER)
 	item.add_button(0, Icons.rename, Buttons.RENAME_FOLDER)
@@ -116,6 +140,8 @@ func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_ind
 		Buttons.DELETE_FOLDER:
 			item.get_parent().remove_child(item)
 			OS.move_to_trash(paths.get_value(item))
+		Buttons.SHOW_IN_FILE_MANAGER:
+			OS.shell_show_in_file_manager(ProjectSettings.globalize_path(paths.get_value(item)))
 
 
 func _rename_item(item: TreeItem, title: String) -> void:
@@ -186,4 +212,12 @@ func _on_item_activated() -> void:
 
 
 func _on_item_selected() -> void:
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		while true:
+			var input: InputEvent = await gui_input
+			if input is InputEventMouseButton:
+				if not input.pressed:
+					break
+		if not has_focus():
+			return
 	file_opened.emit(paths.get_value(get_selected()))

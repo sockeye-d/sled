@@ -8,6 +8,7 @@ signal setting_changed(identifier: StringName, new_value)
 
 @onready var category_container: VBoxContainer = %CategoryContainer
 @onready var setting_option_container: VBoxContainer = %SettingOptionContainer
+@onready var button: Button = %Button
 
 
 @export var repopulate_settings: bool = false:
@@ -22,14 +23,23 @@ var settings: Dictionary
 var settings_items: Dictionary
 
 
+func _init() -> void:
+	close_requested.connect(func(): hide())
+
+
 func _ready() -> void:
 	populate_setting_categories()
-	close_requested.connect(func(): hide())
+	button.pressed.connect(func(): OS.shell_show_in_file_manager(ProjectSettings.globalize_path(Settings.SETTINGS_PATH)))
 
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("escape"):
 		hide()
+
+
+func set_all_to_default() -> void:
+	for item in settings_items:
+		settings_items[item].value = settings_items[item]._get_default_value()
 
 
 func populate_setting_categories() -> void:
@@ -48,15 +58,17 @@ func populate_setting_categories() -> void:
 						)
 			settings_items[setting.identifier] = setting
 	
-	add_custom_settings()
+	init_custom_settings()
 	
 	population_complete.emit()
 
-func add_custom_settings():
+func init_custom_settings():
 	var themes := EditorThemeManager.THEMES
 	settings_items.theme.options.append("Custom")
+	settings_items.theme.options.clear()
 	for t in themes.themes:
 		settings_items.theme.options.append(t)
+	
 	settings_items.theme.setting_changed.connect.call_deferred(
 			func(new_value):
 				var new_theme: String = settings_items.theme.options[new_value]
@@ -95,7 +107,8 @@ func add_custom_settings():
 				EditorThemeManager.theme.default_base_scale = new_value
 				)
 	
-	settings_items.font.select_text((theme.get_font(&"font", &"CodeEdit") as SystemFont).get_font_name())
+	var t = EditorThemeManager.theme
+	settings_items.font.select_text(t.get_font(&"font", &"CodeEdit").get_font_name())
 
 func populate_settings(category: SettingCategory) -> void:
 	NodeUtil.free_children(setting_option_container)
@@ -141,12 +154,15 @@ func add_setting_category(category: SettingCategory) -> void:
 	button.text = category.name
 	button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	
-	category_container.add_child(button)
+	if category_container:
+		category_container.add_child(button)
 	
 	button.pressed.connect(populate_settings.bind(category))
 
 
 func load_settings(new_settings: Dictionary) -> void:
+	if not settings_items:
+		populate_setting_categories()
 	for s in settings:
 		if s in settings_items and s in new_settings:
 			settings_items[s].value = new_settings[s]

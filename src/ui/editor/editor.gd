@@ -56,7 +56,8 @@ func _ready() -> void:
 	if code_editor:
 		code_editor.save_requested.connect(_on_save_button_pressed)
 	
-	Settings.settings_window.setting_changed.connect(_on_setting_changed)
+	_reset_all_settings()
+	Settings.settings_window.setting_changed.connect(func(identifier: StringName, new_value): _reset_all_settings())
 
 
 func load_file(path: String) -> void:
@@ -78,23 +79,36 @@ func load_file(path: String) -> void:
 
 	if file_handle == null:
 		var err: Error = FileAccess.get_open_error()
-		NotificationManager.notify("%s failed to open" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_ERROR)
+		NotificationManager.notify("%s failed to open" % path.get_file(), NotificationManager.TYPE_ERROR)
 		file_handle = old_file_handle
+		code_editor.editable = false
 		return
-	else:
-		NotificationManager.notify("Opened %s" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_NORMAL)
-		if old_file_handle:
-			old_file_handle.close()
+
+	NotificationManager.notify("Opened %s" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_NORMAL)
+	if old_file_handle:
+		old_file_handle.close()
+	code_editor.editable = true
 	code_editor.text = file_handle.get_as_text(true)
 	last_saved_text = code_editor.text
 	old_text = code_editor.text
 
 	path_button.text = path.get_file()
+	
+	if Settings.syntax_highlighting_enabled:
+		if path.get_extension() in Settings.syntax_highlighted_files.split(",", false):
+			if code_editor.syntax_highlighter == null:
+				load_theme(ThemeImporter.last_imported_theme)
+		else:
+			code_editor.syntax_highlighter = null
+	else:
+		code_editor.syntax_highlighter = null
 
 
 func save(path: String = "") -> void:
 	if path:
 		file_handle = FileAccess.open(path, FileAccess.READ_WRITE)
+	if not file_handle:
+		return
 	file_handle.seek(0)
 	file_handle.store_string(code_editor.text)
 	file_handle.flush()
@@ -112,25 +126,18 @@ func load_theme(file: String) -> void:
 			code_editor.syntax_highlighter.add_color_region("#", "", get_theme_color("background_color").lightened(0.5))
 
 
-func _on_setting_changed(identifier: StringName, new_value) -> void:
-	match identifier:
-		&"show_line_numbers":
-			code_editor.gutters_draw_line_numbers = new_value
-		&"zero_pad_line_numbers":
-			code_editor.gutters_zero_pad_line_numbers = new_value
-		&"caret_style":
-			code_editor.caret_type = new_value as TextEdit.CaretType
-		&"scroll_past_eof":
-			code_editor.scroll_past_end_of_file = new_value
-		&"text_wrapping_mode":
-			if new_value == 0:
-				code_editor.wrap_mode = TextEdit.LINE_WRAPPING_NONE
-			else:
-				code_editor.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
-				code_editor.autowrap_mode = new_value as TextServer.AutowrapMode
-				print(new_value as TextServer.AutowrapMode)
-		&"indent_wrapped_lines":
-			code_editor.indent_wrapped_lines = new_value
+func _reset_all_settings() -> void:
+	code_editor.gutters_draw_line_numbers = Settings.show_line_numbers
+	code_editor.gutters_zero_pad_line_numbers = Settings.zero_pad_line_numbers
+	code_editor.caret_type = Settings.caret_style
+	code_editor.scroll_past_end_of_file = Settings.scroll_past_eof
+	var mode = Settings.text_wrapping_mode
+	if mode == 0:
+		code_editor.wrap_mode = TextEdit.LINE_WRAPPING_NONE
+	else:
+		code_editor.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+		code_editor.autowrap_mode = mode as TextServer.AutowrapMode
+	code_editor.indent_wrapped_lines = Settings.indent_wrapped_lines
 
 
 func _on_confirmation_dialog_canceled() -> void:

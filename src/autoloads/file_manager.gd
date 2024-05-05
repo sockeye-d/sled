@@ -8,6 +8,7 @@ const MAX_RECENT_ITEMS: int = 8
 signal changed_paths()
 signal paths_changed()
 signal loaded_recent_paths(found_any: bool)
+signal file_open_requested(path: String)
 
 
 var last_opened_paths: PackedStringArray = []
@@ -24,6 +25,21 @@ func _ready() -> void:
 		change_path(last_opened_paths[0])
 	else:
 		loaded_recent_paths.emit(false)
+
+
+func request_open_file(path: String):
+	file_open_requested.emit(path)
+
+
+func open_quick_switch():
+	var qs: QuickSwitchDialog = preload("res://src/ui/quick_switch_dialog/quick_switch_dialog.tscn").instantiate()
+	qs.path = current_path
+	qs.base_path = current_path
+	add_child(qs)
+	qs.popup_centered()
+	var path = await qs.file_selected
+	if path:
+		request_open_file(current_path.path_join(path))
 
 
 func change_path(new_path: String) -> void:
@@ -65,7 +81,7 @@ func change_path_browse() -> void:
 					)
 
 
-func get_base_path(path: String, valid_names: PackedStringArray = Settings.settings.base_paths.split(",", false)) -> String:
+func get_base_path(path: String, valid_names: PackedStringArray = Settings.base_paths.split(",", false)) -> String:
 	for dir in DirAccess.get_directories_at(path):
 		if dir in valid_names:
 			return path.path_join(dir)

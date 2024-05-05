@@ -27,6 +27,8 @@ func _ready() -> void:
 				main_container.visible = found_any
 				)
 	
+	FileManager.file_open_requested.connect(open_file)
+	
 	if EditorManager:
 		EditorManager.editor_visible_change_requested.connect(
 				func(index: int, new_visible: bool):
@@ -35,6 +37,11 @@ func _ready() -> void:
 							left_editor.visible = new_visible
 						1:
 							right_editor.visible = new_visible
+					)
+		
+		EditorManager.browser_visible_change_requested.connect(
+				func(new_visible: bool):
+					browser.visible = new_visible
 					)
 
 

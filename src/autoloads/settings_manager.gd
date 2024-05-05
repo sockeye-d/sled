@@ -4,7 +4,7 @@ extends Node
 const SETTINGS_PATH: String = "user://settings.sled"
 
 
-@onready var settings_window: SettingsWindow = preload("res://src/ui/settings_window/settings_window.tscn").instantiate()
+var settings_window: SettingsWindow
 var settings: Dictionary:
 	get:
 		if settings_window:
@@ -15,16 +15,22 @@ var settings_items: Dictionary:
 		if settings_window:
 			return settings_window.settings_items
 		return { }
+var could_load_settings: bool = false
+
+
+func _init() -> void:
+	settings_window = preload("res://src/ui/settings_window/settings_window.tscn").instantiate()
+	settings_window.hide()
+	load_settings()
 
 
 func _ready() -> void:
-	settings_window.hide()
 	get_tree().root.add_child.call_deferred(settings_window)
-	
-	await RenderingServer.frame_pre_draw
-	load_settings()
-	
 	settings_window.setting_changed.connect(func(_identifier: String, _new_value): save_settings())
+	
+	if not could_load_settings:
+		await RenderingServer.frame_post_draw
+		settings_window.set_all_to_default()
 
 
 func show_settings_window():
@@ -54,6 +60,7 @@ func load_settings(path: String = SETTINGS_PATH) -> Error:
 	if file_handle:
 		var new_settings = file_handle.get_var()
 		settings_window.load_settings(new_settings)
+		could_load_settings = true
 		return OK
 	else:
 		return FileAccess.get_open_error()

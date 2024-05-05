@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://cfbphdd74su8c"]
+[gd_scene load_steps=6 format=3 uid="uid://cfbphdd74su8c"]
 
 [ext_resource type="Script" path="res://src/ui/editor/editor.gd" id="1_rsqc6"]
 [ext_resource type="Script" path="res://src/ui/editor/code_editor.gd" id="2_didrn"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fdh43"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kv086"]
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_i4v8i"]
 number_color = Color(0.682353, 0.505882, 1, 1)
@@ -216,7 +218,7 @@ size_flags_horizontal = 3
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "[bold]Hello in bold![/bold] Hello in normal text!"
+tooltip_text = "Save the file (Ctrl+S)"
 theme_override_styles/focus = SubResource("StyleBoxEmpty_fdh43")
 text = "Save"
 flat = true
@@ -232,6 +234,7 @@ alignment = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_kv086")
 text = "path"
 flat = true
 alignment = 2

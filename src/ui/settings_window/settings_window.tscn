@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://bhh21mxu6765g"]
+[gd_scene load_steps=39 format=3 uid="uid://bhh21mxu6765g"]
 
 [ext_resource type="Theme" uid="uid://brmolr535bgtw" path="res://src/main.theme" id="1_8ki8x"]
 [ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="1_k1b4t"]
@@ -221,10 +221,47 @@ name = "Side-by-side-opening file extensions"
 identifier = &"sbs_opening_file_exts"
 tooltip = "A list of files to open in two editors instead of one. Normally the fragment shader and the vertex shader. Values within pairs are separated by a colon, pairs are separated by a comma."
 
+[sub_resource type="Resource" id="Resource_w6rj6"]
+script = ExtResource("3_afdq8")
+default_value = 2
+options = PackedStringArray("Disabled", "Full path", "Use #include")
+value = null
+name = "Browser drag & drop mode"
+identifier = &"browser_drag_drop_mode"
+tooltip = "Sets the behavior of dragging a file from the browser into the code editor.
+[b]Disabled: [/b]Completely disables this feature
+[b]Full path: [/b]Will only drop full paths (relative to the open folder)
+[b]Use [code]#include[/code]: [/b]Drops a [code]#include[/code] statement, relative to the base path specified with [b]Base path names[/b]"
+
+[sub_resource type="Resource" id="Resource_ncn2m"]
+script = ExtResource("4_a0mpu")
+value = null
+name = "Syntax highlighting"
+identifier = &"syntax_highlighting_divider"
+tooltip = ""
+
+[sub_resource type="Resource" id="Resource_4h3dn"]
+script = ExtResource("4_cg4by")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Syntax highlighting enabled"
+identifier = &"syntax_highlighting_enabled"
+tooltip = "If on, enables syntax highlighting for files specified with [b]Syntax highlighted files[/b]"
+
+[sub_resource type="Resource" id="Resource_qxxpw"]
+script = ExtResource("4_p6htm")
+default_value = "fsh,vsh,gsh,csh,inc"
+value = null
+name = "Syntax highlighted files"
+identifier = &"syntax_highlighted_files"
+tooltip = "Sets which files get syntax highlighting in a comma-separated list."
+
 [sub_resource type="Resource" id="Resource_ydeaw"]
 script = ExtResource("2_qdoe0")
 name = "Behavior"
-settings = Array[ExtResource("4_m6ucj")]([SubResource("Resource_j8c3w"), SubResource("Resource_pv3ng"), SubResource("Resource_k580q"), SubResource("Resource_qq8tb"), SubResource("Resource_1uxen"), SubResource("Resource_6tmdd"), SubResource("Resource_pkmub"), SubResource("Resource_dx61e")])
+settings = Array[ExtResource("4_m6ucj")]([SubResource("Resource_j8c3w"), SubResource("Resource_pv3ng"), SubResource("Resource_k580q"), SubResource("Resource_qq8tb"), SubResource("Resource_1uxen"), SubResource("Resource_6tmdd"), SubResource("Resource_pkmub"), SubResource("Resource_dx61e"), SubResource("Resource_w6rj6"), SubResource("Resource_ncn2m"), SubResource("Resource_4h3dn"), SubResource("Resource_qxxpw")])
 
 [node name="SettingsWindow" type="Window"]
 title = "Settings"
@@ -266,3 +303,26 @@ layout_mode = 2
 [node name="SettingOptionContainer" type="VBoxContainer" parent="SplitContainer/PanelContainer/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -74.0
+offset_top = -45.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Button" type="Button" parent="MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+text = "Show settings file"

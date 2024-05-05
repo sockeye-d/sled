@@ -1,0 +1,67 @@
+[gd_scene load_steps=3 format=3 uid="uid://crbljbnqdthrc"]
+
+[ext_resource type="Script" path="res://src/ui/quick_switch_dialog/quick_switch_dialog.gd" id="1_50mwx"]
+[ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="2_l1gdf"]
+
+[node name="QuickSwitchDialog" type="ConfirmationDialog"]
+title = "Quick switch"
+initial_position = 4
+size = Vector2i(700, 600)
+visible = true
+max_size = Vector2i(700, 32768)
+ok_button_text = "Open"
+script = ExtResource("1_50mwx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -47.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SearchBox" type="LineEdit" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RelativeSplitContainer" type="SplitContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+vertical = true
+script = ExtResource("2_l1gdf")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/RelativeSplitContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ItemList" type="ItemList" parent="VBoxContainer/RelativeSplitContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PreviewContainer" type="PanelContainer" parent="VBoxContainer/RelativeSplitContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PreviewScrollContainer" type="ScrollContainer" parent="VBoxContainer/RelativeSplitContainer/PreviewContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Preview" type="RichTextLabel" parent="VBoxContainer/RelativeSplitContainer/PreviewContainer/PreviewScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+
+[connection signal="gui_input" from="VBoxContainer/SearchBox" to="." method="_on_search_box_gui_input"]
+[connection signal="text_changed" from="VBoxContainer/SearchBox" to="." method="_on_search_box_text_changed"]
+[connection signal="text_submitted" from="VBoxContainer/SearchBox" to="." method="_on_search_box_text_submitted"]
+[connection signal="item_activated" from="VBoxContainer/RelativeSplitContainer/ScrollContainer/ItemList" to="." method="_on_item_list_item_activated"]
+[connection signal="item_selected" from="VBoxContainer/RelativeSplitContainer/ScrollContainer/ItemList" to="." method="_on_item_list_item_selected"]

@@ -5,6 +5,8 @@ signal save_requested()
 
 
 func _gui_input(event: InputEvent) -> void:
+	if not editable:
+		return
 	if event.is_action_pressed("move_lines_down", false, true):
 		move_lines_down()
 	if event.is_action_pressed("move_lines_up", false, true):

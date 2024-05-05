@@ -1,6 +1,8 @@
 extends Node
 
-static var theme: Theme = load(ProjectSettings.get_setting("gui/theme/custom"))
+static var theme: Theme:
+	get:
+		return preload("res://src/main.theme")
 
 signal theme_changed(new_theme: String)
 
@@ -63,6 +65,9 @@ func change_theme_from_text(theme_text: String) -> void:
 			StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
 	theme.set_stylebox(&"pressed", &"OptionButton",
 			StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
+	
+	theme.set_stylebox(&"panel", &"AcceptDialog",
+			StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [0], [4]))
 	
 	RenderingServer.set_default_clear_color(colors.background_color.darkened(0.2))
 	
