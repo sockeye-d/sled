@@ -81,7 +81,7 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 theme_override_constants/autohide = 1
-split_offset = 227
+split_offset = 16
 script = ExtResource("3_3bsis")
 relative_split_offset = 0.2
 
@@ -92,7 +92,7 @@ layout_mode = 2
 [node name="Editors" type="SplitContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-split_offset = 450
+split_offset = 30
 script = ExtResource("3_3bsis")
 relative_split_offset = 0.5
 

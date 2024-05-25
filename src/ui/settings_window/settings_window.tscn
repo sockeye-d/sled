@@ -252,7 +252,7 @@ tooltip = "If on, enables syntax highlighting for files specified with [b]Syntax
 
 [sub_resource type="Resource" id="Resource_qxxpw"]
 script = ExtResource("4_p6htm")
-default_value = "fsh,vsh,gsh,csh,inc"
+default_value = "fsh,vsh,gsh,csh,inc,glsl"
 value = null
 name = "Syntax highlighted files"
 identifier = &"syntax_highlighted_files"

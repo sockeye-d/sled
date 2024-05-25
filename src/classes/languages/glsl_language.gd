@@ -1,7 +1,7 @@
 class_name GLSLLanguage extends Language
 
 
-const _ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789."
+const _ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._"
 
 
 static func _static_init() -> void:
@@ -173,48 +173,29 @@ static func _static_init() -> void:
 	string_regions = []
 
 
-static func get_code_completion_suggestions(path: String, file: String, line: int = -1, base_path: String = path) -> Array[CodeCompletionSuggestion]:
+static func get_code_completion_suggestions(path: String, file: String, line: int = -1, col: int = -1, base_path: String = path) -> Array[CodeCompletionSuggestion]:
 	# Takes a little effort to convert an untyped array to a typed one
-	var untyped_array: Array = _get_code_completion_suggestions(path, file, line, 0, base_path).values()
+	var untyped_array: Array = _get_code_completion_suggestions(path, file, line, col, 0, base_path).values()
 	var typed_array: Array[CodeCompletionSuggestion] = []
 	typed_array.assign(untyped_array)
 	return typed_array
 
 
-static func _get_code_completion_suggestions(path: String, file: String, editing_line: int = -1, depth: int = 0, base_path: String = "", visited_files: PackedStringArray = []) -> Dictionary:
+static func _get_code_completion_suggestions(path: String, file: String, editing_line: int = -1, editing_column: int = -1, depth: int = 0, base_path: String = "", visited_files: PackedStringArray = []) -> Dictionary:
 	visited_files.append(path)
 	# Dictionary[value, CodeCompletionSuggestion]
 	var suggestions: Dictionary = { }
 	var included_files: PackedStringArray = []
 	var definitions: Dictionary = { }
+	file = StringUtil.substr_line_pos(file, 0, editing_line)
 	var file_split = file.replace(";", "\n").split("\n", false)
 	if not editing_line == -1:
 		file_split.resize(editing_line)
-
-	var is_comment: bool = false
+	
 	for line_whitespaceful in file_split:
 		var line = line_whitespaceful.strip_edges().lstrip(" ")
-		var line_comments_removed = ""
-		# Find the comments so they can be removed
-		for char_ind in line.length():
-			if char_ind + 1 < line.length() and line[char_ind] == "/" and line[char_ind + 1] == "/":
-				# Line comment, can break here instead of setting is_comment
-				# because nothing interesting is
-				# going to happen for the rest of the line
-				line_comments_removed = line.substr(0, char_ind)
-				break
-			if char_ind + 1 < line.length() and line[char_ind] == "/" and line[char_ind + 1] == "*":
-				# Beginning of a block comment,
-				is_comment = true
-				continue
-			if char_ind + 1 < line.length() and line[char_ind] == "*" and line[char_ind + 1] == "/":
-				# End of the block comment
-				is_comment = false
-				continue
-			if not is_comment:
-				line_comments_removed += line[char_ind]
 
-		var symbols: PackedStringArray = _split_string_into_symbols(line_comments_removed)
+		var symbols: PackedStringArray = _split_string_into_symbols(line)
 		for i in range(1, symbols.size()):
 			# Is the symbol a variable?
 			if (
@@ -265,6 +246,7 @@ static func _get_code_completion_suggestions(path: String, file: String, editing
 					new_path,
 					FileAccess.open(new_path, FileAccess.READ).get_as_text(true),
 					-1,
+					-1,
 					depth + 1,
 					base_path,
 					))
@@ -306,3 +288,22 @@ static func _is_valid_var_name(name: String) -> bool:
 			return false
 
 	return true
+
+
+class Struct extends RefCounted:
+	var name: String
+	var properties: Array[Variable] = []
+
+
+class Variable extends RefCounted:
+	var type: String
+	var name: String
+	
+	func _init(_type: String, _name: String) -> void:
+		type = _type
+		name = _name
+	
+	static func new_from_def(def: String) -> Variable:
+		var def_type: String = def.get_slice(" ", 0)
+		var def_name: String = def.get_slice(" ", 1)
+		return Variable.new(def_type, def_name)

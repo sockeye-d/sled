@@ -56,8 +56,8 @@ func _ready() -> void:
 	if code_editor:
 		code_editor.save_requested.connect(_on_save_button_pressed)
 	
-	_reset_all_settings()
-	Settings.settings_window.setting_changed.connect(func(identifier: StringName, new_value): _reset_all_settings())
+	_set_all_settings()
+	Settings.settings_window.setting_changed.connect(func(identifier: StringName, new_value): _set_all_settings())
 
 
 func load_file(path: String) -> void:
@@ -125,7 +125,7 @@ func load_theme(file: String) -> void:
 			code_editor.syntax_highlighter.add_color_region("#", "", get_theme_color("background_color").lightened(0.5))
 
 
-func _reset_all_settings() -> void:
+func _set_all_settings() -> void:
 	code_editor.gutters_draw_line_numbers = Settings.show_line_numbers
 	code_editor.gutters_zero_pad_line_numbers = Settings.zero_pad_line_numbers
 	code_editor.caret_type = Settings.caret_style
@@ -185,6 +185,7 @@ func _get_completion_suggestions() -> void:
 			file_handle.get_path_absolute(),
 			code_editor.text,
 			code_editor.get_caret_line(code_editor.get_caret_count() - 1),
+			code_editor.get_caret_column(code_editor.get_caret_count() - 1),
 			FileManager.absolute_base_path if Settings.inc_absolute_paths else "",
 			), code_editor)
 	for keyword in GLSLLanguage.base_types:

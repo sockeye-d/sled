@@ -156,7 +156,7 @@ func _rename_item(item: TreeItem, title: String) -> void:
 		item.set_text(0, new_name)
 		var path: String = paths.get_value(item)
 		var new_path: String = path.get_base_dir().path_join(new_name)
-		DirAccess.rename_absolute(path, new_path)
+		NotificationManager.notify_err(DirAccess.rename_absolute(path, new_path), "Rename failed with error %s", true)
 		paths.add(item, path.get_base_dir().path_join(new_name))
 	dialog.queue_free()
 

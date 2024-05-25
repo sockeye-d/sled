@@ -7,7 +7,7 @@ signal file_selected(path: String)
 @onready var search_box: LineEdit = %SearchBox
 @onready var item_list: ItemList = %ItemList
 @onready var preview_container: PanelContainer = %PreviewContainer
-@onready var preview: RichTextLabel = %Preview
+@onready var preview: CodeEdit = %Preview
 
 
 var base_path: String
@@ -94,10 +94,7 @@ func _on_search_box_text_submitted(new_text: String) -> void:
 func _on_item_list_item_selected(index: int) -> void:
 	get_ok_button().disabled = false
 	preview_container.show()
-	preview.clear()
-	preview.push_mono()
-	preview.add_text(FileAccess.get_file_as_string(base_path.path_join(item_list.get_item_text(index))))
-	preview.pop_all()
+	preview.text = FileAccess.get_file_as_string(base_path.path_join(item_list.get_item_text(index)))
 
 
 func _on_item_list_item_activated(index: int) -> void:

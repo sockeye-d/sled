@@ -23,3 +23,11 @@ func notify(what: String, type: int, color: Color = NOTIFICATION_COLORS[type]) -
 	label.add_theme_constant_override(&"outline_size", 3)
 	label.add_theme_color_override(&"font_outline_color", color.darkened(0.5))
 	notification_tray.add_child(label)
+
+
+## Use a %s placeholder for the error
+func notify_err(error: Error, text: String, include_error_type := false, notification_type: int = TYPE_ERROR, notification_color: Color = NOTIFICATION_COLORS[notification_type]) -> void:
+	if error:
+		if include_error_type:
+			text = text % error_string(error)
+		notify(text, notification_type, notification_color)
