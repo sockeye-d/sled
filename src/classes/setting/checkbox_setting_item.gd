@@ -30,5 +30,5 @@ func _create_control() -> Control:
 	return new_control
 
 
-func _get_default_value() -> bool:
+func _get_default_value():
 	return default_value

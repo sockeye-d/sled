@@ -116,6 +116,8 @@ func save(path: String = "") -> void:
 	NotificationManager.notify("Saved %s" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_NORMAL)
 	path_button.remove_theme_font_override(&"font")
 	path_button.text = file_handle.get_path_absolute().get_file()
+	
+	code_editor.tag_saved_version()
 
 
 func load_theme(file: String) -> void:

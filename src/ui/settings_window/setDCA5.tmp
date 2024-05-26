@@ -1,0 +1,328 @@
+[gd_scene load_steps=39 format=3 uid="uid://bhh21mxu6765g"]
+
+[ext_resource type="Theme" uid="uid://brmolr535bgtw" path="res://src/main.theme" id="1_8ki8x"]
+[ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="1_k1b4t"]
+[ext_resource type="Script" path="res://src/ui/settings_window/settings_window.gd" id="1_qsncc"]
+[ext_resource type="Script" path="res://src/classes/setting/setting_category.gd" id="2_qdoe0"]
+[ext_resource type="Script" path="res://src/classes/setting/options_setting_item.gd" id="3_afdq8"]
+[ext_resource type="Script" path="res://src/classes/setting/divider_setting_item.gd" id="4_a0mpu"]
+[ext_resource type="Script" path="res://src/classes/setting/checkbox_setting_item.gd" id="4_cg4by"]
+[ext_resource type="Script" path="res://src/classes/setting/setting_item.gd" id="4_m6ucj"]
+[ext_resource type="Script" path="res://src/classes/setting/string_setting_item.gd" id="4_p6htm"]
+[ext_resource type="Script" path="res://src/classes/setting/file_setting_item.gd" id="5_5bcjm"]
+[ext_resource type="Script" path="res://src/classes/setting/slider_setting_item.gd" id="7_mc558"]
+
+[sub_resource type="Resource" id="Resource_2e6wi"]
+script = ExtResource("4_a0mpu")
+value = null
+name = "Theming"
+identifier = &"theming"
+tooltip = ""
+
+[sub_resource type="Resource" id="Resource_3kvck"]
+script = ExtResource("3_afdq8")
+default_value = 0
+options = PackedStringArray()
+value = null
+name = "Theme"
+identifier = &"theme"
+tooltip = "The code editor theme.
+Import your own using the \"Load custom theme\" setting"
+
+[sub_resource type="Resource" id="Resource_t67iy"]
+script = ExtResource("5_5bcjm")
+filters = PackedStringArray()
+button_text = ""
+default_value = ""
+value = null
+name = "Load custom theme"
+identifier = &"custom_theme_path"
+tooltip = "Import a path to load a theme. Supports the themes in the godotengine/godot-syntax-themes repository"
+
+[sub_resource type="Resource" id="Resource_fbn8t"]
+script = ExtResource("3_afdq8")
+default_value = 0
+options = PackedStringArray()
+value = null
+name = "Code editor font"
+identifier = &"font"
+tooltip = ""
+
+[sub_resource type="Resource" id="Resource_42da8"]
+script = ExtResource("4_p6htm")
+default_value = "ss01,ss02,ss03,ss06,ss07,dlig"
+value = null
+name = "Coding ligatures"
+identifier = &"ligatures"
+tooltip = "The ligatures to use. Most are contained within the [code]ssXX[/code] format. GitHub's Monaspace font supports [code]ss01[/code] through [code]ss08[/code], and the Cascadia Code font supports a slashed zero using the [code]ss19[/code] set."
+
+[sub_resource type="Resource" id="Resource_jjevf"]
+script = ExtResource("7_mc558")
+default_value = 1.0
+min_value = 0.25
+max_value = 3.0
+step = 0.001
+allow_greater = false
+allow_lesser = false
+value = null
+name = "GUI scale"
+identifier = &"gui_scale"
+tooltip = "Changes the overall scale of the interface.
+Useful for hiDPI displays, if the text and buttons are too small."
+
+[sub_resource type="Resource" id="Resource_qnedh"]
+script = ExtResource("4_a0mpu")
+value = null
+name = "Text editor"
+identifier = &"text_editor"
+tooltip = ""
+
+[sub_resource type="Resource" id="Resource_s7ufq"]
+script = ExtResource("4_cg4by")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Show line numbers"
+identifier = &"show_line_numbers"
+tooltip = "Shows or hides the line numbers"
+
+[sub_resource type="Resource" id="Resource_o3l8i"]
+script = ExtResource("4_cg4by")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Zero-pad line numbers"
+identifier = &"zero_pad_line_numbers"
+tooltip = "Makes all the line numbers the same length by padding the beginning with zeros"
+
+[sub_resource type="Resource" id="Resource_jbmoq"]
+script = ExtResource("3_afdq8")
+default_value = 0
+options = PackedStringArray("Line", "Block")
+value = null
+name = "Caret style"
+identifier = &"caret_style"
+tooltip = "Sets the style of the caret.
+[b]Line: [/b]A line-shaped caret
+[b]Block: [/b]A block-shaped caret"
+
+[sub_resource type="Resource" id="Resource_oppod"]
+script = ExtResource("4_cg4by")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Scroll past end of file"
+identifier = &"scroll_past_eof"
+tooltip = "If true, allows scrolling into \"virtual space\" at the end of the file"
+
+[sub_resource type="Resource" id="Resource_dp7ij"]
+script = ExtResource("3_afdq8")
+default_value = 0
+options = PackedStringArray("None", "Arbitrary", "Word", "Word (smart)")
+value = null
+name = "Text wrapping mode"
+identifier = &"text_wrapping_mode"
+tooltip = "Sets how text wrapping behaves. Useful for long lines.
+[b]None: [/b]No wrapping is performed.
+[b]Arbitrary: [/b] Letters are individually wrapped, breaking words across lines.
+[b]Word: [/b]Only breaks lines at spaces
+[b]Word (smart): [/b]Like [code]Word[/code] but will break a word arbitrarily if it doesn't fit in one line"
+
+[sub_resource type="Resource" id="Resource_vdvjn"]
+script = ExtResource("4_cg4by")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Indent wrapped lines"
+identifier = &"indent_wrapped_lines"
+tooltip = "If on, indents wrapped lines are indented to the same level as the unwrapped line"
+
+[sub_resource type="Resource" id="Resource_moc02"]
+script = ExtResource("2_qdoe0")
+name = "Theme"
+settings = Array[ExtResource("4_m6ucj")]([SubResource("Resource_2e6wi"), SubResource("Resource_3kvck"), SubResource("Resource_t67iy"), SubResource("Resource_fbn8t"), SubResource("Resource_42da8"), SubResource("Resource_jjevf"), SubResource("Resource_qnedh"), SubResource("Resource_s7ufq"), SubResource("Resource_o3l8i"), SubResource("Resource_jbmoq"), SubResource("Resource_oppod"), SubResource("Resource_dp7ij"), SubResource("Resource_vdvjn")])
+
+[sub_resource type="Resource" id="Resource_j8c3w"]
+script = ExtResource("4_a0mpu")
+value = null
+name = "Code completion"
+identifier = &"code_completion_divider"
+tooltip = ""
+
+[sub_resource type="Resource" id="Resource_pv3ng"]
+script = ExtResource("4_cg4by")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Auto code completion"
+identifier = &"auto_code_completion"
+tooltip = "If turned off code completion can still be activated with [code]ctrl+space[/code]"
+
+[sub_resource type="Resource" id="Resource_k580q"]
+script = ExtResource("7_mc558")
+default_value = 0.0
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+allow_greater = true
+allow_lesser = false
+value = null
+name = "Code completion delay"
+identifier = &"code_completion_delay"
+tooltip = "Sets the time between starting to type and the code completion popup appearing"
+
+[sub_resource type="Resource" id="Resource_qq8tb"]
+script = ExtResource("4_a0mpu")
+value = null
+name = "Paths"
+identifier = &"paths_divider"
+tooltip = ""
+
+[sub_resource type="Resource" id="Resource_1uxen"]
+script = ExtResource("4_cg4by")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Include absolute paths"
+identifier = &"inc_absolute_paths"
+tooltip = "[code]#include[/code] directives support absolute paths with a preceding slash: [code]#include \"/path\"[/code].
+Disabling this will disable searching for a base path."
+
+[sub_resource type="Resource" id="Resource_6tmdd"]
+script = ExtResource("4_p6htm")
+default_value = "shaders"
+value = null
+name = "Base path names"
+identifier = &"base_paths"
+tooltip = "The folder names to look for as the base path for absolute [code]#include[/code] declarations.
+Supports multiple paths, comma-separated."
+
+[sub_resource type="Resource" id="Resource_pkmub"]
+script = ExtResource("4_cg4by")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Open files side-by-side"
+identifier = &""
+tooltip = "If true, files defined with [b]Side-by-side-opening file extensions[/b] will be opened in two editors."
+
+[sub_resource type="Resource" id="Resource_dx61e"]
+script = ExtResource("4_p6htm")
+default_value = "fsh:vsh,vert:frag,vertex:fragment"
+value = null
+name = "Side-by-side-opening file extensions"
+identifier = &"sbs_opening_file_exts"
+tooltip = "A list of files to open in two editors instead of one. Normally the fragment shader and the vertex shader. Values within pairs are separated by a colon, pairs are separated by a comma."
+
+[sub_resource type="Resource" id="Resource_w6rj6"]
+script = ExtResource("3_afdq8")
+default_value = 2
+options = PackedStringArray("Disabled", "Full path", "Use #include")
+value = null
+name = "Browser drag & drop mode"
+identifier = &"browser_drag_drop_mode"
+tooltip = "Sets the behavior of dragging a file from the browser into the code editor.
+[b]Disabled: [/b]Completely disables this feature
+[b]Full path: [/b]Will only drop full paths (relative to the open folder)
+[b]Use [code]#include[/code]: [/b]Drops a [code]#include[/code] statement, relative to the base path specified with [b]Base path names[/b]"
+
+[sub_resource type="Resource" id="Resource_ncn2m"]
+script = ExtResource("4_a0mpu")
+value = null
+name = "Syntax highlighting"
+identifier = &"syntax_highlighting_divider"
+tooltip = ""
+
+[sub_resource type="Resource" id="Resource_4h3dn"]
+script = ExtResource("4_cg4by")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Syntax highlighting enabled"
+identifier = &"syntax_highlighting_enabled"
+tooltip = "If on, enables syntax highlighting for files specified with [b]Syntax highlighted files[/b]"
+
+[sub_resource type="Resource" id="Resource_qxxpw"]
+script = ExtResource("4_p6htm")
+default_value = "fsh,vsh,gsh,csh,inc,glsl"
+value = null
+name = "Syntax highlighted files"
+identifier = &"syntax_highlighted_files"
+tooltip = "Sets which files get syntax highlighting in a comma-separated list."
+
+[sub_resource type="Resource" id="Resource_ydeaw"]
+script = ExtResource("2_qdoe0")
+name = "Behavior"
+settings = Array[ExtResource("4_m6ucj")]([SubResource("Resource_j8c3w"), SubResource("Resource_pv3ng"), SubResource("Resource_k580q"), SubResource("Resource_qq8tb"), SubResource("Resource_1uxen"), SubResource("Resource_6tmdd"), SubResource("Resource_pkmub"), SubResource("Resource_dx61e"), SubResource("Resource_w6rj6"), SubResource("Resource_ncn2m"), SubResource("Resource_4h3dn"), SubResource("Resource_qxxpw")])
+
+[node name="SettingsWindow" type="Window"]
+title = "Settings"
+initial_position = 2
+size = Vector2i(700, 500)
+transient = true
+exclusive = true
+theme = ExtResource("1_8ki8x")
+script = ExtResource("1_qsncc")
+setting_categories = Array[ExtResource("2_qdoe0")]([SubResource("Resource_moc02"), SubResource("Resource_ydeaw")])
+
+[node name="SplitContainer" type="SplitContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offset = 175
+script = ExtResource("1_k1b4t")
+relative_split_offset = 0.25
+
+[node name="PanelContainer2" type="PanelContainer" parent="SplitContainer"]
+layout_mode = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="SplitContainer/PanelContainer2"]
+auto_translate_mode = 1
+layout_mode = 2
+
+[node name="CategoryContainer" type="VBoxContainer" parent="SplitContainer/PanelContainer2/MarginContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="SplitContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="SplitContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="SettingOptionContainer" type="VBoxContainer" parent="SplitContainer/PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -74.0
+offset_top = -45.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Button" type="Button" parent="MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+text = "Show settings file"

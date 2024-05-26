@@ -81,7 +81,9 @@ func change_path_browse() -> void:
 					)
 
 
-func get_base_path(path: String, valid_names: PackedStringArray = Settings.base_paths.split(",", false)) -> String:
+func get_base_path(path: String, valid_names: PackedStringArray = []) -> String:
+	if not valid_names:
+		valid_names = Settings.base_paths.split(",", false)
 	for dir in DirAccess.get_directories_at(path):
 		if dir in valid_names:
 			return path.path_join(dir)

@@ -26,7 +26,7 @@ func _create_control() -> Control:
 	return new_control
 
 
-func _get_default_value() -> int:
+func _get_default_value():
 	return default_value
 
 

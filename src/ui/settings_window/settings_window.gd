@@ -2,6 +2,9 @@
 class_name SettingsWindow extends Window
 
 
+const SETTING_CATEGORIES = preload("res://src/ui/settings_window/setting_categories.tres")
+
+
 signal population_complete()
 signal setting_changed(identifier: StringName, new_value)
 
@@ -22,7 +25,6 @@ signal setting_changed(identifier: StringName, new_value)
 var settings: Dictionary
 var settings_items: Dictionary
 
-
 func _init() -> void:
 	close_requested.connect(func(): hide())
 
@@ -38,8 +40,13 @@ func _input(event: InputEvent) -> void:
 
 
 func set_all_to_default() -> void:
-	for item in settings_items:
-		settings_items[item].value = settings_items[item]._get_default_value()
+	if not setting_categories:
+		setting_categories = SETTING_CATEGORIES.setting_categories
+	settings.clear()
+	for category in setting_categories:
+		for setting in category.settings:
+			settings[setting.identifier] = setting._get_default_value()
+	populate_setting_categories()
 
 
 func populate_setting_categories() -> void:
@@ -64,8 +71,8 @@ func populate_setting_categories() -> void:
 
 func init_custom_settings():
 	var themes := EditorThemeManager.THEMES
-	settings_items.theme.options.append("Custom")
 	settings_items.theme.options.clear()
+	settings_items.theme.options.append("Custom")
 	for t in themes.themes:
 		settings_items.theme.options.append(t)
 	
