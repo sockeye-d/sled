@@ -19,7 +19,8 @@ var absolute_base_path: String = ""
 func _ready() -> void:
 	last_opened_paths = File.load_variant(LAST_OPENED_PATHS_PATH, [])
 	
-	await RenderingServer.frame_post_draw
+	await get_tree().process_frame
+	await get_tree().process_frame
 	if last_opened_paths:
 		loaded_recent_paths.emit(true)
 		change_path(last_opened_paths[0])

@@ -56,8 +56,10 @@ func _ready() -> void:
 	if code_editor:
 		code_editor.save_requested.connect(_on_save_button_pressed)
 	
-	_set_all_settings()
 	Settings.settings_window.setting_changed.connect(func(identifier: StringName, new_value): _set_all_settings())
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_set_all_settings()
 
 
 func load_file(path: String) -> void:

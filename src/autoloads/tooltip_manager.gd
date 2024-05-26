@@ -29,7 +29,7 @@ func _ready() -> void:
 					p.add_child.call_deferred(new_label)
 					new_label.update_minimum_size.call_deferred()
 					
-					await RenderingServer.frame_post_draw
+					await get_tree().process_frame
 					
 					p.max_size.x = new_label.get_minimum_size().x + 16
 					

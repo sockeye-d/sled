@@ -15,7 +15,7 @@ var settings_items: Dictionary:
 		if settings_window:
 			return settings_window.settings_items
 		return { }
-#var could_load_settings: bool = false
+var could_load_settings: bool = false
 
 
 func _init() -> void:
@@ -27,9 +27,10 @@ func _ready() -> void:
 	get_tree().root.add_child.call_deferred(settings_window)
 	settings_window.setting_changed.connect(func(_identifier: String, _new_value): save_settings())
 	
-	#if not could_load_settings:
-		##await RenderingServer.frame_post_draw
-		#settings_window.set_all_to_default()
+	if not could_load_settings:
+		await get_tree().process_frame
+		await get_tree().process_frame
+		settings_window.set_all_to_default()
 
 
 func show_settings_window():
@@ -37,10 +38,11 @@ func show_settings_window():
 
 
 func _get(property: StringName) -> Variant:
-	if property in settings:
-		if property in settings_items:
-			return settings_items[property].value
-		return settings[property]
+	if property in settings_window.settings:
+		return settings_window.settings[property]
+	
+	if property in settings_window.settings_items:
+		return settings_window.settings_items[property].value
 	
 	return null
 
@@ -61,9 +63,9 @@ func load_settings(path: String = SETTINGS_PATH) -> Error:
 	if file_handle:
 		var new_settings = file_handle.get_var()
 		settings_window.load_settings(new_settings)
-		#could_load_settings = true
+		could_load_settings = true
 		return OK
 	else:
-		#could_load_settings = false
+		could_load_settings = false
 		settings_window.set_all_to_default()
 		return FileAccess.get_open_error()

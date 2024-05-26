@@ -25,12 +25,13 @@ signal setting_changed(identifier: StringName, new_value)
 var settings: Dictionary
 var settings_items: Dictionary
 
+
 func _init() -> void:
 	close_requested.connect(func(): hide())
 
 
 func _ready() -> void:
-	populate_setting_categories()
+	populate_setting_categories.call_deferred()
 	button.pressed.connect(func(): OS.shell_show_in_file_manager(ProjectSettings.globalize_path(Settings.SETTINGS_PATH)))
 
 
@@ -46,7 +47,10 @@ func set_all_to_default() -> void:
 	for category in setting_categories:
 		for setting in category.settings:
 			settings[setting.identifier] = setting._get_default_value()
-	populate_setting_categories()
+	for category in setting_categories:
+		for setting in category.settings:
+			if setting.identifier in settings_items:
+				settings_items[setting.identifier].value = settings_items[setting.identifier]._get_default_value()
 
 
 func populate_setting_categories() -> void:
@@ -65,22 +69,21 @@ func populate_setting_categories() -> void:
 						)
 			settings_items[setting.identifier] = setting
 	
-	init_custom_settings()
+	init_custom_settings.call_deferred()
 	
 	population_complete.emit()
 
 func init_custom_settings():
-	var themes := EditorThemeManager.THEMES
 	settings_items.theme.options.clear()
 	settings_items.theme.options.append("Custom")
-	for t in themes.themes:
+	for t in EditorThemeManager.THEMES.themes:
 		settings_items.theme.options.append(t)
 	
 	settings_items.theme.setting_changed.connect.call_deferred(
 			func(new_value):
 				var new_theme: String = settings_items.theme.options[new_value]
 				if new_theme == "Custom":
-					await RenderingServer.frame_post_draw
+					await get_tree().process_frame
 					EditorThemeManager.change_theme_from_path.call_deferred(settings.custom_theme_path)
 					return
 				if new_theme:
