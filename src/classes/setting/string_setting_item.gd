@@ -10,7 +10,9 @@ func _create_control() -> Control:
 	if value:
 		new_control.text = value
 	
-	new_control.text_changed.connect(func(new_text: String): value = new_text)
+	new_control.text_changed.connect(func(new_text: String):
+		value = new_text
+	)
 	
 	if not setting_changed.is_connected(_on_setting_changed):
 		setting_changed.connect(_on_setting_changed)

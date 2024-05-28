@@ -2,6 +2,7 @@ class_name OptionsSettingItem extends SettingItem
 
 
 @export var default_value: int = 0
+@export var default_value_text: String = ""
 @export var options: PackedStringArray
 
 
@@ -31,8 +32,6 @@ func _get_default_value():
 
 
 func get_text() -> String:
-	if control:
-		return options[control.selected]
 	return options[value]
 
 

@@ -14,11 +14,16 @@ var control: Control
 @export var name: String
 @export var identifier: StringName
 @export_multiline var tooltip: String
+@export var init_script: Script
 
 
 func _init(_name: String = "") -> void:
 	name = _name
 	value = _get_default_value()
+	(func():
+		if init_script:
+			ScriptUtils.run(init_script, SettingInitScript.METHOD, [self])
+		).call_deferred()
 
 
 func create_control() -> void:

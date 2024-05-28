@@ -16,6 +16,37 @@ const LIGATURE_SHORTHANDS: Dictionary = {
 }
 
 
+func _ready() -> void:
+	Settings.connect_setting(&"ligatures",
+		func(new_value):
+			var f = Settings.get_item(&"font").get_text()
+			EditorThemeManager.set_font(f, Settings.ligatures)
+			)
+	
+	Settings.connect_setting(&"font",
+		func(new_value):
+			var f = Settings.get_item(&"font").get_text()
+			EditorThemeManager.set_font(f, Settings.ligatures)
+			)
+	
+	Settings.connect_setting(&"theme",
+			func(new_value):
+				var new_theme: String = Settings.get_item(&"theme").options[new_value]
+				if new_theme == "Custom":
+					await SceneTreeUtil.process_frame
+					EditorThemeManager.change_theme_from_path.call_deferred(Settings.custom_theme_path)
+					return
+				if new_theme:
+					EditorThemeManager.change_theme(new_theme)
+				)
+
+
+
+func change_theme_custom(theme_name: String):
+	if theme_name in THEMES.themes:
+		change_theme_from_text(THEMES.themes[theme_name])
+
+
 func change_theme(theme_name: String):
 	if theme_name in THEMES.themes:
 		change_theme_from_text(THEMES.themes[theme_name])
@@ -74,9 +105,8 @@ func change_theme_from_text(theme_text: String) -> void:
 	theme_changed.emit(theme_text)
 
 func set_font(font_name: String, ligatures: String = ""):
-	var sys_font: SystemFont = create_system_font(font_name, "Monospace")
 	var new_font: FontVariation = FontVariation.new()
-	new_font.base_font = sys_font
+	new_font.base_font = create_system_font(font_name, "Monospace")
 	
 	var features: Dictionary = convert_tags_to_names(new_font.get_supported_feature_list())
 	new_font.opentype_features = _convert_ligatures(features, ligatures)
@@ -94,7 +124,7 @@ func create_system_font(font_name: String, fallback: String = "") -> SystemFont:
 
 
 func convert_tags_to_names(dict: Dictionary) -> Dictionary:
-	var new_dict := {}
+	var new_dict := { }
 	
 	for key in dict:
 		new_dict[TextServerManager.get_primary_interface().tag_to_name(key)] = dict[key]
@@ -103,9 +133,9 @@ func convert_tags_to_names(dict: Dictionary) -> Dictionary:
 
 
 func _convert_ligatures(features: Dictionary, ligatures: String, shorthands: Dictionary = LIGATURE_SHORTHANDS) -> Dictionary:
-	var filtered: Dictionary = {}
+	var filtered: Dictionary = { }
 	var replaced: String = StringUtil.replace_all(ligatures, shorthands)
-	for lig in replaced.split(","):
+	for lig in replaced.split(",", false):
 		if lig in features:
 			filtered[TextServerManager.get_primary_interface().name_to_tag(lig)] = 1
 	

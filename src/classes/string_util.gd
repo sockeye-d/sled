@@ -28,7 +28,6 @@ Not inside comment
 // geiowoi2o906
 // 3toi126u9039uioj
 gerwhkg"
-	print(StringUtil.substr_line_pos(test_string, 1, 4))
 
 ## Replaces all instances of the keys of replacements with their values
 static func replace_all(string: String, replacements: Dictionary) -> String:

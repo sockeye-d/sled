@@ -31,8 +31,10 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	populate_setting_categories.call_deferred()
+	populate_setting_categories()
 	button.pressed.connect(func(): OS.shell_show_in_file_manager(ProjectSettings.globalize_path(Settings.SETTINGS_PATH)))
+	await SceneTreeUtil.process_frame
+	emit_changed_all()
 
 
 func _input(event: InputEvent) -> void:
@@ -69,56 +71,7 @@ func populate_setting_categories() -> void:
 						)
 			settings_items[setting.identifier] = setting
 	
-	init_custom_settings.call_deferred()
-	
 	population_complete.emit()
-
-func init_custom_settings():
-	settings_items.theme.options.clear()
-	settings_items.theme.options.append("Custom")
-	for t in EditorThemeManager.THEMES.themes:
-		settings_items.theme.options.append(t)
-	
-	settings_items.theme.setting_changed.connect.call_deferred(
-			func(new_value):
-				var new_theme: String = settings_items.theme.options[new_value]
-				if new_theme == "Custom":
-					await get_tree().process_frame
-					EditorThemeManager.change_theme_from_path.call_deferred(settings.custom_theme_path)
-					return
-				if new_theme:
-					EditorThemeManager.change_theme(new_theme)
-				)
-	settings_items.theme.select_text(EditorThemeManager.DEFAULT_THEME)
-	settings_items.theme.default_value = settings_items.theme.value
-	
-	settings_items.font.options.append("Monospace")
-	var fonts = OS.get_system_fonts()
-	var cascadia_code_index = -1
-	for font_index in fonts.size():
-		if fonts[font_index].to_lower() == "cascadia code":
-			cascadia_code_index = font_index
-		settings_items.font.options.append(fonts[font_index])
-	
-	settings_items.font.default_value = cascadia_code_index + 1
-	
-	settings_items.font.setting_changed.connect(
-			func(new_value: int):
-				EditorThemeManager.set_font(settings_items.font.options[new_value], settings.ligatures)
-				)
-	
-	settings_items.ligatures.setting_changed.connect(
-			func(_new_value: String):
-				EditorThemeManager.set_font(settings_items.font.get_text(), settings.ligatures)
-				)
-	settings_items.gui_scale.setting_changed.connect(
-			func(new_value: float):
-				EditorThemeManager.theme.default_font_size = 16 * new_value as int
-				EditorThemeManager.theme.default_base_scale = new_value
-				)
-	
-	var t = EditorThemeManager.theme
-	settings_items.font.select_text(t.get_font(&"font", &"CodeEdit").get_font_name())
 
 func populate_settings(category: SettingCategory) -> void:
 	NodeUtil.free_children(setting_option_container)
@@ -138,7 +91,9 @@ func populate_settings(category: SettingCategory) -> void:
 		reset_button.icon = Icons.reset_value
 		reset_button.tooltip_text = "Reset to default"
 		reset_button.visible = not setting.value == setting._get_default_value()
-		reset_button.pressed.connect(func(): setting.value = setting._get_default_value())
+		reset_button.pressed.connect(func():
+			setting.value = setting._get_default_value()
+		)
 		
 		var container = HBoxContainer.new()
 		container.add_child(button)
@@ -171,8 +126,15 @@ func add_setting_category(category: SettingCategory) -> void:
 
 
 func load_settings(new_settings: Dictionary) -> void:
+	setting_categories = SETTING_CATEGORIES.setting_categories
 	if not settings_items:
 		populate_setting_categories()
 	for s in settings:
 		if s in settings_items and s in new_settings:
 			settings_items[s].value = new_settings[s]
+
+
+func emit_changed_all() -> void:
+	for item_key in settings_items:
+		var item: SettingItem = settings_items[item_key]
+		setting_changed.emit(item.identifier, item.value)

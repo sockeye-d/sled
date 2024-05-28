@@ -1,14 +1,17 @@
-[gd_resource type="Resource" script_class="SettingCategoryContainer" load_steps=37 format=3 uid="uid://x0tla7gkryo3"]
+[gd_resource type="Resource" script_class="SettingCategoryContainer" load_steps=40 format=3 uid="uid://x0tla7gkryo3"]
 
 [ext_resource type="Script" path="res://src/classes/setting_category_container.gd" id="1_jilef"]
 [ext_resource type="Script" path="res://src/classes/setting/setting_category.gd" id="2_n7kei"]
 [ext_resource type="Script" path="res://src/classes/setting/setting_item.gd" id="3_n71xn"]
 [ext_resource type="Script" path="res://src/classes/setting/divider_setting_item.gd" id="4_5hvfy"]
+[ext_resource type="Script" path="res://src/classes/setting/init_scripts/theme_init_script.gd" id="5_hot02"]
 [ext_resource type="Script" path="res://src/classes/setting/options_setting_item.gd" id="5_hruq1"]
 [ext_resource type="Script" path="res://src/classes/setting/file_setting_item.gd" id="6_wk4j2"]
 [ext_resource type="Script" path="res://src/classes/setting/string_setting_item.gd" id="7_2htcu"]
+[ext_resource type="Script" path="res://src/classes/setting/init_scripts/font_init_script.gd" id="8_jbpf4"]
 [ext_resource type="Script" path="res://src/classes/setting/slider_setting_item.gd" id="8_w2up1"]
 [ext_resource type="Script" path="res://src/classes/setting/checkbox_setting_item.gd" id="9_6ym6o"]
+[ext_resource type="Script" path="res://src/classes/setting/init_scripts/gui_scale_init_script.gd" id="11_d30ah"]
 
 [sub_resource type="Resource" id="Resource_2e6wi"]
 script = ExtResource("4_5hvfy")
@@ -20,12 +23,14 @@ tooltip = ""
 [sub_resource type="Resource" id="Resource_3kvck"]
 script = ExtResource("5_hruq1")
 default_value = 0
+default_value_text = ""
 options = PackedStringArray()
 value = null
 name = "Theme"
 identifier = &"theme"
 tooltip = "The code editor theme.
 Import your own using the \"Load custom theme\" setting"
+init_script = ExtResource("5_hot02")
 
 [sub_resource type="Resource" id="Resource_t67iy"]
 script = ExtResource("6_wk4j2")
@@ -40,11 +45,13 @@ tooltip = "Import a path to load a theme. Supports the themes in the godotengine
 [sub_resource type="Resource" id="Resource_fbn8t"]
 script = ExtResource("5_hruq1")
 default_value = 0
+default_value_text = ""
 options = PackedStringArray()
 value = null
 name = "Code editor font"
 identifier = &"font"
 tooltip = ""
+init_script = ExtResource("8_jbpf4")
 
 [sub_resource type="Resource" id="Resource_42da8"]
 script = ExtResource("7_2htcu")
@@ -67,6 +74,7 @@ name = "GUI scale"
 identifier = &"gui_scale"
 tooltip = "Changes the overall scale of the interface.
 Useful for hiDPI displays, if the text and buttons are too small."
+init_script = ExtResource("11_d30ah")
 
 [sub_resource type="Resource" id="Resource_qnedh"]
 script = ExtResource("4_5hvfy")
@@ -98,6 +106,7 @@ tooltip = "Makes all the line numbers the same length by padding the beginning w
 [sub_resource type="Resource" id="Resource_jbmoq"]
 script = ExtResource("5_hruq1")
 default_value = 0
+default_value_text = ""
 options = PackedStringArray("Line", "Block")
 value = null
 name = "Caret style"
@@ -119,6 +128,7 @@ tooltip = "If true, allows scrolling into \"virtual space\" at the end of the fi
 [sub_resource type="Resource" id="Resource_dp7ij"]
 script = ExtResource("5_hruq1")
 default_value = 0
+default_value_text = ""
 options = PackedStringArray("None", "Arbitrary", "Word", "Word (smart)")
 value = null
 name = "Text wrapping mode"
@@ -222,6 +232,7 @@ tooltip = "A list of files to open in two editors instead of one. Normally the f
 [sub_resource type="Resource" id="Resource_w6rj6"]
 script = ExtResource("5_hruq1")
 default_value = 2
+default_value_text = ""
 options = PackedStringArray("Disabled", "Full path", "Use #include")
 value = null
 name = "Browser drag & drop mode"

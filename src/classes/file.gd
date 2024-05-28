@@ -11,7 +11,7 @@ static func save_variant(path: String, variant) -> Error:
 	return fa.get_error()
 
 
-static func load_variant(path: String, default) -> Variant:
+static func load_variant(path: String, default = null) -> Variant:
 	var fa := FileAccess.open(path, FileAccess.READ)
 	
 	if fa == null:
