@@ -4,11 +4,13 @@
 [ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="2_l1gdf"]
 [ext_resource type="Script" path="res://src/ui/quick_switch_dialog/preview.gd" id="3_y0fpf"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qq6c2"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_17rkc"]
 content_margin_left = 4.0
 content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 4.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+draw_center = false
 
 [node name="QuickSwitchDialog" type="ConfirmationDialog"]
 title = "Quick switch"
@@ -55,11 +57,11 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/read_only = SubResource("StyleBoxEmpty_qq6c2")
+theme_override_styles/read_only = SubResource("StyleBoxFlat_17rkc")
 text = "hello there"
+editable = false
 context_menu_enabled = false
 shortcut_keys_enabled = false
-selecting_enabled = false
 deselect_on_focus_loss_enabled = false
 drag_and_drop_selection_enabled = false
 virtual_keyboard_enabled = false

@@ -77,7 +77,7 @@ func load_file(path: String) -> void:
 
 	# Save the old one in case loading fails
 	var old_file_handle = file_handle
-	file_handle = FileAccess.open(path, FileAccess.READ_WRITE)
+	file_handle = FileAccess.open(path, FileAccess.READ)
 
 	if file_handle == null:
 		NotificationManager.notify("%s failed to open" % path.get_file(), NotificationManager.TYPE_ERROR)
@@ -105,10 +105,10 @@ func load_file(path: String) -> void:
 		code_editor.syntax_highlighter = null
 
 
-func save(path: String = "") -> void:
-	if path:
-		file_handle = FileAccess.open(path, FileAccess.READ_WRITE)
+func save(path: String = file_path) -> void:
+	file_handle = FileAccess.open(path, FileAccess.WRITE)
 	if not file_handle:
+		NotificationManager.notify("Failed to save at path %s" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_ERROR)
 		return
 	file_handle.seek(0)
 	file_handle.store_string(code_editor.text)

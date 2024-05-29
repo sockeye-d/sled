@@ -34,6 +34,7 @@ func _ready() -> void:
 	populate_setting_categories()
 	button.pressed.connect(func(): OS.shell_show_in_file_manager(ProjectSettings.globalize_path(Settings.SETTINGS_PATH)))
 	await SceneTreeUtil.process_frame
+	await SceneTreeUtil.process_frame
 	emit_changed_all()
 
 

@@ -31,6 +31,9 @@ func _ready() -> void:
 					
 					await get_tree().process_frame
 					
+					if not p:
+						return
+					
 					p.max_size.x = new_label.get_minimum_size().x + 16
 					
 					# Fanciness

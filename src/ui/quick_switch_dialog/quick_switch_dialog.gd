@@ -58,16 +58,16 @@ func _confirmed():
 		file_selected.emit("")
 
 
-func _on_search_box_text_changed(new_text: String) -> void:
+func _on_search_box_text_changed(query: String) -> void:
 	string_items.sort_custom(
 			func(a: WeightedText, b: WeightedText) -> bool:
-				if not a.query_text == new_text:
-					a.query_text = new_text
-					a.weight = _search_ranking(new_text, a.text)
+				if not a.query_text == query:
+					a.query_text = query
+					a.weight = _search_ranking(query, a.text.get_basename()) * 0.25 + _search_ranking(query, a.text.get_file().get_basename())
 				
-				if not b.query_text == new_text:
-					b.query_text = new_text
-					b.weight = _search_ranking(new_text, b.text)
+				if not b.query_text == query:
+					b.query_text = query
+					b.weight = _search_ranking(query, b.text.get_basename()) * 0.25 + _search_ranking(query, b.text.get_file().get_basename())
 				
 				return a.weight > b.weight
 				)
@@ -129,18 +129,7 @@ func _on_search_box_gui_input(event: InputEvent) -> void:
 
 
 func _search_ranking(query: String, text: String) -> float:
-	var weight: float = 0.0
-	for text_i in text.length():
-		for query_i in query.length():
-			if query_i + text_i > text.length() - 1:
-				break
-			
-			if query[query_i].nocasecmp_to(text[text_i + query_i]) == 0:
-				weight += (query_i - 1)
-			else:
-				break
-	
-	return weight
+	return (text.to_lower().similarity(query.to_lower()) - 0.1 * maxf(0.0, text.find(query))) * (float(text.length()) / float(query.length()))
 
 
 class WeightedText extends RefCounted:

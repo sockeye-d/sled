@@ -12,4 +12,4 @@ func on_init(item: SettingItem) -> void:
 	
 	if not cascadia_code_index == -1:
 		item.default_value = cascadia_code_index + 1
-		item.value = item.default_value
+		#item.value = item.default_value
