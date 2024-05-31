@@ -1,15 +1,17 @@
 class_name CodeCompletionSuggestion extends RefCounted
 
 
-@export var type: CodeEdit.CodeCompletionKind
-@export var text: String
-@export var location: CodeEdit.CodeCompletionLocation
+var type: CodeEdit.CodeCompletionKind
+var text: String
+var location: CodeEdit.CodeCompletionLocation
+var icon: Texture2D
 
 
-func _init(_type: CodeEdit.CodeCompletionKind, _text: String, _location: CodeEdit.CodeCompletionLocation) -> void:
+func _init(_type: CodeEdit.CodeCompletionKind, _text: String, _location: CodeEdit.CodeCompletionLocation, _icon: Texture2D = null) -> void:
 	type = _type
 	text = _text
 	location = _location
+	icon = _icon
 
 
 func add_to(editor: CodeEdit) -> void:

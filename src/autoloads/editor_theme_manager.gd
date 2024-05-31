@@ -105,8 +105,6 @@ func change_theme_from_text(theme_text: String) -> void:
 	theme_changed.emit(theme_text)
 
 func set_font(font_name: String, ligatures: String = ""):
-	print(font_name)
-	print(Settings.font)
 	var new_font: FontVariation = FontVariation.new()
 	new_font.base_font = create_system_font(font_name, "Monospace")
 	

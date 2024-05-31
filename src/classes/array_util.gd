@@ -9,3 +9,7 @@ static func swap(array: Array, a: int, b: int) -> Array:
 	array[a] = array[b]
 	array[b] = temp
 	return array
+
+
+static func index_wrap(array: Array, index: int) -> Variant:
+	return array[posmod(index, array.size())]

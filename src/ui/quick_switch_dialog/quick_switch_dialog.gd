@@ -63,11 +63,11 @@ func _on_search_box_text_changed(query: String) -> void:
 			func(a: WeightedText, b: WeightedText) -> bool:
 				if not a.query_text == query:
 					a.query_text = query
-					a.weight = _search_ranking(query, a.text.get_basename()) * 0.25 + _search_ranking(query, a.text.get_file().get_basename())
+					a.weight = _search_ranking(query, a.text)
 				
 				if not b.query_text == query:
 					b.query_text = query
-					b.weight = _search_ranking(query, b.text.get_basename()) * 0.25 + _search_ranking(query, b.text.get_file().get_basename())
+					b.weight = _search_ranking(query, b.text)
 				
 				return a.weight > b.weight
 				)
@@ -129,7 +129,14 @@ func _on_search_box_gui_input(event: InputEvent) -> void:
 
 
 func _search_ranking(query: String, text: String) -> float:
-	return (text.to_lower().similarity(query.to_lower()) - 0.1 * maxf(0.0, text.find(query))) * (float(text.length()) / float(query.length()))
+	#return (text.to_lower().similarity(query.to_lower()) - 0.1 * maxf(0.0, text.find(query))) * (float(text.length()) / float(query.length()))
+	text = text.to_lower()
+	query = query.to_lower()
+	var weight: float = 0.0
+	for keyword in query.split("/", false):
+		weight += text.countn(keyword) + text.similarity(keyword)
+	print("query: ", query, ", text: ", text, ", weight: ", weight)
+	return weight
 
 
 class WeightedText extends RefCounted:

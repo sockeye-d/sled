@@ -43,9 +43,6 @@ static func _static_init() -> void:
 		"mat4x2",
 		"mat4x3",
 		"mat4x4",
-		"mat4x2",
-		"mat2x3",
-		"mat2x4",
 		# Double-precision matrices
 		"dmat2",
 		"dmat3",
@@ -58,10 +55,6 @@ static func _static_init() -> void:
 		"dmat3x4",
 		"dmat4x2",
 		"dmat4x3",
-		"dmat4x4",
-		"dmat4x2",
-		"dmat2x3",
-		"dmat2x4",
 		# Samplers
 		"sampler1D",
 		"sampler2D",
@@ -183,17 +176,15 @@ static func get_code_completion_suggestions(path: String, file: String, line: in
 
 static func _get_code_completion_suggestions(path: String, file: String, editing_line: int = -1, editing_column: int = -1, depth: int = 0, base_path: String = "", visited_files: PackedStringArray = []) -> Dictionary:
 	visited_files.append(path)
-	# Dictionary[value, CodeCompletionSuggestion]
+	## Dictionary[String, Type]
 	var suggestions: Dictionary = { }
 	var included_files: PackedStringArray = []
 	var definitions: Dictionary = { }
 	file = StringUtil.substr_line_pos(file, 0, editing_line)
 	var file_split = file.replace(";", "\n").split("\n", false)
-	if not editing_line == -1:
-		file_split.resize(editing_line)
 	
-	for line_whitespaceful in file_split:
-		var line = line_whitespaceful.strip_edges().lstrip(" ")
+	for raw_line in file_split:
+		var line = raw_line.strip_edges().lstrip(" ")
 
 		var symbols: PackedStringArray = _split_string_into_symbols(line)
 		for i in range(1, symbols.size()):
@@ -234,7 +225,7 @@ static func _get_code_completion_suggestions(path: String, file: String, editing
 						symbols[i - 1],
 						CodeEdit.LOCATION_PARENT_MASK | depth,
 						)
-
+	
 	for included_file in included_files:
 		var new_path = path.get_base_dir().path_join(included_file).simplify_path()
 		if included_file.begins_with("/") or included_file.begins_with("\\"):
@@ -286,24 +277,719 @@ static func _is_valid_var_name(name: String) -> bool:
 	for ch in name:
 		if not ch.to_lower() in "abcdefghijklmnopqrstuvwxyz0123456789":
 			return false
+	
 
 	return true
 
 
-class Struct extends RefCounted:
-	var name: String
-	var properties: Array[Variable] = []
-
-
-class Variable extends RefCounted:
-	var type: String
-	var name: String
+class Type:
+	static var _prefix_map := {
+		"b": "bool",
+		"i": "int",
+		"u": "uint",
+		"d": "double",
+	}
 	
-	func _init(_type: String, _name: String) -> void:
+	static var built_in_structs := {
+		# Vector types
+		"bvec2": _create_vector("bvec2"),
+		"bvec3": _create_vector("bvec3"),
+		"bvec4": _create_vector("bvec4"),
+		"ivec2": _create_vector("ivec2"),
+		"ivec3": _create_vector("ivec3"),
+		"ivec4": _create_vector("ivec4"),
+		"uvec2": _create_vector("uvec2"),
+		"uvec3": _create_vector("uvec3"),
+		"uvec4": _create_vector("uvec4"),
+		"dvec2": _create_vector("dvec2"),
+		"dvec3": _create_vector("dvec3"),
+		"dvec4": _create_vector("dvec4"),
+		"vec2": _create_vector("vec2",),
+		"vec3": _create_vector("vec3",),
+		"vec4": _create_vector("vec4",),
+		## Square matrices
+		"mat2": _create_matrix("mat2"),
+		"mat3": _create_matrix("mat3"),
+		"mat4": _create_matrix("mat4"),
+		## Non-square matrices
+		"mat2x2": _create_matrix("mat2x2"),
+		"mat2x3": _create_matrix("mat2x3"),
+		"mat2x4": _create_matrix("mat2x4"),
+		"mat3x2": _create_matrix("mat3x2"),
+		"mat3x3": _create_matrix("mat3x3"),
+		"mat3x4": _create_matrix("mat3x4"),
+		"mat4x2": _create_matrix("mat4x2"),
+		"mat4x3": _create_matrix("mat4x3"),
+		"mat4x4": _create_matrix("mat4x4"),
+		## Double-precision matrices
+		"dmat2": _create_matrix("dmat2"),
+		"dmat3": _create_matrix("dmat3"),
+		"dmat4": _create_matrix("dmat4"),
+		"dmat2x2": _create_matrix("dmat2x2"),
+		"dmat2x3": _create_matrix("dmat2x3"),
+		"dmat2x4": _create_matrix("dmat2x4"),
+		"dmat3x2": _create_matrix("dmat3x2"),
+		"dmat3x3": _create_matrix("dmat3x3"),
+		"dmat3x4": _create_matrix("dmat3x4"),
+		"dmat4x2": _create_matrix("dmat4x2"),
+		"dmat4x3": _create_matrix("dmat4x3"),
+		"dmat4x4": _create_matrix("dmat4x4"),
+		## Samplers
+		"sampler1D": Type.new("sampler1D", 16, Icons.type_sampler1d),
+		"sampler2D": Type.new("sampler2D", 16, Icons.type_sampler2d),
+		"sampler3D": Type.new("sampler3D", 16, Icons.type_sampler3d),
+		"samplerCube": Type.new("samplerCube", 16, Icons.type_samplerCube),
+		"sampler2DRect": Type.new("sampler2DRect", 16, Icons.type_sampler2d),
+		"sampler1DArray": Type.new("sampler1DArray", 16, Icons.type_sampler1d),
+		"sampler2DArray": Type.new("sampler2DArray", 16, Icons.type_sampler2d),
+		"samplerCubeArray": Type.new("samplerCubeArray", 16, Icons.type_samplerCube),
+		"samplerBuffer": Type.new("samplerBuffer", 16, Icons.type_sampler1d),
+		"sampler2DMS": Type.new("sampler2DMS", 16, Icons.type_sampler2d),
+		"sampler2DMSArray": Type.new("sampler2DMSArray", 16, Icons.type_sampler2d),
+		"isampler1D": Type.new("isampler1D", 16, Icons.type_sampler1d),
+		"isampler2D": Type.new("isampler2D", 16, Icons.type_sampler2d),
+		"isampler3D": Type.new("isampler3D", 16, Icons.type_sampler3d),
+		"isamplerCube": Type.new("isamplerCube", 16, Icons.type_samplerCube),
+		"isampler2DRect": Type.new("isampler2DRect", 16, Icons.type_sampler2d),
+		"isampler1DArray": Type.new("isampler1DArray", 16, Icons.type_sampler1d),
+		"isampler2DArray": Type.new("isampler2DArray", 16, Icons.type_sampler2d),
+		"isamplerCubeArray": Type.new("isamplerCubeArray", 16, Icons.type_samplerCube),
+		"isamplerBuffer": Type.new("isamplerBuffer", 16, Icons.type_sampler1d),
+		"isampler2DMS": Type.new("isampler2DMS", 16, Icons.type_sampler2d),
+		"isampler2DMSArray": Type.new("isampler2DMSArray", 16, Icons.type_sampler2d),
+		"usampler1D": Type.new("usampler1D", 16, Icons.type_sampler1d),
+		"usampler2D": Type.new("usampler2D", 16, Icons.type_sampler2d),
+		"usampler3D": Type.new("usampler3D", 16, Icons.type_sampler3d),
+		"usamplerCube": Type.new("usamplerCube", 16, Icons.type_samplerCube),
+		"usampler2DRect": Type.new("usampler2DRect", 16, Icons.type_sampler2d),
+		"usampler1DArray": Type.new("usampler1DArray", 16, Icons.type_sampler1d),
+		"usampler2DArray": Type.new("usampler2DArray", 16, Icons.type_sampler2d),
+		"usamplerCubeArray": Type.new("usamplerCubeArray", 16, Icons.type_samplerCube),
+		"usamplerBuffer": Type.new("usamplerBuffer", 16, Icons.type_sampler1d),
+		"usampler2DMS": Type.new("usampler2DMS", 16, Icons.type_sampler2d),
+		"usampler2DMSArray": Type.new("usampler2DMSArray", 16, Icons.type_sampler2d),
+		"sampler1DShadow": Type.new("sampler1DShadow", 16, Icons.type_sampler1d),
+		"sampler2DShadow": Type.new("sampler2DShadow", 16, Icons.type_sampler1d),
+		"samplerCubeShadow": Type.new("samplerCubeShadow", 16, Icons.type_samplerCube),
+		"sampler2DRectShadow": Type.new("sampler2DRectShadow", 16, Icons.type_sampler2d),
+		"sampler1DArrayShadow": Type.new("sampler1DArrayShadow", 16, Icons.type_sampler1d),
+		"sampler2DArrayShadow": Type.new("sampler2DArrayShadow", 16, Icons.type_sampler2d),
+		"samplerCubeArrayShadow": Type.new("samplerCubeArrayShadow", 16, Icons.type_samplerCube),
+	}
+	
+	static var _prefix_types := {
+		"f": [
+			"float",
+			"vec2",
+			"vec3",
+			"vec4",
+			"double",
+			"dvec2",
+			"dvec3",
+			"dvec4",
+		],
+		
+		"f_no_d": [
+			"float",
+			"vec2",
+			"vec3",
+			"vec4",
+		],
+		
+		"i": [
+			"int",
+			"ivec2",
+			"ivec3",
+			"ivec4"
+		],
+		
+		"u": [
+			"uint",
+			"uvec2",
+			"uvec3",
+			"uvec4"
+		],
+		
+		"b": [
+			"bool",
+			"bvec2",
+			"bvec3",
+			"bvec4"
+		],
+		
+		"": [
+			"float",
+			"vec2",
+			"vec3",
+			"vec4",
+			"double",
+			"dvec2",
+			"dvec3",
+			"dvec4",
+			"int",
+			"ivec2",
+			"ivec3",
+			"ivec4",
+			"uint",
+			"uvec2",
+			"uvec3",
+			"uvec4",
+			"bool",
+			"bvec2",
+			"bvec3",
+			"bvec4",
+		],
+		
+		"v": [
+			"vec2",
+			"vec3",
+			"vec4",
+			"dvec2",
+			"dvec3",
+			"dvec4",
+			"ivec2",
+			"ivec3",
+			"ivec4",
+			"uvec2",
+			"uvec3",
+			"uvec4",
+			"bvec2",
+			"bvec3",
+			"bvec4",
+		],
+		
+		"v_comp": [
+			"vec2",
+			"vec3",
+			"vec4",
+			"dvec2",
+			"dvec3",
+			"dvec4",
+			"ivec2",
+			"ivec3",
+			"ivec4",
+			"uvec2",
+			"uvec3",
+			"uvec4",
+		],
+		
+		"bv_comp": [
+			"bvec2",
+			"bvec3",
+			"bvec4",
+		],
+		
+		"mat": [
+			"mat2",
+			"mat3",
+			"mat4",
+			"mat2x2",
+			"mat2x3",
+			"mat2x4",
+			"mat3x2",
+			"mat3x3",
+			"mat3x4",
+			"mat4x2",
+			"mat4x3",
+			"mat4x4",
+		],
+		
+		"sampler": [
+			"sampler1D",
+			"sampler2D",
+			"sampler3D",
+			"samplerCube",
+			"sampler2DRect",
+			"sampler1DArray",
+			"sampler2DArray",
+			"samplerCubeArray",
+			"samplerBuffer",
+			"sampler2DMS",
+			"sampler2DMSArray",
+			"isampler1D",
+			"isampler2D",
+			"isampler3D",
+			"isamplerCube",
+			"isampler2DRect",
+			"isampler1DArray",
+			"isampler2DArray",
+			"isamplerCubeArray",
+			"isamplerBuffer",
+			"isampler2DMS",
+			"isampler2DMSArray",
+			"usampler1D",
+			"usampler2D",
+			"usampler3D",
+			"usamplerCube",
+			"usampler2DRect",
+			"usampler1DArray",
+			"usampler2DArray",
+			"usamplerCubeArray",
+			"usamplerBuffer",
+			"usampler2DMS",
+			"usampler2DMSArray",
+			"sampler1DShadow",
+			"sampler2DShadow",
+			"samplerCubeShadow",
+			"sampler2DRectShadow",
+			"sampler1DArrayShadow",
+			"sampler2DArrayShadow",
+			"samplerCubeArrayShadow",
+		],
+		
+		"sampler_vec": [
+			"float",
+			"vec2",
+			"vec3",
+			"vec3",
+			"vec2",
+			"vec2",
+			"vec3",
+			"vec4",
+			"float",
+			"vec2",
+			"vec3",
+			"float",
+			"vec2",
+			"vec3",
+			"vec3",
+			"vec2",
+			"vec2",
+			"vec3",
+			"vec4",
+			"float",
+			"vec2",
+			"vec3",
+			"float",
+			"vec2",
+			"vec3",
+			"vec3",
+			"vec2",
+			"vec2",
+			"vec3",
+			"vec4",
+			"float",
+			"vec2",
+			"vec3",
+			"float",
+			"vec2",
+			"vec3",
+			"vec2",
+			"float",
+			"vec2",
+			"vec3",
+		],
+		
+		"sampler_ivec": [
+			"int",
+			"ivec2",
+			"ivec3",
+			"ivec3",
+			"ivec2",
+			"ivec2",
+			"ivec3",
+			"ivec4",
+			"int",
+			"ivec2",
+			"ivec3",
+			"int",
+			"ivec2",
+			"ivec3",
+			"ivec3",
+			"ivec2",
+			"ivec2",
+			"ivec3",
+			"ivec4",
+			"int",
+			"ivec2",
+			"ivec3",
+			"int",
+			"ivec2",
+			"ivec3",
+			"ivec3",
+			"ivec2",
+			"ivec2",
+			"ivec3",
+			"ivec4",
+			"int",
+			"ivec2",
+			"ivec3",
+			"int",
+			"ivec2",
+			"ivec3",
+			"ivec2",
+			"int",
+			"ivec2",
+			"ivec3",
+		],
+		
+		"sampler_ivec_offset": [
+			"int",
+			"ivec2",
+			"ivec3",
+			"ivec3",
+			"ivec2",
+			"int",
+			"ivec2",
+			"ivec3",
+			"int",
+			"ivec2",
+			"ivec2",
+			"int",
+			"ivec2",
+			"ivec3",
+			"ivec3",
+			"ivec2",
+			"int",
+			"ivec2",
+			"ivec3",
+			"int",
+			"ivec2",
+			"ivec2",
+			"int",
+			"ivec2",
+			"ivec3",
+			"ivec3",
+			"ivec2",
+			"int",
+			"ivec2",
+			"ivec3",
+			"int",
+			"ivec2",
+			"ivec2",
+			"int",
+			"ivec2",
+			"ivec3",
+			"ivec2",
+			"int",
+			"ivec2",
+			"ivec3",
+		],
+	}
+	
+	static var built_in_functions := {
+#region Trig funcs
+		"radians": _create_multi_func("radians", ["degrees"], ["f"]),
+		"degrees": _create_multi_func("degrees", ["radians"], ["f"]),
+		"sin": _create_multi_func("sin", ["angle"], ["f"]),
+		"cos": _create_multi_func("cos", ["angle"], ["f"]),
+		"tan": _create_multi_func("tan", ["angle"], ["f"]),
+		"asin": _create_multi_func("asin", ["angle"], ["f"]),
+		"acos": _create_multi_func("acos", ["angle"], ["f"]),
+		"atan": _create_multi_func("atan", ["y", "x"], ["f"]) + _create_multi_func("atan", ["y_over_x"], ["f"]),
+		"sinh": _create_multi_func("sinh", ["x"], ["f"]),
+		"cosh": _create_multi_func("cosh", ["x"], ["f"]),
+		"tanh": _create_multi_func("tanh", ["x"], ["f"]),
+		"asinh": _create_multi_func("asinh", ["x"], ["f"]),
+		"acosh": _create_multi_func("acosh", ["x"], ["f"]),
+		"atanh": _create_multi_func("atanh", ["x"], ["f"]),
+#endregion
+		
+#region Power/logarithms
+		"pow": _create_multi_func("pow", ["x", "y"], ["f"]),
+		"exp": _create_multi_func("exp", ["x"], ["f"]),
+		"log": _create_multi_func("log", ["x"], ["f"]),
+		"exp2": _create_multi_func("exp2", ["x"], ["f"]),
+		"log2": _create_multi_func("log2", ["x"], ["f"]),
+		"inversesqrt": _create_multi_func("inversesqrt", ["x"], ["f"]),
+#endregion
+		
+#region Rounding and clamping
+		"abs": _create_multi_func("abs", ["x"], [""]),
+		"sign": _create_multi_func("sign", ["x"], [""]),
+		"floor": _create_multi_func("floor", ["x"], ["f"]),
+		"ceil": _create_multi_func("ceil", ["x"], ["f"]),
+		"trunc": _create_multi_func("trunc", ["x"], ["f"]),
+		"fract": _create_multi_func("fract", ["x"], ["f"]),
+		"mod": _create_multi_func("mod", ["x", "y"], ["f"]),
+		"min": _create_multi_func("min", ["x", "y"], [""]),
+		"max": _create_multi_func("max", ["x", "y"], [""]),
+		"clamp": _create_multi_func("clamp", ["x", "min", "max"], [""]),
+		"mix": _create_multi_func("mix", ["a", "b", "x"], ["f"]),
+		"step": _create_multi_func("step", ["edge", "x"], [""]),
+		"smoothstep": _create_multi_func("smoothstep", ["edge_0", "edge_1", "x"], [""]),
+#endregion
+		
+#region Vector operations
+		"length": _create_multi_func("length", ["vector"], ["v"], "float"),
+		"dot": _create_multi_func("dot", ["a", "b"], ["v"], "float"),
+		"cross": _create_multi_func("cross", ["a", "b"], ["vec3"], "vec3"),
+		"normalize": _create_multi_func("normalize", ["vector"], ["v"], "v"),
+		"faceforward": _create_multi_func("faceforward", ["normal", "incident", "normal_reference"], ["v"], "v"),
+		"reflect": _create_multi_func("reflect", ["incident", "normal"], ["v"], "v"),
+		"refract": _create_multi_func("refract", ["incident", "normal", "eta"], ["v", "v", "float"]),
+#endregion
+		
+#region Matrix operations
+		"determinant": _create_multi_func("determinant", ["matrix"], ["m"], "float"),
+		"outerProduct": [
+			Function.new("outerProduct", "mat2", [
+					Variable.new("c", "vec2"),
+					Variable.new("r", "vec2"),
+				]),
+			Function.new("outerProduct", "mat3", [
+					Variable.new("c", "vec3"),
+					Variable.new("r", "vec3"),
+				]),
+			Function.new("outerProduct", "mat4", [
+					Variable.new("c", "vec4"),
+					Variable.new("r", "vec4"),
+				]),
+			Function.new("outerProduct", "mat2x3", [
+					Variable.new("c", "vec3"),
+					Variable.new("r", "vec2"),
+				]),
+			Function.new("outerProduct", "mat3x2", [
+					Variable.new("c", "vec2"),
+					Variable.new("r", "vec3"),
+				]),
+			Function.new("outerProduct", "mat2x4", [
+					Variable.new("c", "vec4"),
+					Variable.new("r", "vec2"),
+				]),
+			Function.new("outerProduct", "mat4x2", [
+					Variable.new("c", "vec2"),
+					Variable.new("r", "vec4"),
+				]),
+			Function.new("outerProduct", "mat3x4", [
+					Variable.new("c", "vec4"),
+					Variable.new("r", "vec3"),
+				]),
+			Function.new("outerProduct", "mat4x3", [
+					Variable.new("c", "vec3"),
+					Variable.new("r", "vec4"),
+				]),
+			
+			Function.new("outerProduct", "dmat2", [
+					Variable.new("c", "vec2"),
+					Variable.new("r", "vec2"),
+				]),
+			Function.new("outerProduct", "dmat3", [
+					Variable.new("c", "vec3"),
+					Variable.new("r", "vec3"),
+				]),
+			Function.new("outerProduct", "dmat4", [
+					Variable.new("c", "vec4"),
+					Variable.new("r", "vec4"),
+				]),
+			Function.new("outerProduct", "dmat2x3", [
+					Variable.new("c", "vec3"),
+					Variable.new("r", "vec2"),
+				]),
+			Function.new("outerProduct", "dmat3x2", [
+					Variable.new("c", "vec2"),
+					Variable.new("r", "vec3"),
+				]),
+			Function.new("outerProduct", "dmat2x4", [
+					Variable.new("c", "vec4"),
+					Variable.new("r", "vec2"),
+				]),
+			Function.new("outerProduct", "dmat4x2", [
+					Variable.new("c", "vec2"),
+					Variable.new("r", "vec4"),
+				]),
+			Function.new("outerProduct", "dmat3x4", [
+					Variable.new("c", "vec4"),
+					Variable.new("r", "vec3"),
+				]),
+			Function.new("outerProduct", "dmat4x3", [
+					Variable.new("c", "vec3"),
+					Variable.new("r", "vec4"),
+				]),
+			],
+		"matrixCompMult": _create_multi_func("matrixCompMult", ["a", "b"], ["mat"]),
+		"inverse": _create_multi_func("inverse", ["inverse"], ["mat"]),
+		"transpose": _create_multi_func("transpose", ["inverse"], ["mat"]),
+#endregion
+		
+#region Texture sampling
+		"texture": _create_multi_func("texture", ["sampler", "coord", "bias"], ["sampler", "sampler_vec", "float"], "vec4"),
+		"textureLod": _create_multi_func("textureLod", ["sampler", "coord", "lod"], ["sampler", "sampler_vec", "float"], "vec4"),
+		"textureLodOffset": _create_multi_func("textureLodOffset", ["sampler", "coord", "lod", "offset"], ["sampler", "sampler_vec", "float", "sampler_ivec_offset"], "vec4"),
+		"textureGrad": _create_multi_func("textureGrad", ["sampler", "coord", "dPdx", "dPdy"], ["sampler", "sampler_vec", "vec2", "vec2"], "vec4"),
+		"textureGradOffset": _create_multi_func("textureGradOffset", ["sampler", "coord", "dPdx", "dPdy", "offset"], ["sampler", "sampler_vec", "vec2", "vec2", "sampler_ivec_offset"], "vec4"),
+		"textureProj": _create_multi_func("textureProj", ["sampler", "coord", "bias"], ["sampler", "sampler_vec", "float"], "vec4"),
+		"textureProjLod": _create_multi_func("textureProjLod", ["sampler", "coord", "lod"], ["sampler", "sampler_vec", "float"], "vec4"),
+		"textureProjLodOffset": _create_multi_func("textureProjLodOffset", ["sampler", "coord", "lod", "offset"], ["sampler", "sampler_vec", "float", "sampler_ivec_offset"], "vec4"),
+		"textureProjGrad": _create_multi_func("textureProjGrad", ["sampler", "coord", "dPdx", "dPdy"], ["sampler", "sampler_vec", "vec2", "vec2"], "vec4"),
+		"texelFetch": _create_multi_func("texelFetch", ["sampler", "coord", "lod"], ["sampler", "sampler_ivec", "int"], "vec4"),
+		"texelFetchOffset": _create_multi_func("texelFetch", ["sampler", "coord", "lod", "offset"], ["sampler", "sampler_ivec", "int", "sampler_ivec_offset"], "vec4"),
+		"textureSize": _create_multi_func("textureSize", ["sampler", "lod"], ["sampler", "int"], "sampler_ivec_offset"),
+#endregion
+		
+#region Screen-space derivatives
+		"dFdx": _create_multi_func("dFdx", ["x"], [""]),
+		"dFdy": _create_multi_func("dFdy", ["x"], [""]),
+		"fwidth": _create_multi_func("fwidth", ["x"], [""]),
+#endregion
+		
+#region Bit-manipulation
+		"isnan": _create_multi_func("isnan", ["x"], ["f"], "b"),
+		"isinf": _create_multi_func("isinf", ["x"], ["f"], "b"),
+		"intBitsToFloat": _create_multi_func("intBitsToFloat", ["v"], ["i"], "f"),
+		"uintBitsToFloat": _create_multi_func("uintBitsToFloat", ["v"], ["u"], "f"),
+		"floatBitsToInt": _create_multi_func("floatBitsToInt", ["v"], ["f_no_d"], "i"),
+		"floatBitsToUint": _create_multi_func("floatBitsToUint", ["v"], ["f_no_d"], "u"),
+		"packSnorm2x16": _create_multi_func("packSnorm2x16", ["v"], ["vec2"], "uint"),
+		"packUnorm2x16": _create_multi_func("packUnorm2x16", ["v"], ["vec2"], "uint"),
+		"unpackSnorm2x16": _create_multi_func("unpackSnorm2x16", ["p"], ["uint"], "vec2"),
+		"unpackUnorm2x16": _create_multi_func("unpackUnorm2x16", ["p"], ["uint"], "vec2"),
+#endregion
+		
+#region Boolean vectors
+		"lessThan": _create_multi_func("lessThan", ["x", "y"], ["v_comp"], "bv_comp"),
+		"lessThanEqual": _create_multi_func("lessThanEqual", ["x", "y"], ["v_comp"], "bv_comp"),
+		"greaterThan": _create_multi_func("greaterThan", ["x", "y"], ["v_comp"], "bv_comp"),
+		"greaterThanEqual": _create_multi_func("greaterThanEqual", ["x", "y"], ["v_comp"], "bv_comp"),
+		"equal": _create_multi_func("equal", ["x", "y"], ["v_comp"], "bv_comp"),
+		"notEqual": _create_multi_func("notEqual", ["x", "y"], ["v_comp"], "bv_comp"),
+		"any": _create_multi_func("any", ["x"], ["bv_comp"], "bool"),
+		"all": _create_multi_func("all", ["x"], ["bv_comp"], "bool"),
+		"not": _create_multi_func("not", ["x"], ["bv_comp"], "bv_comp"),
+#endregion
+	}
+	
+	var name: String
+	var depth: int = 0
+	var icon: Texture2D
+	
+	func _init(_name: String, _depth: int = 0, _icon: Texture2D = null) -> void:
+		name = _name
+		depth = _depth
+		icon = _icon
+	
+	## Kinda cursed function
+	## [br]
+	## Input prefixes can either be a raw type, such as [c]float[/c], or a type
+	## set defined in [c]_prefix_types[/c]
+	## [br]
+	## For example, entering [c]f[/c] would result in all versions of the method
+	## with a float type, like method(float x), method(vec2 x), method(vec3 x),
+	## etc.
+	static func _create_multi_func(name: String, arguments: PackedStringArray, input_prefixes: PackedStringArray, output_prefix: String = input_prefixes[0]) -> Array[Function]:
+		var in_types: Array[PackedStringArray] = []
+		for p in input_prefixes:
+			in_types.append(PackedStringArray(_prefix_types.get(p, [p])))
+		var out_types: PackedStringArray = _prefix_types.get(output_prefix, [output_prefix])
+		var funcs: Array[Function] = []
+		var type_count: int = in_types.reduce(
+			func(accum: int, types: PackedStringArray) -> int: return maxi(accum, types.size()),
+			0
+			)
+		funcs.resize(type_count)
+		
+		for i in type_count:
+			var typed_args: Array[Variable] = []
+			typed_args.resize(arguments.size())
+			for typed_arg_i in typed_args.size():
+				typed_args[typed_arg_i] = Variable.new(
+						arguments[typed_arg_i],
+						ArrayUtil.index_wrap(ArrayUtil.index_wrap(in_types, typed_arg_i), i))
+			funcs[i] = Function.new(name, ArrayUtil.index_wrap(out_types, i), typed_args)
+		print("\n".join(funcs))
+		print()
+		return funcs
+	
+	static func _create_vector(name: String, base_type: String = _prefix_map.get(name[0], "float"), count: int = int(name[-1]), access_sets: PackedStringArray = ["xyzw", "rgba", "stpq"]) -> IndexableStruct:
+		var components: Array[Variable] = []
+		for access_set in access_sets:
+			components.append_array(Array(_generate_permutations(access_set, count)).map(
+				func(name: String):
+					var type: String = ""
+					if name.length() == 1:
+						type = base_type
+					else:
+						type = base_type[0] + "vec" + str(name.length())
+					return Variable.new(name, type)
+					))
+		#print("\n".join(components))
+		return IndexableStruct.new(name, components, base_type, Icons.sget("type_" + name))
+	
+	static func _create_matrix(name: String, base_type: String = _prefix_map.get(name[0], "float")) -> IndexableStruct:
+		var dim: String = name.right(3) if "x" in name else name.right(1)
+		return IndexableStruct.new(name, [], base_type, Icons.sget("type_" + dim))
+	
+	static func _generate_single_permutation(sets: String, count: int) -> PackedStringArray:
+		if count == 1:
+			return sets.split()
+		
+		var arr: PackedStringArray = []
+		for ch in sets:
+			var set_prev := _generate_single_permutation(sets, count - 1)
+			for b in set_prev.size():
+				set_prev[b] = ch + set_prev[b]
+			arr.append_array(set_prev)
+		return arr
+	
+	static func _generate_permutations(sets: String, count: int) -> PackedStringArray:
+		var arr: PackedStringArray = []
+		for new_count in range(1, count + 1):
+			arr.append_array(_generate_single_permutation(sets, new_count))
+		return arr
+
+
+class Function extends Type:
+	var return_type: String
+	var arguments: Array[Variable]
+	
+	func _init(_name: String, _return_type: String, _arguments: Array[Variable]) -> void:
+		name = _name
+		return_type = _return_type
+		arguments = _arguments
+		icon = Icons.function
+	
+	func _to_string() -> String:
+		return "%s %s(%s)" % [
+			return_type,
+			name,
+			", ".join(arguments.map(func(arg: Variable): return str(arg)))
+		]
+
+
+class Struct extends Type:
+	var properties: Array[Variable] = []
+	
+	func _init(_name: String, _properties: Array[Variable], _icon: Texture2D = Icons.struct) -> void:
+		name = _name
+		properties = _properties
+		icon = _icon
+	
+	func _to_string() -> String:
+		return "%s {\n%s\n}" % [
+			name,
+			"\n\t".join(properties.map(func(prop: Variable): return prop.to_string()))
+		]
+
+
+class IndexableStruct extends Struct:
+	var element_type: String
+	
+	func _init(_name: String, _properties: Array[Variable], _element_type: String, _icon: Texture2D = Icons.struct) -> void:
+		name = _name
+		properties = _properties
+		element_type = _element_type
+		icon = _icon
+	
+	func _to_string() -> String:
+		return "%s[%s] {\n%s\n}" % [
+			name,
+			element_type,
+			"\n\t".join(properties.map(func(prop: Variable): return prop.to_string()))
+		]
+
+
+class Variable extends Type:
+	var type: String
+	
+	func _init(_name: String, _type: String) -> void:
 		type = _type
 		name = _name
+		icon = Icons.variable
+	
+	func _to_string() -> String:
+		return "%s %s" % [type, name]
 	
 	static func new_from_def(def: String) -> Variable:
 		var def_type: String = def.get_slice(" ", 0)
 		var def_name: String = def.get_slice(" ", 1)
-		return Variable.new(def_type, def_name)
+		return Variable.new(def_name, def_type)
