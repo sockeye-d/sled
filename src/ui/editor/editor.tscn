@@ -275,6 +275,7 @@ one_shot = true
 
 [connection signal="pressed" from="PanelContainer/MarginContainer/MenuBar/LeftBar/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="code_completion_requested" from="CodeEditor" to="." method="_on_code_editor_code_completion_requested"]
+[connection signal="symbol_validate" from="CodeEditor" to="." method="_on_code_editor_symbol_validate"]
 [connection signal="text_changed" from="CodeEditor" to="." method="_on_code_editor_text_changed"]
 [connection signal="canceled" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_canceled"]
 [connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_confirmed"]

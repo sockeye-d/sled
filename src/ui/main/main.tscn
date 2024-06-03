@@ -110,4 +110,6 @@ size_flags_vertical = 8
 mouse_filter = 2
 alignment = 2
 
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+
 [connection signal="file_opened" from="VBoxContainer/MarginContainer/VBoxContainer/MainContainer/Browser" to="." method="open_file"]

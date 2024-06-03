@@ -205,12 +205,15 @@ static func _get_file_contents(path: String, file: String, editing_line: int = -
 			continue
 		if not scopes[i] == -1 and (
 			StringUtil.begins_with_any(substr, structs_keys)
-			or  StringUtil.begins_with_any(substr, Variable.qualifiers.keys())
+			or StringUtil.begins_with_any(substr, Variable.qualifiers.keys())
 			):
-			var end := StringUtil.find_any(substr, [")", ";", "="])
+			var end := StringUtil.find_any(substr, ["{", ";"])
 			var def := substr.substr(0, end)
 			
-			if "(" in def:
+			var equals_index := def.find("=")
+			var parens_index := def.find("(")
+			
+			if not parens_index == -1 and (equals_index == -1 or parens_index < equals_index):
 				var obj := Function.from_def(def)
 				obj.depth = current_scope + 1
 				if obj:
@@ -250,9 +253,11 @@ class FileContents:
 	var funcs: Dictionary = { }
 	
 	func add(obj: Type) -> void:
+		if not obj:
+			return
 		if obj is Struct:
 			structs[obj.name] = obj
-			funcs[obj.name] = obj.as_fn()
+			#funcs[obj.name] = obj.as_fn()
 		if obj is Variable:
 			variables[obj.name] = obj
 		if obj is Function:
@@ -999,6 +1004,9 @@ class Function extends Type:
 			", ".join(arguments.map(func(arg: Variable): return str(arg)))
 		]
 	
+	func as_completion_suggestion() -> CodeCompletionSuggestion:
+		return CodeCompletionSuggestion.new(_get_type(), name, depth, icon, name + "(")
+	
 	static func from_def(def: String) -> Function:
 		var def_split := StringUtil.split_at_sequence(def, [StringUtil.WHITESPACE, ["("]])
 		
@@ -1113,11 +1121,17 @@ class Variable extends Type:
 		return "%s %s" % [type, name]
 	
 	static func from_def(def: String, scope: int = 0) -> Array[Variable]:
-		var def_split := StringUtil.split_at(def,
+		def = def.strip_edges()
+		var def_scope_removed := StringUtil.remove_scope(StringUtil.remove_scope(def, "(", ")"), "=", ",", 0, true)
+		# idk what this does, but it works
+		var def_split := StringUtil.split_at(def_scope_removed,
 				StringUtil.rfind_any(
-						def,
+						def_scope_removed,
 						StringUtil.WHITESPACE,
-						posmod(def.find(","), def.length()),
+						StringUtil.rtrim_index(
+							def_scope_removed, StringUtil.WHITESPACE,
+							posmod(def_scope_removed.find(","), def_scope_removed.length()) - 1
+						)
 					)
 				)
 		var left := StringUtil.split_at_first_any(def_split[0], StringUtil.WHITESPACE, true, false)

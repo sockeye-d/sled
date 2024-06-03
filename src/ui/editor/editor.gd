@@ -203,3 +203,7 @@ func _get_completion_suggestions() -> void:
 
 func _on_save_button_pressed() -> void:
 	save()
+
+
+func _on_code_editor_symbol_validate(symbol: String) -> void:
+	print(symbol)

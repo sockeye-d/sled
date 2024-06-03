@@ -27,6 +27,22 @@ static func remove_inaccesible_scope(string: String, scope_opening: String, scop
 	return str(sb)
 
 
+static func remove_scope(string: String, scope_opening: String, scope_closing: String, start: int = 0, exclusive: bool = false) -> String:
+	var sb := StringBuilder.new()
+	var scope: int = 0
+	var offset: int = scope_closing.length() if exclusive else 0
+	for i in string.length():
+		if string.substr(i).begins_with(scope_opening):
+			scope += 1
+		
+		if string.substr(0, i + offset).ends_with(scope_closing):
+			scope -= 1
+		
+		if scope == 0:
+			sb.append(string[i])
+	return str(sb)
+
+
 ## The array returned contains the scope detected. If the scope is -1, it means
 ## it was inaccesible, otherwise it is the scope level (0 is the closest scope,
 ## 1 is the next closest, etc.)
@@ -276,3 +292,10 @@ static func splitn_at_sequence(string: String, what: Array[PackedStringArray], s
 		index = new_index
 	array.append(string.substr(index))
 	return array
+
+
+static func rtrim_index(string: String, what: PackedStringArray, start: int = -1) -> int:
+	for i in range(posmod(start, string.length()), -1, -1):
+		if not string[i] in what:
+			return i
+	return 0
