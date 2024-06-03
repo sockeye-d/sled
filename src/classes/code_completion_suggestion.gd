@@ -15,9 +15,10 @@ func _init(_type: CodeEdit.CodeCompletionKind, _text: String, _location: CodeEdi
 
 
 func add_to(editor: CodeEdit) -> void:
-	editor.add_code_completion_option(type, text, text, Color.WHITE, null, null, location)
+	editor.add_code_completion_option(type, text, text, Color.WHITE, icon, null, location)
 
 
 static func add_arr_to(suggestions: Array[CodeCompletionSuggestion], editor: CodeEdit) -> void:
 	for suggestion in suggestions:
-		suggestion.add_to(editor)
+		if suggestion:
+			suggestion.add_to(editor)

@@ -174,7 +174,7 @@ func _on_code_editor_text_changed() -> void:
 		path_button.text = file_handle.get_path_absolute().get_file()
 	else:
 		path_button.add_theme_font_override(&"font", MAIN_FONT_ITALICS)
-		path_button.text = file_handle.get_path_absolute().get_file() + "*"
+		path_button.text = file_handle.get_path_absolute().get_file() + " (unsaved)"
 
 	old_text = code_editor.text
 
@@ -191,11 +191,14 @@ func _get_completion_suggestions() -> void:
 			code_editor.get_caret_line(code_editor.get_caret_count() - 1),
 			code_editor.get_caret_column(code_editor.get_caret_count() - 1),
 			FileManager.absolute_base_path if Settings.inc_absolute_paths else "",
-			), code_editor)
-	for keyword in GLSLLanguage.base_types:
-		code_editor.add_code_completion_option(CodeEdit.KIND_CLASS, keyword, keyword, Color.WHITE, null, null, 1)
-	for keyword in GLSLLanguage.keywords:
-		code_editor.add_code_completion_option(CodeEdit.KIND_PLAIN_TEXT, keyword, keyword, Color.WHITE, null, null, 2)
+			),
+			code_editor
+		)
+	#for keyword in GLSLLanguage.base_types:
+		#code_editor.add_code_completion_option(CodeEdit.KIND_CLASS, keyword, keyword, Color.WHITE, null, null, 1)
+	#for keyword in GLSLLanguage.keywords:
+		#code_editor.add_code_completion_option(CodeEdit.KIND_PLAIN_TEXT, keyword, keyword, Color.WHITE, null, null, 2)
+	#pass
 
 
 func _on_save_button_pressed() -> void:

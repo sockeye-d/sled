@@ -5,6 +5,7 @@ const _ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345678
 
 
 static func _static_init() -> void:
+#region consts
 	base_types = [
 		"void",
 		# Basic types
@@ -161,6 +162,7 @@ static func _static_init() -> void:
 		"#extension",
 		"#include",
 	]
+#endregion
 	comment_regions = ["//", "/* */"]
 	# GLSL has no strings
 	string_regions = []
@@ -168,121 +170,145 @@ static func _static_init() -> void:
 
 static func get_code_completion_suggestions(path: String, file: String, line: int = -1, col: int = -1, base_path: String = path) -> Array[CodeCompletionSuggestion]:
 	# Takes a little effort to convert an untyped array to a typed one
-	var untyped_array: Array = _get_code_completion_suggestions(path, file, line, col, 0, base_path).values()
-	var typed_array: Array[CodeCompletionSuggestion] = []
-	typed_array.assign(untyped_array)
-	return typed_array
+	var contents = _get_file_contents(path, file, line, col, 0, base_path)
+	contents.merge(FileContents.built_in_contents)
+	return contents.as_suggestions()
 
 
-static func _get_code_completion_suggestions(path: String, file: String, editing_line: int = -1, editing_column: int = -1, depth: int = 0, base_path: String = "", visited_files: PackedStringArray = []) -> Dictionary:
+static func _get_file_contents(path: String, file: String, editing_line: int = -1, editing_column: int = -1, depth: int = 0, base_path: String = "", visited_files: PackedStringArray = []) -> FileContents:
 	visited_files.append(path)
-	## Dictionary[String, Type]
-	var suggestions: Dictionary = { }
-	var included_files: PackedStringArray = []
-	var definitions: Dictionary = { }
+	var contents = FileContents.new()
+	var structs_keys: PackedStringArray = Type.built_in_structs.keys()
 	file = StringUtil.substr_line_pos(file, 0, editing_line)
-	var file_split = file.replace(";", "\n").split("\n", false)
-	
-	for raw_line in file_split:
-		var line = raw_line.strip_edges().lstrip(" ")
-
-		var symbols: PackedStringArray = _split_string_into_symbols(line)
-		for i in range(1, symbols.size()):
-			# Is the symbol a variable?
-			if (
-			(
-				symbols[i - 1].ends_with(",")
-				or symbols[i - 1] in base_types
-			)
-			and _is_valid_var_name(symbols[i])
-			):
-				suggestions[symbols[i]] = (CodeCompletionSuggestion.new(
-						CodeEdit.KIND_VARIABLE,
-						symbols[i],
-						CodeEdit.LOCATION_PARENT_MASK | depth,
-						))
-			# Is it a preproccesor directive?
-			if symbols[i - 2] == "#":
-				var directive = symbols[i - 1]
-				var value = "".join(symbols.slice(i))
-				match directive:
-					"define":
-						var suggestion = CodeCompletionSuggestion.new(
-								CodeEdit.KIND_CONSTANT,
-								symbols[i],
-								CodeEdit.LOCATION_PARENT_MASK | depth)
-						definitions[value] = suggestion
-						suggestions[value] = suggestion
-					"undef":
-						suggestions.erase(value)
-					"include":
-						# Not really a suggestion, will be handled later
-						included_files.append(value.lstrip("'\"").rstrip("'\""))
-			# Is it a function?
-			if symbols[i] == "(" and _is_valid_var_name(symbols[i - 1]) and symbols[i - 2] in base_types:
-				suggestions[symbols[i - 1]] = CodeCompletionSuggestion.new(
-						CodeEdit.KIND_MEMBER,
-						symbols[i - 1],
-						CodeEdit.LOCATION_PARENT_MASK | depth,
-						)
-	
-	for included_file in included_files:
-		var new_path = path.get_base_dir().path_join(included_file).simplify_path()
-		if included_file.begins_with("/") or included_file.begins_with("\\"):
-			if not base_path:
+	file = StringUtil.remove_comments(file)
+	var scopes := StringUtil.detect_inaccesible_scope(file, "{", "}")
+	var i := 0
+	while i < file.length():
+		var substr := file.substr(i)
+		var current_scope: = depth + scopes[i]
+		if substr.begins_with("struct"):
+			# It is a struct
+			var open_brace: int = substr.find("{")
+			if open_brace == -1:
+				i += 1
 				continue
-			new_path = base_path.path_join(included_file).simplify_path()
-		if not included_file in visited_files and FileAccess.file_exists(new_path):
-			suggestions.merge(_get_code_completion_suggestions(
-					new_path,
-					FileAccess.open(new_path, FileAccess.READ).get_as_text(true),
-					-1,
-					-1,
-					depth + 1,
-					base_path,
-					))
-
-	return suggestions
-
-
-static func _split_string_into_symbols(string: String, allow_empty: bool = false) -> PackedStringArray:
-	string = string.lstrip(" ")
-	var arr: PackedStringArray = []
-	var begin: int = 0
-	for end in range(1, string.length()):
-
-		if (string[end - 1] in _ALPHABET) != (string[end] in _ALPHABET):
-			var sub: String = string.substr(begin, end - begin).lstrip(" ").rstrip(" ")
-			if allow_empty or sub:
-				arr.append(sub)
-			begin = end
-
-	arr.append(string.substr(begin))
-	return arr
-
-
-static func _is_valid_var_name(name: String) -> bool:
-	if " " in name:
-		return false
-
-	if name[0] in "0123456789":
-		return false
-
-	if name in base_types:
-		return false
-
-	if name in keywords:
-		return false
-
-	for ch in name:
-		if not ch.to_lower() in "abcdefghijklmnopqrstuvwxyz0123456789":
-			return false
+			var close_brace: int = StringUtil.find_scope_end(substr, open_brace + 1, "{", "}")
+			var def := substr.substr(0, close_brace)
+			var obj := Struct.from_def(def)
+			obj.depth = current_scope + 1
+			if obj:
+				contents.add(obj)
+				structs_keys.append(obj.name)
+			if close_brace == -1:
+				break
+			i += close_brace + 1
+			continue
+		if not scopes[i] == -1 and (
+			StringUtil.begins_with_any(substr, structs_keys)
+			or  StringUtil.begins_with_any(substr, Variable.qualifiers.keys())
+			):
+			var end := StringUtil.find_any(substr, [")", ";", "="])
+			var def := substr.substr(0, end)
+			
+			if "(" in def:
+				var obj := Function.from_def(def)
+				obj.depth = current_scope + 1
+				if obj:
+					contents.add(obj)
+			else:
+				var objs := Variable.from_def(def, current_scope + 1)
+				if objs:
+					for obj in objs:
+						contents.add(obj)
+			if end == -1:
+				break
+			if substr[end] == ";":
+				end = substr.find(";")
+			i += end + 1
+		i += 1
 	
+	return contents
 
-	return true
+
+class FileContents:
+	static var built_in_contents: FileContents = null:
+		set(value):
+			built_in_contents = value
+		get:
+			if not built_in_contents:
+				built_in_contents = FileContents.new()
+				built_in_contents.structs.merge(Type.built_in_structs)
+				built_in_contents.funcs.merge(Type.built_in_functions)
+				built_in_contents.add_depth(CodeEdit.LOCATION_OTHER)
+			return built_in_contents
+	
+	## Dictionary[String, Struct]
+	var structs: Dictionary = { }
+	## Dictionary[String, Variable]
+	var variables: Dictionary = { }
+	## Dictionary[String, Array[Function]]
+	var funcs: Dictionary = { }
+	
+	func add(obj: Type) -> void:
+		if obj is Struct:
+			structs[obj.name] = obj
+			funcs[obj.name] = obj.as_fn()
+		if obj is Variable:
+			variables[obj.name] = obj
+		if obj is Function:
+			if not obj.name in funcs:
+				funcs[obj.name] = [obj]
+			else:
+				funcs[obj.name].append(obj)
+	
+	func _to_string() -> String:
+		return "%s\n\n%s\n\n%s" % [
+			ArrayUtil.join_line(ArrayUtil.to_string_array(structs.values())),
+			ArrayUtil.join_line(ArrayUtil.to_string_array(variables.values())),
+			ArrayUtil.join_line(ArrayUtil.to_string_array(funcs.values())),
+		]
+	
+	func as_suggestions() -> Array[CodeCompletionSuggestion]:
+		var f_size = funcs.size()
+		var total_size: int = structs.size() + variables.size() + f_size
+		var s: Array[CodeCompletionSuggestion] = []
+		s.resize(total_size)
+		var total_i: int = 0
+		for i in structs:
+			s[total_i] = structs[i].as_completion_suggestion()
+			total_i += 1
+		for i in variables:
+			s[total_i] = variables[i].as_completion_suggestion()
+			total_i += 1
+		for i in funcs:
+			s[total_i] = funcs[i][0].as_completion_suggestion()
+			total_i += 1
+		return s
+	
+	func add_depth(depth: int) -> void:
+		for key in structs:
+			structs[key].depth += depth
+		for key in variables:
+			variables[key].depth += depth
+		for key in funcs:
+			for f in funcs[key]:
+				f.depth += depth
+	
+	func merge(file_contents: FileContents) -> void:
+		structs.merge(file_contents.structs)
+		variables.merge(file_contents.variables)
+		for key in file_contents.funcs:
+			if key in funcs:
+				# Function does exist so merge the arrays
+				funcs[key].append_array(file_contents.funcs[key])
+			else:
+				# Function does not exist so insert a new key
+				funcs[key] = file_contents.funcs[key]
 
 
 class Type:
+	
+#region consts
 	static var _prefix_map := {
 		"b": "bool",
 		"i": "int",
@@ -291,6 +317,11 @@ class Type:
 	}
 	
 	static var built_in_structs := {
+		"float": _create_vector("float", "float", 1),
+		"bool": _create_vector("bool", "bool", 1),
+		"int": _create_vector("int", "int", 1),
+		"uint": _create_vector("uint", "uint", 1),
+		"double": _create_vector("double", "double", 1),
 		# Vector types
 		"bvec2": _create_vector("bvec2"),
 		"bvec3": _create_vector("bvec3"),
@@ -304,9 +335,9 @@ class Type:
 		"dvec2": _create_vector("dvec2"),
 		"dvec3": _create_vector("dvec3"),
 		"dvec4": _create_vector("dvec4"),
-		"vec2": _create_vector("vec2",),
-		"vec3": _create_vector("vec3",),
-		"vec4": _create_vector("vec4",),
+		"vec2": _create_vector("vec2"),
+		"vec3": _create_vector("vec3"),
+		"vec4": _create_vector("vec4"),
 		## Square matrices
 		"mat2": _create_matrix("mat2"),
 		"mat3": _create_matrix("mat3"),
@@ -848,9 +879,11 @@ class Type:
 		"not": _create_multi_func("not", ["x"], ["bv_comp"], "bv_comp"),
 #endregion
 	}
+#endregion
 	
 	var name: String
 	var depth: int = 0
+	var line_number: int = -1
 	var icon: Texture2D
 	
 	func _init(_name: String, _depth: int = 0, _icon: Texture2D = null) -> void:
@@ -858,12 +891,13 @@ class Type:
 		depth = _depth
 		icon = _icon
 	
+#region Helper functions
 	## Kinda cursed function
 	## [br]
-	## Input prefixes can either be a raw type, such as [c]float[/c], or a type
-	## set defined in [c]_prefix_types[/c]
+	## Input prefixes can either be a raw type, such as [code]float[/code], or a type
+	## set defined in [code]_prefix_types[/code]
 	## [br]
-	## For example, entering [c]f[/c] would result in all versions of the method
+	## For example, entering [code]f[/code] would result in all versions of the method
 	## with a float type, like method(float x), method(vec2 x), method(vec3 x),
 	## etc.
 	static func _create_multi_func(name: String, arguments: PackedStringArray, input_prefixes: PackedStringArray, output_prefix: String = input_prefixes[0]) -> Array[Function]:
@@ -886,8 +920,6 @@ class Type:
 						arguments[typed_arg_i],
 						ArrayUtil.index_wrap(ArrayUtil.index_wrap(in_types, typed_arg_i), i))
 			funcs[i] = Function.new(name, ArrayUtil.index_wrap(out_types, i), typed_args)
-		print("\n".join(funcs))
-		print()
 		return funcs
 	
 	static func _create_vector(name: String, base_type: String = _prefix_map.get(name[0], "float"), count: int = int(name[-1]), access_sets: PackedStringArray = ["xyzw", "rgba", "stpq"]) -> IndexableStruct:
@@ -902,12 +934,11 @@ class Type:
 						type = base_type[0] + "vec" + str(name.length())
 					return Variable.new(name, type)
 					))
-		#print("\n".join(components))
 		return IndexableStruct.new(name, components, base_type, Icons.sget("type_" + name))
 	
 	static func _create_matrix(name: String, base_type: String = _prefix_map.get(name[0], "float")) -> IndexableStruct:
 		var dim: String = name.right(3) if "x" in name else name.right(1)
-		return IndexableStruct.new(name, [], base_type, Icons.sget("type_" + dim))
+		return IndexableStruct.new(name, [], base_type, Icons.sget("type_" + name))
 	
 	static func _generate_single_permutation(sets: String, count: int) -> PackedStringArray:
 		if count == 1:
@@ -926,6 +957,29 @@ class Type:
 		for new_count in range(1, count + 1):
 			arr.append_array(_generate_single_permutation(sets, new_count))
 		return arr
+#endregion
+	
+	func as_completion_suggestion() -> CodeCompletionSuggestion:
+		return CodeCompletionSuggestion.new(_get_type(), name, depth, icon)
+	
+	func _get_type() -> CodeEdit.CodeCompletionKind:
+		return CodeEdit.KIND_VARIABLE
+
+
+class Definition extends Type:
+	var value: String
+	
+	func _init(_name: String, _value: String) -> void:
+		name = _name
+		value = _value
+		icon = Icons.definition
+	
+	static func from_def(def: String) -> Definition:
+		return null
+	
+	func _get_type() -> CodeEdit.CodeCompletionKind:
+		return CodeEdit.KIND_CONSTANT
+
 
 
 class Function extends Type:
@@ -944,6 +998,24 @@ class Function extends Type:
 			name,
 			", ".join(arguments.map(func(arg: Variable): return str(arg)))
 		]
+	
+	static func from_def(def: String) -> Function:
+		var def_split := StringUtil.split_at_sequence(def, [StringUtil.WHITESPACE, ["("]])
+		
+		var return_type := def_split[0].strip_edges()
+		var name := def_split[1].strip_edges()
+		var args_str := def_split[2].trim_prefix("(").split(",", false)
+		
+		var args: Array[Variable] = []
+		args.resize(args_str.size())
+		for i in args_str.size():
+			args[i] = Variable.from_def(args_str[i].strip_edges())[0]
+		
+		return Function.new(name, return_type, args)
+	
+	func _get_type() -> CodeEdit.CodeCompletionKind:
+		return CodeEdit.KIND_FUNCTION
+
 
 
 class Struct extends Type:
@@ -954,11 +1026,30 @@ class Struct extends Type:
 		properties = _properties
 		icon = _icon
 	
+	func as_fn() -> void:
+		return Function.new(name, name, properties)
+	
 	func _to_string() -> String:
 		return "%s {\n%s\n}" % [
 			name,
 			"\n\t".join(properties.map(func(prop: Variable): return prop.to_string()))
 		]
+	
+	static func from_def(def: String) -> Struct:
+		var trimmed := def.trim_prefix("struct").strip_edges()
+		var split := StringUtil.splitn_at_sequence(trimmed, [StringUtil.WHITESPACE, ["{"]], true, false)
+		split[-1] = split[-1].lstrip("".join(StringUtil.WHITESPACE) + "{").rstrip("".join(StringUtil.WHITESPACE) + "}")
+		var name := split[0]
+		var vars: Array[Variable] = []
+		var v_defs := split[-1].split(";", false)
+		for v_def in v_defs:
+			var current_var := Variable.from_def(v_def.strip_edges())
+			if current_var:
+				vars.append_array(current_var)
+		return Struct.new(name, vars)
+	
+	func _get_type() -> CodeEdit.CodeCompletionKind:
+		return CodeEdit.KIND_CLASS
 
 
 class IndexableStruct extends Struct:
@@ -979,17 +1070,71 @@ class IndexableStruct extends Struct:
 
 
 class Variable extends Type:
-	var type: String
+	enum Qualifier {
+		NONE = 			0,
+		IN = 			1 << 0,
+		OUT = 			1 << 1,
+		UNIFORM = 		1 << 2,
+		CONST =			1 << 3,
+		VARYING = 		1 << 4,
+		FLAT = 			1 << 5,
+		NOPERSPECTIVE = 1 << 6,
+	}
 	
-	func _init(_name: String, _type: String) -> void:
+	static var qualifiers := {
+		"none": Qualifier.NONE,
+		"in": Qualifier.IN,
+		"out": Qualifier.OUT,
+		"uniform": Qualifier.UNIFORM,
+		"const": Qualifier.CONST,
+		"varying": Qualifier.VARYING,
+		"flat": Qualifier.FLAT,
+		"noperspective": Qualifier.NOPERSPECTIVE,
+	}
+	
+	var _qualifier_icons: Dictionary = {
+		Qualifier.IN: Icons.var_in,
+		Qualifier.OUT: Icons.var_out,
+		Qualifier.UNIFORM: Icons.var_uniform,
+		Qualifier.CONST: Icons.var_const,
+	}
+	
+	var type: String
+	var qualifier: Qualifier
+	
+	func _init(_name: String, _type: String, _qualifier: Qualifier = Qualifier.NONE) -> void:
 		type = _type
 		name = _name
-		icon = Icons.variable
+		qualifier = _qualifier
+		
+		icon = _qualifier_icons.get(qualifier, Icons.variable)
 	
 	func _to_string() -> String:
 		return "%s %s" % [type, name]
 	
-	static func new_from_def(def: String) -> Variable:
-		var def_type: String = def.get_slice(" ", 0)
-		var def_name: String = def.get_slice(" ", 1)
-		return Variable.new(def_name, def_type)
+	static func from_def(def: String, scope: int = 0) -> Array[Variable]:
+		var def_split := StringUtil.split_at(def,
+				StringUtil.rfind_any(
+						def,
+						StringUtil.WHITESPACE,
+						posmod(def.find(","), def.length()),
+					)
+				)
+		var left := StringUtil.split_at_first_any(def_split[0], StringUtil.WHITESPACE, true, false)
+		
+		var var_names := def_split[1].split(",", false)
+		ArrayUtil.map_in_place_s(var_names, func(s: String) -> String: return s.strip_edges())
+		
+		var type: String = left[-1]
+		var qualifiers: Qualifier = Qualifier.NONE
+		for q in left.slice(0, -1):
+			qualifiers |= Variable.qualifiers.get(q, Qualifier.NONE)
+		var vars: Array[Variable] = []
+		vars.resize(var_names.size())	
+		for i in var_names.size():
+			vars[i] = Variable.new(var_names[i], type, qualifiers)
+			vars[i].depth = scope
+		return vars
+	
+	func _get_type() -> CodeEdit.CodeCompletionKind:
+		return CodeEdit.KIND_VARIABLE

@@ -135,7 +135,6 @@ func _search_ranking(query: String, text: String) -> float:
 	var weight: float = 0.0
 	for keyword in query.split("/", false):
 		weight += text.countn(keyword) + text.similarity(keyword)
-	print("query: ", query, ", text: ", text, ", weight: ", weight)
 	return weight
 
 

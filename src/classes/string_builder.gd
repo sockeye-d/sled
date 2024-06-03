@@ -31,5 +31,18 @@ func clear() -> void:
 	_array.clear()
 
 
+## Reverses the internal array. Note that this does [b]not[/b] reverse the
+## individual characters, rather it will reverse the order that the substrings
+## were entered. For example, [codeblock]
+## var sb := StringBuilder.new()
+## sb.append("Hello")
+## sb.append("World")
+## sb.reverse()
+## print(str(sb))[/codeblock]
+## will result in [code]WorldHello[/code], rather than [code]dlroWolleH[/code]
+func reverse() -> void:
+	_array.reverse()
+
+
 func _to_string() -> String:
 	return "".join(_array)

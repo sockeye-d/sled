@@ -7,21 +7,22 @@ signal save_requested()
 func _gui_input(event: InputEvent) -> void:
 	if not editable:
 		return
-	if event.is_action_pressed("move_lines_down", false, true):
-		move_lines_down()
-	if event.is_action_pressed("move_lines_up", false, true):
-		move_lines_up()
-	if event.is_action_pressed("duplicate_lines", false, true):
-		duplicate_lines()
-	if event.is_action_pressed("delete_lines", false, true):
-		delete_lines()
-	if event.is_action_pressed("save", false, true):
-		save_requested.emit()
+	if event is InputEventKey:
+		if event.is_action_pressed("move_lines_down", true, false):
+			move_lines_down()
+		if event.is_action_pressed("move_lines_up", true, false):
+			move_lines_up()
+		if event.is_action_pressed("duplicate_lines", true, false):
+			duplicate_lines()
+		if event.is_action_pressed("delete_lines", true, false):
+			delete_lines()
+		if event.is_action_pressed("save", true, false):
+			save_requested.emit()
 
 
 func move_lines_down():
 	var lines: PackedStringArray = text.split("\n")
-	var carets = get_carets(func(a: Vector2i, b: Vector2i): return a.y > b.y)
+	var carets := get_carets(func(a: Vector2i, b: Vector2i): return a.y < b.y)
 	if carets[-1].y == lines.size() - 1:
 		return
 	
@@ -34,6 +35,7 @@ func move_lines_down():
 	for caret in carets:
 		add_caret(caret.y, caret.x)
 	remove_caret(0)
+
 
 func move_lines_up():
 	var lines: PackedStringArray = text.split("\n")
@@ -49,6 +51,8 @@ func move_lines_up():
 	
 	for caret in carets:
 		add_caret(caret.y, caret.x)
+	if get_caret_count() == 1:
+		return
 	remove_caret(0)
 
 
