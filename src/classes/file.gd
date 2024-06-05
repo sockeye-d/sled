@@ -18,3 +18,8 @@ static func load_variant(path: String, default = null) -> Variant:
 		return default
 	
 	return fa.get_var()
+
+
+static func get_text(path: String, skip_cr: bool = true) -> String:
+	var handle = FileAccess.open(path, FileAccess.READ)
+	return handle.get_as_text(skip_cr) if handle else ""

@@ -29,6 +29,11 @@ TooltipManager="*res://src/autoloads/tooltip_manager.gd"
 EditorManager="*res://src/autoloads/editor_manager.gd"
 SceneTreeUtil="*res://src/autoloads/scene_tree_util.gd"
 
+[debug]
+
+gdscript/warnings/int_as_enum_without_cast=0
+gdscript/warnings/int_as_enum_without_match=0
+
 [display]
 
 window/energy_saving/keep_screen_on=false

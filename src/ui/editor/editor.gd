@@ -40,6 +40,7 @@ var file_path: String:
 		return ""
 var old_text: String
 var base_path: String
+var file_contents: GLSLLanguage.FileContents
 
 
 func _ready() -> void:
@@ -206,4 +207,11 @@ func _on_save_button_pressed() -> void:
 
 
 func _on_code_editor_symbol_validate(symbol: String) -> void:
+	return
+	print(symbol)
+	code_editor.set_symbol_lookup_word_as_valid(true)
+
+
+func _on_code_editor_symbol_lookup(symbol: String, line: int, column: int) -> void:
+	return
 	print(symbol)

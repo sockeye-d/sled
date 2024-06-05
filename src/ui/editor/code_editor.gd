@@ -3,6 +3,7 @@ class_name CodeEditor extends CodeEdit
 
 signal save_requested()
 
+@onready var editor: Editor = $".."
 
 func _gui_input(event: InputEvent) -> void:
 	if not editable:
@@ -20,6 +21,12 @@ func _gui_input(event: InputEvent) -> void:
 			save_requested.emit()
 
 
+func _get_tooltip(at_position: Vector2) -> String:
+	return ""
+	var pos := get_line_column_at_pos(at_position, false)
+	print(pos)
+
+
 func move_lines_down():
 	var lines: PackedStringArray = text.split("\n")
 	var carets := get_carets(func(a: Vector2i, b: Vector2i): return a.y < b.y)
@@ -27,14 +34,7 @@ func move_lines_down():
 		return
 	
 	for caret_i in carets.size():
-		lines = ArrayUtil.swap(lines, carets[caret_i].y, carets[caret_i].y + 1)
-		carets[caret_i].y += 1
-	
-	text = "\n".join(lines)
-	
-	for caret in carets:
-		add_caret(caret.y, caret.x)
-	remove_caret(0)
+		swap_lines(carets[caret_i].y, carets[caret_i].y + 1)
 
 
 func move_lines_up():
@@ -44,16 +44,7 @@ func move_lines_up():
 		return
 	
 	for caret_i in carets.size():
-		lines = ArrayUtil.swap(lines, carets[caret_i].y, carets[caret_i].y - 1)
-		carets[caret_i].y -= 1
-	
-	text = "\n".join(lines)
-	
-	for caret in carets:
-		add_caret(caret.y, caret.x)
-	if get_caret_count() == 1:
-		return
-	remove_caret(0)
+		swap_lines(carets[caret_i].y, carets[caret_i].y - 1)
 
 
 func delete_lines():

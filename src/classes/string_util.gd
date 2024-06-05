@@ -1,4 +1,4 @@
-class_name StringUtil extends Node
+class_name StringUtil
 
 
 const WHITESPACE := ["\n", " ", "\r"]
@@ -125,11 +125,13 @@ static func substr_line_pos(string: String, start: int, end: int = 0x7FFFFFFF) -
 static func substr_line(string: String, start: int, len: int = -1) -> String:
 	return "\n".join(string.split("\n", true).slice(start, 0x7FFFFFFF if len == -1 else start + len))
 
-
-static func remove_comments(string: String, opening := "/*", closing := "*/", single_opening := "//") -> String:
+## index_map maps between indices in the string with the comments removed and
+## the string with comments
+static func remove_comments(string: String, index_map: Dictionary = { }, opening := "/*", closing := "*/", single_opening := "//") -> String:
 	var inside_comment := false
 	var sb: StringBuilder = StringBuilder.new()
 	var i: int = 0
+	var mapped_i: int = 0
 	while i < string.length():
 		if string.substr(i).begins_with(opening):
 			inside_comment = true
@@ -145,7 +147,9 @@ static func remove_comments(string: String, opening := "/*", closing := "*/", si
 			i += 1
 			continue
 		if not inside_comment:
+			index_map[mapped_i] = i
 			sb.append(string[i])
+			mapped_i += 1
 		i += 1
 	return sb.to_string()
 
@@ -299,3 +303,10 @@ static func rtrim_index(string: String, what: PackedStringArray, start: int = -1
 		if not string[i] in what:
 			return i
 	return 0
+
+
+static func get_index(string: String, line: int, column: int) -> int:
+	var total_index: int = 0
+	for line_str in string.split("\n").slice(0, line):
+		total_index += line_str.length() + 1
+	return total_index + column

@@ -169,23 +169,61 @@ static func _static_init() -> void:
 
 
 static func get_code_completion_suggestions(path: String, file: String, line: int = -1, col: int = -1, base_path: String = path) -> Array[CodeCompletionSuggestion]:
-	# Takes a little effort to convert an untyped array to a typed one
-	var contents = _get_file_contents(path, file, line, col, 0, base_path)
+	var contents: FileContents = _get_file_contents(path, file, 0, base_path)
 	contents.merge(FileContents.built_in_contents)
-	return contents.as_suggestions()
+	var caret_index := StringUtil.get_index(file, line, col)
+	print(caret_index)
+	print("substr: ", file.substr(caret_index, 5))
+	return contents.as_suggestions(caret_index)
 
 
-static func _get_file_contents(path: String, file: String, editing_line: int = -1, editing_column: int = -1, depth: int = 0, base_path: String = "", visited_files: PackedStringArray = []) -> FileContents:
+static func _get_file_contents(path: String, file: String, depth: int = 0, base_path: String = "", visited_files: PackedStringArray = []) -> FileContents:
 	visited_files.append(path)
 	var contents = FileContents.new()
+	if not file:
+		return contents
 	var structs_keys: PackedStringArray = Type.built_in_structs.keys()
-	file = StringUtil.substr_line_pos(file, 0, editing_line)
-	file = StringUtil.remove_comments(file)
-	var scopes := StringUtil.detect_inaccesible_scope(file, "{", "}")
+	var index_map: Dictionary = { }
+	file = StringUtil.remove_comments(file, index_map)
+	var scope_stack: Array[Scope] = [Scope.new(0)]
 	var i := 0
 	while i < file.length():
 		var substr := file.substr(i)
-		var current_scope: = depth + scopes[i]
+		var current_scope = scope_stack.size() - 1
+		
+		if substr.begins_with("{"):
+			scope_stack.push_back(Scope.new(index_map[i]))
+			i += 1
+			continue
+		
+		if substr.begins_with("}"):
+			var last_scope: Scope = scope_stack.pop_back()
+			last_scope.end_index = index_map[i]
+			contents.variables.append(last_scope)
+			i += 1
+			continue
+		
+		if substr.begins_with("#"):
+			var end := substr.find("\n")
+			var def := StringUtil.substr_pos(substr, 0, end)
+			if substr.trim_prefix("#").strip_edges(true, false).begins_with("include"):
+				var included_path = StringUtil.substr_pos(def, def.find("\"") + 1, def.rfind("\""))
+				var new_path = path.get_base_dir().path_join(included_path).simplify_path()
+				if included_path.begins_with("/") or included_path.begins_with("\\"):
+					if base_path:
+						new_path = base_path.path_join(included_path).simplify_path()
+				if not included_path in visited_files and FileAccess.file_exists(new_path):
+					var text := File.get_text(new_path)
+					contents.merge(_get_file_contents(
+							new_path,
+							text,
+							depth + 1,
+							base_path,
+							visited_files
+							))
+			if end == -1:
+				break
+			i += end + 1
 		if substr.begins_with("struct"):
 			# It is a struct
 			var open_brace: int = substr.find("{")
@@ -195,7 +233,7 @@ static func _get_file_contents(path: String, file: String, editing_line: int = -
 			var close_brace: int = StringUtil.find_scope_end(substr, open_brace + 1, "{", "}")
 			var def := substr.substr(0, close_brace)
 			var obj := Struct.from_def(def)
-			obj.depth = current_scope + 1
+			obj.depth = current_scope
 			if obj:
 				contents.add(obj)
 				structs_keys.append(obj.name)
@@ -203,8 +241,8 @@ static func _get_file_contents(path: String, file: String, editing_line: int = -
 				break
 			i += close_brace + 1
 			continue
-		if not scopes[i] == -1 and (
-			StringUtil.begins_with_any(substr, structs_keys)
+		if  (
+			StringUtil.begins_with_any(substr, structs_keys + PackedStringArray(["void"]))
 			or StringUtil.begins_with_any(substr, Variable.qualifiers.keys())
 			):
 			var end := StringUtil.find_any(substr, ["{", ";"])
@@ -215,21 +253,25 @@ static func _get_file_contents(path: String, file: String, editing_line: int = -
 			
 			if not parens_index == -1 and (equals_index == -1 or parens_index < equals_index):
 				var obj := Function.from_def(def)
-				obj.depth = current_scope + 1
+				obj.depth = current_scope
 				if obj:
 					contents.add(obj)
 			else:
-				var objs := Variable.from_def(def, current_scope + 1)
-				if objs:
+				var objs := Variable.from_def(def, current_scope)
+				if objs and scope_stack:
 					for obj in objs:
-						contents.add(obj)
+						scope_stack[-1].variables[obj.name] = obj
 			if end == -1:
 				break
-			if substr[end] == ";":
-				end = substr.find(";")
-			i += end + 1
+			#if substr[end] == ";":
+				#end = substr.find(";")
+			i += end
+			continue
 		i += 1
-	
+	var last: Scope = scope_stack.pop_back()
+	if last:
+		contents.variables.append(last)
+	#print(contents.variables)
 	return contents
 
 
@@ -247,8 +289,7 @@ class FileContents:
 	
 	## Dictionary[String, Struct]
 	var structs: Dictionary = { }
-	## Dictionary[String, Variable]
-	var variables: Dictionary = { }
+	var variables: Array[Scope]
 	## Dictionary[String, Array[Function]]
 	var funcs: Dictionary = { }
 	
@@ -258,8 +299,6 @@ class FileContents:
 		if obj is Struct:
 			structs[obj.name] = obj
 			#funcs[obj.name] = obj.as_fn()
-		if obj is Variable:
-			variables[obj.name] = obj
 		if obj is Function:
 			if not obj.name in funcs:
 				funcs[obj.name] = [obj]
@@ -269,39 +308,41 @@ class FileContents:
 	func _to_string() -> String:
 		return "%s\n\n%s\n\n%s" % [
 			ArrayUtil.join_line(ArrayUtil.to_string_array(structs.values())),
-			ArrayUtil.join_line(ArrayUtil.to_string_array(variables.values())),
+			#ArrayUtil.join_line(ArrayUtil.to_string_array(variables.values())),
 			ArrayUtil.join_line(ArrayUtil.to_string_array(funcs.values())),
 		]
 	
-	func as_suggestions() -> Array[CodeCompletionSuggestion]:
-		var f_size = funcs.size()
-		var total_size: int = structs.size() + variables.size() + f_size
-		var s: Array[CodeCompletionSuggestion] = []
-		s.resize(total_size)
-		var total_i: int = 0
-		for i in structs:
-			s[total_i] = structs[i].as_completion_suggestion()
-			total_i += 1
-		for i in variables:
-			s[total_i] = variables[i].as_completion_suggestion()
-			total_i += 1
-		for i in funcs:
-			s[total_i] = funcs[i][0].as_completion_suggestion()
-			total_i += 1
-		return s
+	func as_suggestions(index: int) -> Array[CodeCompletionSuggestion]:
+		var suggestions: Array[CodeCompletionSuggestion] = []
+		for struct in structs.values():
+			var s: CodeCompletionSuggestion = struct.as_completion_suggestion()
+			suggestions.append(s)
+		for scope in variables:
+			if scope.includes(index):
+				suggestions.append_array(scope.as_completion_suggestions())
+		for f in funcs.values():
+			suggestions.append(f[0].as_completion_suggestion())
+		return suggestions
+	
 	
 	func add_depth(depth: int) -> void:
 		for key in structs:
 			structs[key].depth += depth
-		for key in variables:
-			variables[key].depth += depth
+		for scope in variables:
+			scope.add_depth(depth)
 		for key in funcs:
 			for f in funcs[key]:
 				f.depth += depth
 	
+	
 	func merge(file_contents: FileContents) -> void:
 		structs.merge(file_contents.structs)
-		variables.merge(file_contents.variables)
+		## Merge the top-level vars with the other top-level vars
+		var tl := Scope.get_top_level(file_contents.variables)
+		if tl:
+			Scope.get_top_level(variables).merge(
+					tl.variables
+				)
 		for key in file_contents.funcs:
 			if key in funcs:
 				# Function does exist so merge the arrays
@@ -309,6 +350,45 @@ class FileContents:
 			else:
 				# Function does not exist so insert a new key
 				funcs[key] = file_contents.funcs[key]
+
+
+class Scope:
+	var start_index: int = -1
+	var end_index: int = -1
+	## Dictionary[String, Variable]
+	var variables: Dictionary = { }
+	
+	func _init(_start_index: int) -> void:
+		start_index = _start_index
+	
+	func _to_string() -> String:
+		return "%s -> %s { %s }" % [
+			start_index,
+			end_index,
+			", ".join(variables.values().map(func(v: Variable): return str(v))),
+		]
+	
+	func includes(index: int) -> bool:
+		return end_index == -1 or start_index < index and index < end_index
+	
+	func merge(with_variables: Dictionary) -> void:
+		variables.merge(with_variables)
+	
+	func add_depth(depth: int) -> void:
+		for key in variables:
+			variables[key].depth += depth
+		
+	func as_completion_suggestions() -> Array[CodeCompletionSuggestion]:
+		var arr: Array[CodeCompletionSuggestion] = []
+		arr.assign(variables.values().map(func(element: Variable) -> CodeCompletionSuggestion: return element.as_completion_suggestion()))
+		return arr
+	
+	static func get_top_level(scopes: Array[Scope]) -> Scope:
+		if scopes:
+			for i in range(scopes.size() - 1, -1, -1):
+				if scopes[i].end_index == -1:
+					return scopes[i]
+		return null
 
 
 class Type:
@@ -1012,7 +1092,7 @@ class Function extends Type:
 		
 		var return_type := def_split[0].strip_edges()
 		var name := def_split[1].strip_edges()
-		var args_str := def_split[2].trim_prefix("(").split(",", false)
+		var args_str := def_split[2].strip_edges().trim_prefix("(").trim_suffix(")").split(",", false)
 		
 		var args: Array[Variable] = []
 		args.resize(args_str.size())
