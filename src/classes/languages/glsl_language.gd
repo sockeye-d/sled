@@ -233,8 +233,8 @@ static func _get_file_contents(path: String, file: String, depth: int = 0, base_
 			var close_brace: int = StringUtil.find_scope_end(substr, open_brace + 1, "{", "}")
 			var def := substr.substr(0, close_brace)
 			var obj := Struct.from_def(def)
-			obj.depth = current_scope
 			if obj:
+				obj.depth = current_scope
 				contents.add(obj)
 				structs_keys.append(obj.name)
 			if close_brace == -1:
@@ -253,8 +253,8 @@ static func _get_file_contents(path: String, file: String, depth: int = 0, base_
 			
 			if not parens_index == -1 and (equals_index == -1 or parens_index < equals_index):
 				var obj := Function.from_def(def)
-				obj.depth = current_scope
 				if obj:
+					obj.depth = current_scope
 					contents.add(obj)
 			else:
 				var objs := Variable.from_def(def, current_scope)
@@ -1090,6 +1090,9 @@ class Function extends Type:
 	static func from_def(def: String) -> Function:
 		var def_split := StringUtil.split_at_sequence(def, [StringUtil.WHITESPACE, ["("]])
 		
+		if def_split.size() == 1:
+			return null
+		
 		var return_type := def_split[0].strip_edges()
 		var name := def_split[1].strip_edges()
 		var args_str := def_split[2].strip_edges().trim_prefix("(").trim_suffix(")").split(",", false)
@@ -1097,7 +1100,10 @@ class Function extends Type:
 		var args: Array[Variable] = []
 		args.resize(args_str.size())
 		for i in args_str.size():
-			args[i] = Variable.from_def(args_str[i].strip_edges())[0]
+			var vars = Variable.from_def(args_str[i].strip_edges())
+			if not vars:
+				return null
+			args[i] = vars[0]
 		
 		return Function.new(name, return_type, args)
 	

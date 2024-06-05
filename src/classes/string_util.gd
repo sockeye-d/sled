@@ -273,6 +273,9 @@ static func split_at_sequence(string: String, what: Array[PackedStringArray], st
 	var index: int = 0
 	for w in what:
 		var new_index := StringUtil.find_any(string, w, index)
+		if new_index == -1:
+			index = new_index
+			continue
 		var substr := StringUtil.substr_pos(string, index, new_index)
 		if strip_edges:
 			substr = substr.strip_edges()
@@ -288,6 +291,9 @@ static func splitn_at_sequence(string: String, what: Array[PackedStringArray], s
 	var index: int = 0
 	for w in what:
 		var new_index := StringUtil.findn_any(string, w, index)
+		if new_index == -1:
+			index = new_index
+			continue
 		var substr := StringUtil.substr_pos(string, index, new_index)
 		if strip_edges:
 			substr = substr.strip_edges()
