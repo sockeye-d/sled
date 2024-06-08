@@ -35,7 +35,7 @@ static func remove_scope(string: String, scope_opening: String, scope_closing: S
 		if string.substr(i).begins_with(scope_opening):
 			scope += 1
 		
-		if string.substr(0, i + offset).ends_with(scope_closing):
+		if not scope == 0 and string.substr(0, i + offset).ends_with(scope_closing):
 			scope -= 1
 		
 		if scope == 0:
@@ -109,13 +109,21 @@ static func substr_pos(string: String, start: int, end: int = -1) -> String:
 	start = clampi(start, 0, string.length() - 1)
 	if end == -1:
 		end = string.length() - 1
-	end = clampi(end, 0, string.length() - 1)
+	end = clampi(end, 0, string.length())
 	if end == start:
 		return ""
-	string = string.substr(start, end - start)
 	if end < start:
-		return string.reverse()
+		var temp := end
+		end = start
+		start = temp
+	string = string.substr(start, end - start)
 	return string
+
+
+static func substr_posv(string: String, start_end: PackedInt32Array) -> String:
+	if not start_end:
+		return ""
+	return substr_pos(string, start_end[0], -1 if start_end.size() == 1 else start_end[1])
 
 
 static func substr_line_pos(string: String, start: int, end: int = 0x7FFFFFFF) -> String:
@@ -174,8 +182,21 @@ static func find_scope_end(string: String, start: int, scope_opening: String, sc
 		if string.substr(i).begins_with(scope_opening):
 			scope += 1
 		
-		if string.substr(0, i).ends_with(scope_closing):
+		if string.substr(i).begins_with(scope_closing):
 			scope -= 1
+		
+		if scope == 0:
+			return i
+	return -1
+
+static func find_scope_beginning(string: String, start: int, scope_opening: String, scope_closing: String) -> int:
+	var scope: int = 1
+	for i in range(start, -1, -1):
+		if string.substr(i).begins_with(scope_opening):
+			scope -= 1
+		
+		if string.substr(i).begins_with(scope_closing):
+			scope += 1
 		
 		if scope == 0:
 			return i
@@ -218,11 +239,11 @@ static func rfindn_any(string: String, what: PackedStringArray, start: int = 0) 
 	return current_index
 
 ## Returns [code]true[/code] if the string begins with any of the given strings
-static func begins_with_any(string: String, texts: PackedStringArray) -> bool:
+static func begins_with_any(string: String, texts: PackedStringArray) -> String:
 	for text in texts:
 		if string.begins_with(text):
-			return true
-	return false
+			return text
+	return ""
 
 ## Returns [code]true[/code] if the string ends with any of the given strings
 static func ends_with_any(string: String, texts: PackedStringArray) -> bool:
@@ -316,3 +337,52 @@ static func get_index(string: String, line: int, column: int) -> int:
 	for line_str in string.split("\n").slice(0, line):
 		total_index += line_str.length() + 1
 	return total_index + column
+
+## Returns the start and end of the word
+static func get_word(string: String, index: int, allowed_chars_left: String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_", allowed_chars_right: String = allowed_chars_left) -> PackedInt32Array:
+	if string[index] not in allowed_chars_left:
+		return []
+	var start_index := index
+	var end_index := index
+	while start_index >= 0 and string[start_index] in allowed_chars_left:
+		start_index -= 1
+	while end_index < string.length() and string[end_index] in allowed_chars_right:
+		end_index += 1
+	return [start_index + 1, end_index]
+
+## Returns the start and end of the word
+static func get_word_code(string: String, index: int) -> PackedInt32Array:
+	if index > string.length():
+		return []
+	var start_index := index
+	var end_index := index
+	var left_valid_chars: String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_."# + "".join(StringUtil.WHITESPACE)
+	while end_index < string.length() - 1 and string[end_index] in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_":
+		end_index += 1
+	while start_index > 0 and start_index < string.length() and string[start_index] in left_valid_chars:
+		start_index -= 1
+		if string[start_index] == ")":
+			var new_start_index = StringUtil.find_scope_beginning(string, start_index - 1, "(", ")") - 1
+			if new_start_index < 0 or new_start_index > start_index:
+				return []
+			start_index = new_start_index
+	if start_index < 0 or start_index > string.length() - 1:
+		return []
+	return [start_index + 1, end_index]
+
+
+static func split_scoped(string: String, delim: String, scope_open: String, scope_close: String, target_scope: int = 0) -> PackedStringArray:
+	var arr: PackedStringArray = []
+	var scope: int = 0
+	var last_index: int = 0
+	for i in string.length():
+		var s := string.substr(i)
+		if s.begins_with(scope_open):
+			scope += 1
+		if s.begins_with(scope_close):
+			scope -= 1
+		if scope == target_scope and s.begins_with(delim):
+			arr.append(StringUtil.substr_pos(string, last_index, i))
+			last_index = i + delim.length()
+	arr.append(string.substr(last_index))
+	return arr

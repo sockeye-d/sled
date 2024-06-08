@@ -40,7 +40,13 @@ var file_path: String:
 		return ""
 var old_text: String
 var base_path: String
-var file_contents: GLSLLanguage.FileContents
+var file_contents: GLSLLanguage.FileContents:
+	set(value):
+		file_contents = value
+	get:
+		if not file_contents:
+			refresh_file_contents()
+		return file_contents
 
 
 func _ready() -> void:
@@ -186,20 +192,42 @@ func _on_code_editor_code_completion_requested() -> void:
 
 
 func _get_completion_suggestions() -> void:
-	CodeCompletionSuggestion.add_arr_to(GLSLLanguage.get_code_completion_suggestions(
-			file_handle.get_path_absolute(),
-			code_editor.text,
-			code_editor.get_caret_line(code_editor.get_caret_count() - 1),
-			code_editor.get_caret_column(code_editor.get_caret_count() - 1),
-			FileManager.absolute_base_path if Settings.inc_absolute_paths else "",
+	#CodeCompletionSuggestion.add_arr_to(GLSLLanguage.get_code_completion_suggestions(
+			#file_handle.get_path_absolute(),
+			#code_editor.text,
+			#code_editor.get_caret_line(code_editor.get_caret_count() - 1),
+			#code_editor.get_caret_column(code_editor.get_caret_count() - 1),
+			#FileManager.absolute_base_path if Settings.inc_absolute_paths else "",
+			#file_contents,
+			#),
+			#code_editor
+		#)
+	refresh_file_contents()
+	CodeCompletionSuggestion.add_arr_to(
+			file_contents.as_suggestions(
+				StringUtil.get_index(
+					code_editor.text,
+					code_editor.get_caret_line(code_editor.get_caret_count() - 1),
+					code_editor.get_caret_column(code_editor.get_caret_count() - 1),
+				)
 			),
-			code_editor
+			code_editor,
 		)
 	#for keyword in GLSLLanguage.base_types:
 		#code_editor.add_code_completion_option(CodeEdit.KIND_CLASS, keyword, keyword, Color.WHITE, null, null, 1)
 	#for keyword in GLSLLanguage.keywords:
 		#code_editor.add_code_completion_option(CodeEdit.KIND_PLAIN_TEXT, keyword, keyword, Color.WHITE, null, null, 2)
 	#pass
+
+
+func refresh_file_contents():
+	file_contents = GLSLLanguage.get_file_contents(
+			file_path, 
+			code_editor.text,
+			0,
+			FileManager.absolute_base_path if Settings.inc_absolute_paths else "",
+			true
+			)
 
 
 func _on_save_button_pressed() -> void:

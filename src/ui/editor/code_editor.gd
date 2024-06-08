@@ -21,10 +21,21 @@ func _gui_input(event: InputEvent) -> void:
 			save_requested.emit()
 
 
+func _make_custom_tooltip(for_text: String) -> Object:
+	var label: RichTextLabel = RichTextLabel.new()
+	label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	label.fit_content = true
+	label.bbcode_enabled = true
+	label.text = for_text
+	return label
+
+
 func _get_tooltip(at_position: Vector2) -> String:
-	return ""
-	var pos := get_line_column_at_pos(at_position, false)
-	print(pos)
+	var line_column: Vector2i = get_line_column_at_pos(at_position, false)
+	if line_column == Vector2i(-1, -1):
+		return ""
+	var index: int = StringUtil.get_index(text, line_column.y, line_column.x)
+	return editor.file_contents.get_tooltip(text, index)
 
 
 func move_lines_down():

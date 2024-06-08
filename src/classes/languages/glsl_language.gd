@@ -167,39 +167,51 @@ static func _static_init() -> void:
 	# GLSL has no strings
 	string_regions = []
 
+## Dictionary[String, FileContents]
+## Used to cache the results of get_file_contents() calls, keys are file paths
+static var contents_cache: Dictionary = { }
 
-static func get_code_completion_suggestions(path: String, file: String, line: int = -1, col: int = -1, base_path: String = path) -> Array[CodeCompletionSuggestion]:
-	var contents: FileContents = _get_file_contents(path, file, 0, base_path)
+
+static func get_code_completion_suggestions(path: String, file: String, line: int = -1, col: int = -1, base_path: String = path, contents: FileContents = null) -> Array[CodeCompletionSuggestion]:
+	if not contents:
+		contents = FileContents.new()
+	contents = get_file_contents(path, file, 0, base_path, true)
 	contents.merge(FileContents.built_in_contents)
 	var caret_index := StringUtil.get_index(file, line, col)
-	print(caret_index)
-	print("substr: ", file.substr(caret_index, 5))
 	return contents.as_suggestions(caret_index)
 
 
-static func _get_file_contents(path: String, file: String, depth: int = 0, base_path: String = "", visited_files: PackedStringArray = []) -> FileContents:
+static func get_file_contents(path: String, file: String, depth: int = 0, base_path: String = "", currently_edited_file: bool = false, visited_files: PackedStringArray = []) -> FileContents:
 	visited_files.append(path)
+	if not currently_edited_file and contents_cache.has(path):
+		# NOTE: determine whether shallow duplication is necessary
+		# because get_code_completion_suggestions merges it with the built-in
+		# types
+		return contents_cache[path]
 	var contents = FileContents.new()
 	if not file:
 		return contents
 	var structs_keys: PackedStringArray = Type.built_in_structs.keys()
 	var index_map: Dictionary = { }
 	file = StringUtil.remove_comments(file, index_map)
-	var scope_stack: Array[Scope] = [Scope.new(0)]
+	var tl_scope := Scope.new(0)
+	var scope_stack: Array[Scope] = [tl_scope]
+	contents.variables.append(tl_scope)
 	var i := 0
 	while i < file.length():
 		var substr := file.substr(i)
 		var current_scope = scope_stack.size() - 1
 		
 		if substr.begins_with("{"):
-			scope_stack.push_back(Scope.new(index_map[i]))
+			var new_scope := Scope.new(index_map[i])
+			scope_stack.push_back(new_scope)
+			contents.variables.append(new_scope)
 			i += 1
 			continue
 		
 		if substr.begins_with("}"):
 			var last_scope: Scope = scope_stack.pop_back()
 			last_scope.end_index = index_map[i]
-			contents.variables.append(last_scope)
 			i += 1
 			continue
 		
@@ -214,12 +226,13 @@ static func _get_file_contents(path: String, file: String, depth: int = 0, base_
 						new_path = base_path.path_join(included_path).simplify_path()
 				if not included_path in visited_files and FileAccess.file_exists(new_path):
 					var text := File.get_text(new_path)
-					contents.merge(_get_file_contents(
+					contents.merge(get_file_contents(
 							new_path,
 							text,
 							depth + 1,
 							base_path,
-							visited_files
+							false,
+							visited_files,
 							))
 			if end == -1:
 				break
@@ -241,17 +254,16 @@ static func _get_file_contents(path: String, file: String, depth: int = 0, base_
 				break
 			i += close_brace + 1
 			continue
-		if  (
-			StringUtil.begins_with_any(substr, structs_keys + PackedStringArray(["void"]))
-			or StringUtil.begins_with_any(substr, Variable.qualifiers.keys())
-			):
+		var type_str: String = StringUtil.begins_with_any(substr, structs_keys + PackedStringArray(["void"]))
+		var is_qualifier: bool = i > 0 and StringUtil.begins_with_any(substr, Variable.qualifiers.keys()) and file[i - 1] in StringUtil.WHITESPACE
+		if type_str or is_qualifier:
 			var end := StringUtil.find_any(substr, ["{", ";"])
 			var def := substr.substr(0, end)
 			
 			var equals_index := def.find("=")
 			var parens_index := def.find("(")
 			
-			if not parens_index == -1 and (equals_index == -1 or parens_index < equals_index):
+			if not is_qualifier and (type_str == "void" or not parens_index == -1 and (equals_index == -1 or parens_index < equals_index)):
 				var obj := Function.from_def(def)
 				if obj:
 					obj.depth = current_scope
@@ -268,10 +280,7 @@ static func _get_file_contents(path: String, file: String, depth: int = 0, base_
 			i += end
 			continue
 		i += 1
-	var last: Scope = scope_stack.pop_back()
-	if last:
-		contents.variables.append(last)
-	#print(contents.variables)
+	contents_cache[path] = contents
 	return contents
 
 
@@ -284,6 +293,8 @@ class FileContents:
 				built_in_contents = FileContents.new()
 				built_in_contents.structs.merge(Type.built_in_structs)
 				built_in_contents.funcs.merge(Type.built_in_functions)
+				#for s: Struct in Type.built_in_structs.values():
+					#built_in_contents.add(s.as_fn())
 				built_in_contents.add_depth(CodeEdit.LOCATION_OTHER)
 			return built_in_contents
 	
@@ -298,7 +309,7 @@ class FileContents:
 			return
 		if obj is Struct:
 			structs[obj.name] = obj
-			#funcs[obj.name] = obj.as_fn()
+			funcs[obj.name] = obj.as_fn()
 		if obj is Function:
 			if not obj.name in funcs:
 				funcs[obj.name] = [obj]
@@ -350,6 +361,81 @@ class FileContents:
 			else:
 				# Function does not exist so insert a new key
 				funcs[key] = file_contents.funcs[key]
+	
+	func find(what: String) -> Type:
+		if funcs.has(what):
+			return funcs[what]
+		var found_var := Scope.find(variables, what)
+		if found_var:
+			return found_var
+		return null
+	
+	## NOTE: performs a [b]shallow[/b] copy (only copies arrays and dictionaries
+	## , not their sub-objects)
+	func duplicate() -> FileContents:
+		var new := FileContents.new()
+		new.structs = structs.duplicate()
+		new.variables = variables.duplicate()
+		new.funcs = funcs.duplicate()
+		return new
+	
+	## Finds the variable with member access, e.g.
+	## [code]custom_struct_var.member[/code] would return the correct variable
+	## for [code]member[/code]
+	func get_variable(string: String, index: int) -> Variable:
+		var chain: PackedStringArray = StringUtil.split_scoped(string, ".", "(", ")")
+		ArrayUtil.map_in_place_s(chain, func(str: String) -> String: return str.strip_edges())
+		#return null
+		if not chain or Array(chain).any(func(str: String) -> bool: return str.is_empty()):
+			return null
+		if chain.size() == 1:
+			return Scope.find(variables, chain[0], index)
+		var structs_merged: Dictionary = structs.merged(Type.built_in_structs)
+		var v
+		if "(" in chain[0]:
+			v = funcs[chain[0].get_slice("(", 0)][0]
+		else:
+			v = Scope.find(variables, chain[0], index) as Variable
+		var s: Struct
+		for i in range(1, chain.size()):
+			if not v:
+				return null
+			s = structs_merged[v.type]
+			if not s:
+				return null
+			v = s.properties.get(chain[i])
+		return v
+	
+	
+	## Finds the matching function signature for a invocation like
+	## [code]function_name(arg1, arg2, etc.)[/code]
+	func get_function(function_name: String, invocation: String) -> Function:
+		return null
+	
+	
+	func get_tooltip(text: String, index: int) -> String:
+		var simple_word_bounds := StringUtil.get_word(text, index)
+		if not simple_word_bounds:
+			return ""
+		var simple_word: String = StringUtil.substr_posv(text, simple_word_bounds).strip_edges()
+		var i: int = simple_word_bounds[1] - 1
+		while true:
+			i += 1
+			if text[i] in StringUtil.WHITESPACE:
+				continue
+			if text[i] == "(":
+				break
+			i = -1
+			break
+		if not i == -1:
+			var m_funcs := funcs.merged(FileContents.built_in_contents.funcs)
+			if simple_word in m_funcs:
+				return str("\n".join(m_funcs[simple_word]))
+		var complex_word: String = StringUtil.substr_posv(text, StringUtil.get_word_code(text, index))
+		var v = get_variable(complex_word, index)
+		if v:
+			return str(v)
+		return ""
 
 
 class Scope:
@@ -383,11 +469,19 @@ class Scope:
 		arr.assign(variables.values().map(func(element: Variable) -> CodeCompletionSuggestion: return element.as_completion_suggestion()))
 		return arr
 	
+	
 	static func get_top_level(scopes: Array[Scope]) -> Scope:
 		if scopes:
 			for i in range(scopes.size() - 1, -1, -1):
 				if scopes[i].end_index == -1:
 					return scopes[i]
+		return null
+	
+	
+	static func find(scopes: Array[Scope], what: String, index: int = -1) -> Variable:
+		for scope in scopes:
+			if scope.variables.has(what) and (index == -1 or scope.includes(index)):
+				return scope.variables[what]
 		return null
 
 
@@ -966,16 +1060,6 @@ class Type:
 	}
 #endregion
 	
-	var name: String
-	var depth: int = 0
-	var line_number: int = -1
-	var icon: Texture2D
-	
-	func _init(_name: String, _depth: int = 0, _icon: Texture2D = null) -> void:
-		name = _name
-		depth = _depth
-		icon = _icon
-	
 #region Helper functions
 	## Kinda cursed function
 	## [br]
@@ -1010,13 +1094,13 @@ class Type:
 	static func _create_vector(name: String, base_type: String = _prefix_map.get(name[0], "float"), count: int = int(name[-1]), access_sets: PackedStringArray = ["xyzw", "rgba", "stpq"]) -> IndexableStruct:
 		var components: Array[Variable] = []
 		for access_set in access_sets:
-			components.append_array(Array(_generate_permutations(access_set, count)).map(
+			components.append_array(Array(_generate_permutations(access_set.substr(0, count), 4)).map(
 				func(name: String):
 					var type: String = ""
 					if name.length() == 1:
 						type = base_type
 					else:
-						type = base_type[0] + "vec" + str(name.length())
+						type = ("" if base_type == "float" else base_type[0]) + "vec" + str(name.length())
 					return Variable.new(name, type)
 					))
 		return IndexableStruct.new(name, components, base_type, Icons.sget("type_" + name))
@@ -1043,6 +1127,17 @@ class Type:
 			arr.append_array(_generate_single_permutation(sets, new_count))
 		return arr
 #endregion
+
+	var name: String
+	var depth: int = 0
+	var index: int = -1
+	var icon: Texture2D
+	
+	func _init(_name: String, _depth: int = 0, _icon: Texture2D = null) -> void:
+		name = _name
+		depth = _depth
+		icon = _icon
+	
 	
 	func as_completion_suggestion() -> CodeCompletionSuggestion:
 		return CodeCompletionSuggestion.new(_get_type(), name, depth, icon)
@@ -1068,18 +1163,18 @@ class Definition extends Type:
 
 
 class Function extends Type:
-	var return_type: String
+	var type: String
 	var arguments: Array[Variable]
 	
-	func _init(_name: String, _return_type: String, _arguments: Array[Variable]) -> void:
+	func _init(_name: String, _type: String, _arguments: Array[Variable]) -> void:
 		name = _name
-		return_type = _return_type
+		type = _type
 		arguments = _arguments
 		icon = Icons.function
 	
 	func _to_string() -> String:
 		return "%s %s(%s)" % [
-			return_type,
+			type,
 			name,
 			", ".join(arguments.map(func(arg: Variable): return str(arg)))
 		]
@@ -1090,7 +1185,11 @@ class Function extends Type:
 	static func from_def(def: String) -> Function:
 		var def_split := StringUtil.split_at_sequence(def, [StringUtil.WHITESPACE, ["("]])
 		
-		if def_split.size() == 1:
+		var real_indices: int = 0
+		for s in def_split:
+			if not s.strip_edges().is_empty():
+				real_indices += 1
+		if real_indices <= 2:
 			return null
 		
 		var return_type := def_split[0].strip_edges()
@@ -1113,20 +1212,22 @@ class Function extends Type:
 
 
 class Struct extends Type:
-	var properties: Array[Variable] = []
+	var properties: Dictionary = { }
 	
 	func _init(_name: String, _properties: Array[Variable], _icon: Texture2D = Icons.struct) -> void:
 		name = _name
-		properties = _properties
+		properties = ArrayUtil.create_dictionary(_properties, func(v): return v.name)
 		icon = _icon
 	
-	func as_fn() -> void:
-		return Function.new(name, name, properties)
+	func as_fn() -> Function:
+		var args: Array[Variable]
+		args.assign(properties.values())
+		return Function.new(name, name, args)
 	
 	func _to_string() -> String:
 		return "%s {\n%s\n}" % [
 			name,
-			"\n\t".join(properties.map(func(prop: Variable): return prop.to_string()))
+			"\n\t".join(properties.values().map(func(prop: Variable): return prop.to_string()))
 		]
 	
 	static func from_def(def: String) -> Struct:
@@ -1137,9 +1238,10 @@ class Struct extends Type:
 		var vars: Array[Variable] = []
 		var v_defs := split[-1].split(";", false)
 		for v_def in v_defs:
-			var current_var := Variable.from_def(v_def.strip_edges())
-			if current_var:
-				vars.append_array(current_var)
+			var current_vars := Variable.from_def(v_def.strip_edges())
+			if current_vars:
+				for v in current_vars:
+					vars.append(v)
 		return Struct.new(name, vars)
 	
 	func _get_type() -> CodeEdit.CodeCompletionKind:
@@ -1151,7 +1253,7 @@ class IndexableStruct extends Struct:
 	
 	func _init(_name: String, _properties: Array[Variable], _element_type: String, _icon: Texture2D = Icons.struct) -> void:
 		name = _name
-		properties = _properties
+		properties = ArrayUtil.create_dictionary(_properties, func(v): return v.name)
 		element_type = _element_type
 		icon = _icon
 	
@@ -1159,7 +1261,7 @@ class IndexableStruct extends Struct:
 		return "%s[%s] {\n%s\n}" % [
 			name,
 			element_type,
-			"\n\t".join(properties.map(func(prop: Variable): return prop.to_string()))
+			"\n\t".join(properties.values().map(func(prop: Variable): return prop.to_string()))
 		]
 
 
@@ -1225,14 +1327,14 @@ class Variable extends Type:
 		var var_names := def_split[1].split(",", false)
 		ArrayUtil.map_in_place_s(var_names, func(s: String) -> String: return s.strip_edges())
 		
-		var type: String = left[-1]
+		var type: String = left[-1].strip_edges()
 		var qualifiers: Qualifier = Qualifier.NONE
 		for q in left.slice(0, -1):
 			qualifiers |= Variable.qualifiers.get(q, Qualifier.NONE)
 		var vars: Array[Variable] = []
 		vars.resize(var_names.size())	
 		for i in var_names.size():
-			vars[i] = Variable.new(var_names[i], type, qualifiers)
+			vars[i] = Variable.new(var_names[i].strip_edges(), type, qualifiers)
 			vars[i].depth = scope
 		return vars
 	

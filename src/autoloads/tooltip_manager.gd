@@ -13,7 +13,7 @@ func _ready() -> void:
 					var new_label := RichTextLabel.new()
 					new_label.bbcode_enabled = true
 					
-					var text = StringUtil.word_wrap(node.text.replace("\n", "\n\n"), 80)
+					var text = StringUtil.word_wrap(node.text, 80)
 
 					new_label.text = text
 					new_label.scroll_active = false
