@@ -5,9 +5,12 @@ var keys_dict: Dictionary
 var values_dict: Dictionary
 
 
-func _init() -> void:
+func _init(dictionary: Dictionary = { }) -> void:
 	keys_dict = { }
 	values_dict = { }
+	if dictionary:
+		for key in dictionary:
+			add(key, dictionary[key])
 
 
 func get_value(key: Variant) -> Variant:

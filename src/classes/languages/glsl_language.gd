@@ -99,19 +99,6 @@ static func _static_init() -> void:
 		"samplerCubeArrayShadow",
 	]
 	keywords = [
-		# Swizzle masks
-		"x",
-		"y",
-		"z",
-		"w",
-		"r",
-		"g",
-		"b",
-		"a",
-		"s",
-		"t",
-		"p",
-		"q",
 		# Other
 		"attribute",
 		"const",
@@ -143,6 +130,7 @@ static func _static_init() -> void:
 		"highp",
 		"precision",
 		"struct",
+		"return", 
 		# Preprocessor stuff
 		"define",
 		"defined",
@@ -198,6 +186,7 @@ static func get_file_contents(path: String, file: String, depth: int = 0, base_p
 	var scope_stack: Array[Scope] = [tl_scope]
 	contents.variables.append(tl_scope)
 	var i := 0
+	var last_func: Function = null
 	while i < file.length():
 		var substr := file.substr(i)
 		var current_scope = scope_stack.size() - 1
@@ -206,6 +195,10 @@ static func get_file_contents(path: String, file: String, depth: int = 0, base_p
 			var new_scope := Scope.new(index_map[i])
 			scope_stack.push_back(new_scope)
 			contents.variables.append(new_scope)
+			if last_func:
+				for arg in last_func.arguments:
+					arg.depth = current_scope + 1
+					new_scope.variables[arg.name] = arg
 			i += 1
 			continue
 		
@@ -218,7 +211,9 @@ static func get_file_contents(path: String, file: String, depth: int = 0, base_p
 		if substr.begins_with("#"):
 			var end := substr.find("\n")
 			var def := StringUtil.substr_pos(substr, 0, end)
-			if substr.trim_prefix("#").strip_edges(true, false).begins_with("include"):
+			last_func = null
+			var kind := substr.trim_prefix("#").strip_edges(true, false)
+			if kind.begins_with("include"):
 				var included_path = StringUtil.substr_pos(def, def.find("\"") + 1, def.rfind("\""))
 				var new_path = path.get_base_dir().path_join(included_path).simplify_path()
 				if included_path.begins_with("/") or included_path.begins_with("\\"):
@@ -234,6 +229,10 @@ static func get_file_contents(path: String, file: String, depth: int = 0, base_p
 							false,
 							visited_files,
 							))
+			if kind.begins_with("define"):
+				var obj := Definition.from_def(StringUtil.split_at_first_any(def, StringUtil.WHITESPACE, true)[-1])
+				if obj:
+					contents.add(obj)
 			if end == -1:
 				break
 			i += end + 1
@@ -247,9 +246,13 @@ static func get_file_contents(path: String, file: String, depth: int = 0, base_p
 			var def := substr.substr(0, close_brace)
 			var obj := Struct.from_def(def)
 			if obj:
+				last_func = null
 				obj.depth = current_scope
 				contents.add(obj)
 				structs_keys.append(obj.name)
+			else:
+				i += 1
+				continue
 			if close_brace == -1:
 				break
 			i += close_brace + 1
@@ -266,11 +269,13 @@ static func get_file_contents(path: String, file: String, depth: int = 0, base_p
 			if not is_qualifier and (type_str == "void" or not parens_index == -1 and (equals_index == -1 or parens_index < equals_index)):
 				var obj := Function.from_def(def)
 				if obj:
+					last_func = obj
 					obj.depth = current_scope
 					contents.add(obj)
 			else:
 				var objs := Variable.from_def(def, current_scope)
 				if objs and scope_stack:
+					last_func = null
 					for obj in objs:
 						scope_stack[-1].variables[obj.name] = obj
 			if end == -1:
@@ -303,13 +308,17 @@ class FileContents:
 	var variables: Array[Scope]
 	## Dictionary[String, Array[Function]]
 	var funcs: Dictionary = { }
+	## Dictionary[String, Definition]
+	var defs: Dictionary
 	
 	func add(obj: Type) -> void:
 		if not obj:
 			return
+		if obj is Definition:
+			defs[obj.name] = obj
 		if obj is Struct:
 			structs[obj.name] = obj
-			funcs[obj.name] = obj.as_fn()
+			add(obj.as_fn())
 		if obj is Function:
 			if not obj.name in funcs:
 				funcs[obj.name] = [obj]
@@ -333,6 +342,8 @@ class FileContents:
 				suggestions.append_array(scope.as_completion_suggestions())
 		for f in funcs.values():
 			suggestions.append(f[0].as_completion_suggestion())
+		for d: Definition in defs.values():
+			suggestions.append(d.as_completion_suggestion())
 		return suggestions
 	
 	
@@ -344,10 +355,13 @@ class FileContents:
 		for key in funcs:
 			for f in funcs[key]:
 				f.depth += depth
+		for d: Definition in defs:
+			d.depth += depth
 	
 	
 	func merge(file_contents: FileContents) -> void:
 		structs.merge(file_contents.structs)
+		defs.merge(file_contents.defs)
 		## Merge the top-level vars with the other top-level vars
 		var tl := Scope.get_top_level(file_contents.variables)
 		if tl:
@@ -377,6 +391,7 @@ class FileContents:
 		new.structs = structs.duplicate()
 		new.variables = variables.duplicate()
 		new.funcs = funcs.duplicate()
+		new.defs = defs.duplicate()
 		return new
 	
 	## Finds the variable with member access, e.g.
@@ -414,10 +429,14 @@ class FileContents:
 	
 	
 	func get_tooltip(text: String, index: int) -> String:
+		if index > text.length() - 1:
+			return ""
 		var simple_word_bounds := StringUtil.get_word(text, index)
 		if not simple_word_bounds:
 			return ""
 		var simple_word: String = StringUtil.substr_posv(text, simple_word_bounds).strip_edges()
+		if simple_word in structs:
+			return str(structs[simple_word])
 		var i: int = simple_word_bounds[1] - 1
 		while true:
 			i += 1
@@ -428,9 +447,13 @@ class FileContents:
 			i = -1
 			break
 		if not i == -1:
+			if simple_word in defs and defs[simple_word] is Macro:
+				return str(defs[simple_word])
 			var m_funcs := funcs.merged(FileContents.built_in_contents.funcs)
 			if simple_word in m_funcs:
 				return str("\n".join(m_funcs[simple_word]))
+		if simple_word in defs:
+			return str(defs[simple_word])
 		var complex_word: String = StringUtil.substr_posv(text, StringUtil.get_word_code(text, index))
 		var v = get_variable(complex_word, index)
 		if v:
@@ -1154,12 +1177,46 @@ class Definition extends Type:
 		value = _value
 		icon = Icons.definition
 	
+	func _to_string() -> String:
+		return "%s %s" % [name, value]
+	
 	static func from_def(def: String) -> Definition:
+		def = def.strip_edges()
+		var paren_index: int = def.find("(")
+		var whitespace_index: int = StringUtil.find_any(def, StringUtil.WHITESPACE)
+		if not paren_index == -1 and paren_index < whitespace_index:
+			# Macro path
+			var name := def.substr(0, paren_index)
+			var end_paren_index: int = def.find(")", paren_index)
+			var args := StringUtil.substr_pos(def, paren_index + 1, end_paren_index).split(",", false)
+			ArrayUtil.map_in_place_s(args, func(str: String) -> String: return str.strip_edges())
+			var value := def.substr(end_paren_index + 1).strip_edges()
+			return Macro.new(name, value, args)
+		else:
+			# Normal path
+			var name := def.substr(0, whitespace_index).strip_edges()
+			var value := def.substr(whitespace_index).strip_edges()
+			return Definition.new(name, value)
 		return null
 	
 	func _get_type() -> CodeEdit.CodeCompletionKind:
 		return CodeEdit.KIND_CONSTANT
 
+
+class Macro extends Definition:
+	var arguments: PackedStringArray
+	
+	func _to_string() -> String:
+		return "%s(%s) %s" % [name, ", ".join(arguments), value]
+	
+	func _init(_name: String, _value: String, _arguments: PackedStringArray) -> void:
+		name = _name
+		value = _value
+		arguments = _arguments
+		icon = Icons.definition
+	
+	func _get_type() -> CodeEdit.CodeCompletionKind:
+		return CodeEdit.KIND_CONSTANT
 
 
 class Function extends Type:
@@ -1225,16 +1282,17 @@ class Struct extends Type:
 		return Function.new(name, name, args)
 	
 	func _to_string() -> String:
-		return "%s {\n%s\n}" % [
+		return "%s {\n\t%s\n}" % [
 			name,
 			"\n\t".join(properties.values().map(func(prop: Variable): return prop.to_string()))
 		]
 	
 	static func from_def(def: String) -> Struct:
-		var trimmed := def.trim_prefix("struct").strip_edges()
-		var split := StringUtil.splitn_at_sequence(trimmed, [StringUtil.WHITESPACE, ["{"]], true, false)
+		var split := StringUtil.splitn_at_sequence(def, [["struct"], StringUtil.WHITESPACE, ["{"]], true, false)
+		if not split.size() == 3:
+			return null
 		split[-1] = split[-1].lstrip("".join(StringUtil.WHITESPACE) + "{").rstrip("".join(StringUtil.WHITESPACE) + "}")
-		var name := split[0]
+		var name := split[1]
 		var vars: Array[Variable] = []
 		var v_defs := split[-1].split(";", false)
 		for v_def in v_defs:
@@ -1288,6 +1346,8 @@ class Variable extends Type:
 		"noperspective": Qualifier.NOPERSPECTIVE,
 	}
 	
+	static var _qualifiers_flipped := DictionaryUtil.flip(qualifiers)
+	
 	var _qualifier_icons: Dictionary = {
 		Qualifier.IN: Icons.var_in,
 		Qualifier.OUT: Icons.var_out,
@@ -1306,7 +1366,8 @@ class Variable extends Type:
 		icon = _qualifier_icons.get(qualifier, Icons.variable)
 	
 	func _to_string() -> String:
-		return "%s %s" % [type, name]
+		var qualifiers_str: String = Variable.get_qualifier_string(qualifier)
+		return "%s%s %s" % [qualifiers_str + (" " if qualifiers_str else ""), type, name]
 	
 	static func from_def(def: String, scope: int = 0) -> Array[Variable]:
 		def = def.strip_edges()
@@ -1337,6 +1398,13 @@ class Variable extends Type:
 			vars[i] = Variable.new(var_names[i].strip_edges(), type, qualifiers)
 			vars[i].depth = scope
 		return vars
+	
+	static func get_qualifier_string(qualifiers: Qualifier) -> String:
+		var sb: StringBuilder = StringBuilder.new()
+		for qualifier in _qualifiers_flipped:
+			if qualifier & qualifiers:
+				sb.append(_qualifiers_flipped[qualifier])
+		return str(sb)
 	
 	func _get_type() -> CodeEdit.CodeCompletionKind:
 		return CodeEdit.KIND_VARIABLE

@@ -23,4 +23,9 @@ func add_to(editor: CodeEdit) -> void:
 static func add_arr_to(suggestions: Array[CodeCompletionSuggestion], editor: CodeEdit) -> void:
 	for suggestion in suggestions:
 		if suggestion:
-			suggestion.add_to(editor)
+			if suggestion.location < CodeEdit.LOCATION_PARENT_MASK:
+				suggestion.location = CodeEdit.LOCATION_PARENT_MASK - suggestion.location - 1
+				suggestion.add_to(editor)
+				suggestion.location = CodeEdit.LOCATION_PARENT_MASK - suggestion.location - 1
+			else:
+				suggestion.add_to(editor)
