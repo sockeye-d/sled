@@ -22,12 +22,15 @@ func _gui_input(event: InputEvent) -> void:
 
 
 func _make_custom_tooltip(for_text: String) -> Object:
+	var container: PanelContainer = PanelContainer.new()
+	container.add_theme_stylebox_override(&"panel", StyleBoxUtil.new_flat(Color.TRANSPARENT, [0], [0, 5, 0, 5]))
 	var label: RichTextLabel = RichTextLabel.new()
 	label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	label.fit_content = true
 	label.bbcode_enabled = true
-	label.text = for_text
-	return label
+	label.text = "[code]" + for_text + "[/code]"
+	container.add_child(label)
+	return container
 
 
 func _get_tooltip(at_position: Vector2) -> String:

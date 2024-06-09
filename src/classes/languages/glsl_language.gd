@@ -448,7 +448,10 @@ class FileContents:
 			break
 		if not i == -1:
 			if simple_word in defs and defs[simple_word] is Macro:
-				return str(defs[simple_word])
+				var args: PackedStringArray = StringUtil.split_scoped(StringUtil.substr_pos(text, simple_word_bounds[1] + 1, StringUtil.find_scope_end(text, i + 1, "(", ")")), ",", "(", ")")
+				ArrayUtil.map_in_place_s(args, func(arg: String) -> String: return arg.strip_edges())
+				print(args)
+				return str(defs[simple_word]) + "\n\n" + (defs[simple_word] as Macro).get_expanded(args)
 			var m_funcs := funcs.merged(FileContents.built_in_contents.funcs)
 			if simple_word in m_funcs:
 				return str("\n".join(m_funcs[simple_word]))
@@ -1213,10 +1216,29 @@ class Macro extends Definition:
 		name = _name
 		value = _value
 		arguments = _arguments
-		icon = Icons.definition
+		icon = Icons.macro
 	
 	func _get_type() -> CodeEdit.CodeCompletionKind:
 		return CodeEdit.KIND_CONSTANT
+	
+	func get_expanded(args: PackedStringArray) -> String:
+		var last_was_valid: bool = false
+		var is_valid: bool = false
+		var sb := StringBuilder.new()
+		var i: int = 0
+		while i < value.length():
+			is_valid = value[i].to_lower() in "abcdefghijklmnopqrstuvwxyz_"
+			if is_valid and not last_was_valid:
+				var b: int = StringUtil.begins_with_any_index(value.substr(i), arguments)
+				if not b == -1:
+					sb.append(args[b])
+					i += arguments[b].length()
+					last_was_valid = is_valid
+					continue
+			sb.append(value[i])
+			last_was_valid = is_valid
+			i += 1
+		return str(sb)
 
 
 class Function extends Type:

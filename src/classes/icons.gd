@@ -72,6 +72,7 @@ static var var_out = preload("res://src/assets/icons/code/var_out.png")
 static var var_uniform = preload("res://src/assets/icons/code/var_uniform.png")
 static var var_const = preload("res://src/assets/icons/code/var_const.png")
 static var definition = preload("res://src/assets/icons/code/definition.png")
+static var macro = preload("res://src/assets/icons/code/macro.png")
 
 
 static func sget(property: StringName) -> Variant:

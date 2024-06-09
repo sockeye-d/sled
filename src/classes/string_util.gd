@@ -245,6 +245,13 @@ static func begins_with_any(string: String, texts: PackedStringArray) -> String:
 			return text
 	return ""
 
+## Returns [code]true[/code] if the string begins with any of the given strings
+static func begins_with_any_index(string: String, texts: PackedStringArray) -> int:
+	for text_index in texts.size():
+		if string.begins_with(texts[text_index]):
+			return text_index
+	return -1
+
 ## Returns [code]true[/code] if the string ends with any of the given strings
 static func ends_with_any(string: String, texts: PackedStringArray) -> bool:
 	for text in texts:
