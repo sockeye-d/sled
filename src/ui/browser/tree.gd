@@ -133,8 +133,14 @@ func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_ind
 			cd.popup_centered()
 			cd.confirmed.connect(
 					func():
-						item.get_parent().remove_child(item)
-						OS.move_to_trash(paths.get_value(item))
+						var err: Error = OS.move_to_trash(paths.get_value(item))
+						NotificationManager.notify_if_err(
+							err,
+							"Deleted %s" % paths.get_value(item).get_file(),
+							"Failed to delete %s" % paths.get_value(item).get_file()
+						)
+						if not err:
+							item.get_parent().remove_child(item)
 						)
 			cd.visibility_changed.connect(func(): if not cd.visible: cd.queue_free())
 		Buttons.DELETE_FOLDER:
@@ -153,11 +159,13 @@ func _rename_item(item: TreeItem, title: String) -> void:
 	dialog.popup_centered()
 	var new_name = await dialog.finished
 	if new_name:
-		item.set_text(0, new_name)
 		var path: String = paths.get_value(item)
 		var new_path: String = path.get_base_dir().path_join(new_name)
-		NotificationManager.notify_err(DirAccess.rename_absolute(path, new_path), "Rename failed with error %s", true)
-		paths.add(item, path.get_base_dir().path_join(new_name))
+		var err: Error = DirAccess.rename_absolute(path, new_path)
+		if not err:
+			item.set_text(0, new_name)
+			paths.add(item, path.get_base_dir().path_join(new_name))
+		NotificationManager.notify_if_err(err, "%s renamed to %s successfully" % [path.get_file(), new_name], "%s failed to be renamed to %s" % [path.get_file(), new_name])
 	dialog.queue_free()
 
 

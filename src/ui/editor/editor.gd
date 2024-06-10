@@ -131,7 +131,7 @@ func save(path: String = file_path) -> void:
 
 func load_theme(file: String) -> void:
 	if file and code_editor:
-		ThemeImporter.import_theme(file, code_editor, GLSLLanguage.base_types, GLSLLanguage.keywords, GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
+		ThemeImporter.import_theme(file, code_editor, GLSLLanguage.base_types, GLSLLanguage.keywords.keys(), GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
 		if not code_editor.syntax_highlighter.has_color_region("#"):
 			code_editor.syntax_highlighter.add_color_region("#", "", get_theme_color("background_color").lightened(0.5))
 
@@ -192,16 +192,6 @@ func _on_code_editor_code_completion_requested() -> void:
 
 
 func _get_completion_suggestions() -> void:
-	#CodeCompletionSuggestion.add_arr_to(GLSLLanguage.get_code_completion_suggestions(
-			#file_handle.get_path_absolute(),
-			#code_editor.text,
-			#code_editor.get_caret_line(code_editor.get_caret_count() - 1),
-			#code_editor.get_caret_column(code_editor.get_caret_count() - 1),
-			#FileManager.absolute_base_path if Settings.inc_absolute_paths else "",
-			#file_contents,
-			#),
-			#code_editor
-		#)
 	refresh_file_contents()
 	CodeCompletionSuggestion.add_arr_to(
 			file_contents.as_suggestions(
@@ -213,11 +203,9 @@ func _get_completion_suggestions() -> void:
 			),
 			code_editor,
 		)
-	#for keyword in GLSLLanguage.base_types:
-		#code_editor.add_code_completion_option(CodeEdit.KIND_CLASS, keyword, keyword, Color.WHITE, null, null, 1)
-	#for keyword in GLSLLanguage.keywords:
-		#code_editor.add_code_completion_option(CodeEdit.KIND_PLAIN_TEXT, keyword, keyword, Color.WHITE, null, null, 2)
-	#pass
+	CodeCompletionSuggestion.add_arr_to(GLSLLanguage.FileContents.built_in_contents.as_suggestions(0), code_editor)
+	for keyword in GLSLLanguage.keywords:
+		code_editor.add_code_completion_option(CodeEdit.KIND_PLAIN_TEXT, keyword, keyword.lstrip("#"), Color.WHITE, GLSLLanguage.keywords[keyword])
 
 
 func refresh_file_contents():
@@ -235,6 +223,7 @@ func _on_save_button_pressed() -> void:
 
 
 func _on_code_editor_symbol_validate(symbol: String) -> void:
+	# TODO: implement go to def?
 	return
 	print(symbol)
 	code_editor.set_symbol_lookup_word_as_valid(true)

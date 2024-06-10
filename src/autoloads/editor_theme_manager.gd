@@ -7,7 +7,7 @@ static var theme: Theme:
 signal theme_changed(new_theme: String)
 
 
-const DEFAULT_THEME: String = "vs code dark"
+const DEFAULT_THEME: String = "vs code light"
 const THEMES: ThemeLibrary = preload("res://src/themes/themes.tres")
 const LIGATURE_SHORTHANDS: Dictionary = {
 	"ss": "stylistic_set_",
@@ -62,7 +62,7 @@ func change_theme_from_path(theme_path: String):
 
 
 func change_theme_from_text(theme_text: String) -> void:
-	var colors = ThemeImporter.import_theme(theme_text, null, GLSLLanguage.base_types, GLSLLanguage.keywords, GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
+	var colors = ThemeImporter.import_theme(theme_text, null, GLSLLanguage.base_types, GLSLLanguage.keywords.keys(), GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
 	
 	theme.set_stylebox(&"normal", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
 			
@@ -85,11 +85,13 @@ func change_theme_from_text(theme_text: String) -> void:
 	theme.set_color(&"font_hover_pressed_color", &"Button", colors.text_color.darkened(0.15))
 	theme.set_color(&"font_pressed_color", &"Button", colors.text_color.darkened(0.1))
 	
-	theme.set_color(&"font_color", &"OptionButton", Color(0.875, 0.875, 0.875))
-	theme.set_color(&"font_focus_color", &"OptionButton", Color(0.875, 0.875, 0.875))
-	theme.set_color(&"font_hover_color", &"OptionButton", Color(0.875, 0.875, 0.875).lightened(0.05))
-	theme.set_color(&"font_hover_pressed_color", &"OptionButton", Color(0.875, 0.875, 0.875).lightened(0.15))
-	theme.set_color(&"font_pressed_color", &"OptionButton", Color(0.875, 0.875, 0.875).lightened(0.1))
+	theme.set_color(&"font_color", &"LineEdit", colors.text_color)
+	
+	theme.set_color(&"font_color", &"OptionButton", colors.text_color)
+	theme.set_color(&"font_focus_color", &"OptionButton", colors.text_color)
+	theme.set_color(&"font_hover_color", &"OptionButton", colors.text_color.lightened(0.05))
+	theme.set_color(&"font_hover_pressed_color", &"OptionButton", colors.text_color.lightened(0.15))
+	theme.set_color(&"font_pressed_color", &"OptionButton", colors.text_color.lightened(0.1))
 	theme.set_stylebox(&"normal", &"OptionButton",
 			StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
 	theme.set_stylebox(&"hover", &"OptionButton",
@@ -99,6 +101,13 @@ func change_theme_from_text(theme_text: String) -> void:
 	
 	theme.set_stylebox(&"panel", &"AcceptDialog",
 			StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [0], [4]))
+	
+	theme.set_stylebox(&"panel", &"PopupMenu",
+			StyleBoxUtil.new_flat(colors.background_color, [4], [4], [2], colors.background_color.darkened(0.2)))
+	theme.set_stylebox(&"hover", &"PopupMenu",
+			StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
+	theme.set_color(&"font_color", &"PopupMenu", colors.text_color)
+	theme.set_color(&"font_hover_color", &"PopupMenu", colors.text_color)
 	
 	RenderingServer.set_default_clear_color(colors.background_color.darkened(0.2))
 	

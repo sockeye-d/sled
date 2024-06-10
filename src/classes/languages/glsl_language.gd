@@ -98,7 +98,8 @@ static func _static_init() -> void:
 		"sampler2DArrayShadow",
 		"samplerCubeArrayShadow",
 	]
-	keywords = [
+	
+	keywords = _create_icons([
 		# Other
 		"attribute",
 		"const",
@@ -130,11 +131,11 @@ static func _static_init() -> void:
 		"highp",
 		"precision",
 		"struct",
-		"return", 
+		"return",
 		# Preprocessor stuff
-		"define",
-		"defined",
-		"undef",
+		"#define",
+		"#defined",
+		"#undef",
 		
 		"#if",
 		"#ifdef",
@@ -149,7 +150,7 @@ static func _static_init() -> void:
 		"#pragma",
 		"#extension",
 		"#include",
-	]
+	])
 #endregion
 	comment_regions = ["//", "/* */"]
 	# GLSL has no strings
@@ -158,6 +159,18 @@ static func _static_init() -> void:
 ## Dictionary[String, FileContents]
 ## Used to cache the results of get_file_contents() calls, keys are file paths
 static var contents_cache: Dictionary = { }
+
+
+static func _create_icons(arr: PackedStringArray) -> Dictionary:
+	var dict: Dictionary = { }
+	for item in arr:
+		var icon: Texture2D
+		if item.begins_with("#"):
+			icon = Icons.keyword_definition
+		else:
+			icon = Icons.sget("keyword_" + item)
+		dict[item] = icon
+	return dict
 
 
 static func get_code_completion_suggestions(path: String, file: String, line: int = -1, col: int = -1, base_path: String = path, contents: FileContents = null) -> Array[CodeCompletionSuggestion]:
@@ -212,7 +225,7 @@ static func get_file_contents(path: String, file: String, depth: int = 0, base_p
 			var end := substr.find("\n")
 			var def := StringUtil.substr_pos(substr, 0, end)
 			last_func = null
-			var kind := substr.trim_prefix("#").strip_edges(true, false)
+			var kind := def.trim_prefix("#").strip_edges(true, false)
 			if kind.begins_with("include"):
 				var included_path = StringUtil.substr_pos(def, def.find("\"") + 1, def.rfind("\""))
 				var new_path = path.get_base_dir().path_join(included_path).simplify_path()
@@ -235,7 +248,7 @@ static func get_file_contents(path: String, file: String, depth: int = 0, base_p
 					contents.add(obj)
 			if end == -1:
 				break
-			i += end + 1
+			i += end
 		if substr.begins_with("struct"):
 			# It is a struct
 			var open_brace: int = substr.find("{")
@@ -435,8 +448,6 @@ class FileContents:
 		if not simple_word_bounds:
 			return ""
 		var simple_word: String = StringUtil.substr_posv(text, simple_word_bounds).strip_edges()
-		if simple_word in structs:
-			return str(structs[simple_word])
 		var i: int = simple_word_bounds[1] - 1
 		while true:
 			i += 1
@@ -455,6 +466,8 @@ class FileContents:
 			var m_funcs := funcs.merged(FileContents.built_in_contents.funcs)
 			if simple_word in m_funcs:
 				return str("\n".join(m_funcs[simple_word]))
+		if simple_word in structs:
+			return str(structs[simple_word])
 		if simple_word in defs:
 			return str(defs[simple_word])
 		var complex_word: String = StringUtil.substr_posv(text, StringUtil.get_word_code(text, index))
@@ -1220,6 +1233,9 @@ class Macro extends Definition:
 	
 	func _get_type() -> CodeEdit.CodeCompletionKind:
 		return CodeEdit.KIND_CONSTANT
+	
+	func as_completion_suggestion() -> CodeCompletionSuggestion:
+		return CodeCompletionSuggestion.new(_get_type(), name, depth, icon, name + "(")
 	
 	func get_expanded(args: PackedStringArray) -> String:
 		var last_was_valid: bool = false

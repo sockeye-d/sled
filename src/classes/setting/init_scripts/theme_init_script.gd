@@ -7,8 +7,7 @@ func on_init(item: SettingItem) -> void:
 	for t in EditorThemeManager.THEMES.themes:
 		item.options.append(t)
 	
-	item.select_text(EditorThemeManager.DEFAULT_THEME)
-	item.default_value = item.value
+	item.default_value = item.options.find(EditorThemeManager.DEFAULT_THEME)
 	
 	item.setting_changed.connect.call_deferred(
 			func(new_value):

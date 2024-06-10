@@ -31,3 +31,10 @@ func notify_err(error: Error, text: String, include_error_type := false, notific
 		if include_error_type:
 			text = text % error_string(error)
 		notify(text, notification_type, notification_color)
+
+
+func notify_if_err(error: Error, success_text: String, failed_text: String, include_error_type := false, notification_type: int = TYPE_ERROR if error else TYPE_NORMAL, notification_color: Color = NOTIFICATION_COLORS[notification_type]) -> void:
+	if error:
+		notify_err(error, failed_text, include_error_type, notification_type, notification_color)
+	else:
+		notify(success_text, notification_type, notification_color)
