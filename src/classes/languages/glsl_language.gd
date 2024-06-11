@@ -179,7 +179,7 @@ static func get_code_completion_suggestions(path: String, file: String, line: in
 	contents = get_file_contents(path, file, 0, base_path, true)
 	contents.merge(FileContents.built_in_contents)
 	var caret_index := StringUtil.get_index(file, line, col)
-	return contents.as_suggestions(caret_index)
+	return contents.as_suggestions(caret_index, file)
 
 
 static func get_file_contents(path: String, file: String, depth: int = 0, base_path: String = "", currently_edited_file: bool = false, visited_files: PackedStringArray = []) -> FileContents:
@@ -345,7 +345,7 @@ class FileContents:
 			ArrayUtil.join_line(ArrayUtil.to_string_array(funcs.values())),
 		]
 	
-	func as_suggestions(index: int) -> Array[CodeCompletionSuggestion]:
+	func as_suggestions(index: int, text: String = "") -> Array[CodeCompletionSuggestion]:
 		var suggestions: Array[CodeCompletionSuggestion] = []
 		for struct in structs.values():
 			var s: CodeCompletionSuggestion = struct.as_completion_suggestion()
@@ -357,6 +357,23 @@ class FileContents:
 			suggestions.append(f[0].as_completion_suggestion())
 		for d: Definition in defs.values():
 			suggestions.append(d.as_completion_suggestion())
+		if not text:
+			return suggestions
+		var dot_index: int = index
+		while true:
+			if text[dot_index] == ".":
+				break
+			if text[dot_index].to_lower() not in "abcdefghijklmnopqrstuvwxyz_" + "".join(StringUtil.WHITESPACE):
+				dot_index = -1
+				break
+			dot_index -= 1
+		if dot_index == -1:
+			return suggestions
+		var v := get_variable(StringUtil.substr_posv(text, StringUtil.get_word_code(text, dot_index)), dot_index)
+		if v:
+			var type: Struct = structs.merged(FileContents.built_in_contents.structs)[v.type]
+			for prop in type.properties.values():
+				suggestions.append(prop.as_completion_suggestion())
 		return suggestions
 	
 	
@@ -412,9 +429,9 @@ class FileContents:
 	## for [code]member[/code]
 	func get_variable(string: String, index: int) -> Variable:
 		var chain: PackedStringArray = StringUtil.split_scoped(string, ".", "(", ")")
-		ArrayUtil.map_in_place_s(chain, func(str: String) -> String: return str.strip_edges())
+		ArrayUtil.map_in_place_s(chain, func(chain_str: String) -> String: return chain_str.strip_edges())
 		#return null
-		if not chain or Array(chain).any(func(str: String) -> bool: return str.is_empty()):
+		if not chain or Array(chain).any(func(chain_str: String) -> bool: return chain_str.is_empty()):
 			return null
 		if chain.size() == 1:
 			return Scope.find(variables, chain[0], index)
@@ -433,12 +450,6 @@ class FileContents:
 				return null
 			v = s.properties.get(chain[i])
 		return v
-	
-	
-	## Finds the matching function signature for a invocation like
-	## [code]function_name(arg1, arg2, etc.)[/code]
-	func get_function(function_name: String, invocation: String) -> Function:
-		return null
 	
 	
 	func get_tooltip(text: String, index: int) -> String:
@@ -1108,7 +1119,7 @@ class Type:
 	## For example, entering [code]f[/code] would result in all versions of the method
 	## with a float type, like method(float x), method(vec2 x), method(vec3 x),
 	## etc.
-	static func _create_multi_func(name: String, arguments: PackedStringArray, input_prefixes: PackedStringArray, output_prefix: String = input_prefixes[0]) -> Array[Function]:
+	static func _create_multi_func(obj_name: String, arguments: PackedStringArray, input_prefixes: PackedStringArray, output_prefix: String = input_prefixes[0]) -> Array[Function]:
 		var in_types: Array[PackedStringArray] = []
 		for p in input_prefixes:
 			in_types.append(PackedStringArray(_prefix_types.get(p, [p])))
@@ -1127,26 +1138,26 @@ class Type:
 				typed_args[typed_arg_i] = Variable.new(
 						arguments[typed_arg_i],
 						ArrayUtil.index_wrap(ArrayUtil.index_wrap(in_types, typed_arg_i), i))
-			funcs[i] = Function.new(name, ArrayUtil.index_wrap(out_types, i), typed_args)
+			funcs[i] = Function.new(obj_name, ArrayUtil.index_wrap(out_types, i), typed_args)
 		return funcs
 	
-	static func _create_vector(name: String, base_type: String = _prefix_map.get(name[0], "float"), count: int = int(name[-1]), access_sets: PackedStringArray = ["xyzw", "rgba", "stpq"]) -> IndexableStruct:
+	static func _create_vector(obj_name: String, base_type: String = _prefix_map.get(obj_name[0], "float"), count: int = int(obj_name[-1]), access_sets: PackedStringArray = ["xyzw", "rgba", "stpq"]) -> IndexableStruct:
 		var components: Array[Variable] = []
 		for access_set in access_sets:
 			components.append_array(Array(_generate_permutations(access_set.substr(0, count), 4)).map(
-				func(name: String):
+				func(obj_name: String):
 					var type: String = ""
-					if name.length() == 1:
+					if obj_name.length() == 1:
 						type = base_type
 					else:
-						type = ("" if base_type == "float" else base_type[0]) + "vec" + str(name.length())
-					return Variable.new(name, type)
+						type = ("" if base_type == "float" else base_type[0]) + "vec" + str(obj_name.length())
+					return Variable.new(obj_name, type)
 					))
-		return IndexableStruct.new(name, components, base_type, Icons.sget("type_" + name))
+		return IndexableStruct.new(obj_name, components, base_type, Icons.sget("type_" + obj_name))
 	
-	static func _create_matrix(name: String, base_type: String = _prefix_map.get(name[0], "float")) -> IndexableStruct:
-		var dim: String = name.right(3) if "x" in name else name.right(1)
-		return IndexableStruct.new(name, [], base_type, Icons.sget("type_" + name))
+	static func _create_matrix(obj_name: String, base_type: String = _prefix_map.get(obj_name[0], "float")) -> IndexableStruct:
+		var dim: String = obj_name.right(3) if "x" in obj_name else obj_name.right(1)
+		return IndexableStruct.new(obj_name, [], base_type, Icons.sget("type_" + obj_name))
 	
 	static func _generate_single_permutation(sets: String, count: int) -> PackedStringArray:
 		if count == 1:
@@ -1311,7 +1322,12 @@ class Struct extends Type:
 	
 	func _init(_name: String, _properties: Array[Variable], _icon: Texture2D = Icons.struct) -> void:
 		name = _name
-		properties = ArrayUtil.create_dictionary(_properties, func(v): return v.name)
+		properties = ArrayUtil.create_dictionary(_properties,
+			func(v: Variable):
+				v.depth = 255
+				v.icon = Icons.member
+				return v.name
+				)
 		icon = _icon
 	
 	func as_fn() -> Function:

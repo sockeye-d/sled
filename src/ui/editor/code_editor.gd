@@ -29,6 +29,7 @@ func _make_custom_tooltip(for_text: String) -> Object:
 	label.fit_content = true
 	label.bbcode_enabled = true
 	label.text = "[code]" + for_text + "[/code]"
+	label.add_theme_color_override(&"default_color", EditorThemeManager.theme.get_color(&"font_color", &"TooltipLabel"))
 	container.add_child(label)
 	return container
 

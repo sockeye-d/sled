@@ -199,7 +199,8 @@ func _get_completion_suggestions() -> void:
 					code_editor.text,
 					code_editor.get_caret_line(code_editor.get_caret_count() - 1),
 					code_editor.get_caret_column(code_editor.get_caret_count() - 1),
-				)
+				),
+				code_editor.text
 			),
 			code_editor,
 		)

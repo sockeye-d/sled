@@ -109,6 +109,12 @@ func change_theme_from_text(theme_text: String) -> void:
 	theme.set_color(&"font_color", &"PopupMenu", colors.text_color)
 	theme.set_color(&"font_hover_color", &"PopupMenu", colors.text_color)
 	
+	theme.set_stylebox(&"panel", &"TooltipPanel",
+			StyleBoxUtil.new_flat(colors.background_color, [4], [8, 4], [2],
+			colors.background_color.lightened(0.2)))
+	
+	theme.set_color(&"font_color", &"TooltipLabel", colors.text_color)
+	
 	RenderingServer.set_default_clear_color(colors.background_color.darkened(0.2))
 	
 	theme_changed.emit(theme_text)
