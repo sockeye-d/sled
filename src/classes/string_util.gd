@@ -4,6 +4,26 @@ class_name StringUtil
 const WHITESPACE := ["\n", " ", "\r"]
 
 
+static func _static_init() -> void:
+	var text: String = """list=Array[Dictionary]([{
+"base": &"Object",
+"class": &"ArrayUtil",
+"icon": "",
+"language": &"GDScript",
+"path": "res://src/classes/array_util.gd"
+}, {
+"base": &"MenuBar",
+"class": &"AutoMenuBar",
+"icon": "",
+"language": &"GDScript",
+"path": "res://src/classes/auto_menu_bar.gd"
+}, {"""
+	var index: int = 217
+	var col_line := get_line_col(text, index)
+	var index2 := get_index(text, col_line.y, col_line.x)
+	assert(index == index2)
+
+
 static func remove_inaccesible_scope(string: String, scope_opening: String, scope_closing: String, start: int = -1) -> String:
 	var sb := StringBuilder.new()
 	var scope: int = 0
@@ -345,6 +365,12 @@ static func get_index(string: String, line: int, column: int) -> int:
 		total_index += line_str.length() + 1
 	return total_index + column
 
+## Returns (column, line)
+static func get_line_col(string: String, index: int) -> Vector2i:
+	var line: int = string.substr(0, index).count("\n")
+	var col: int = index - maxi(0, string.rfind("\n", index)) - 1
+	return Vector2i(col, line)
+
 ## Returns the start and end of the word
 static func get_word(string: String, index: int, allowed_chars_left: String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_", allowed_chars_right: String = allowed_chars_left) -> PackedInt32Array:
 	if string[index] not in allowed_chars_left:
@@ -393,3 +419,27 @@ static func split_scoped(string: String, delim: String, scope_open: String, scop
 			last_index = i + delim.length()
 	arr.append(string.substr(last_index))
 	return arr
+
+
+static func find_all_occurrences(string: String, what: String) -> Array[Vector2i]:
+	var i: int = 0
+	var o: Array[Vector2i] = []
+	while i < string.length():
+		var new_i: int = string.find(what, i)
+		if new_i == -1:
+			return o
+		o.append(Vector2i(new_i, new_i + what.length()))
+		i = new_i + what.length()
+	return o
+
+
+static func findn_all_occurrences(string: String, what: String) -> Array[Vector2i]:
+	var i: int = 0
+	var o: Array[Vector2i] = []
+	while i < string.length():
+		var new_i: int = string.findn(what, i)
+		if new_i == -1:
+			return o
+		o.append(Vector2i(new_i, new_i + what.length()))
+		i = new_i + what.length()
+	return o

@@ -1,7 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://cfbphdd74su8c"]
+[gd_scene load_steps=17 format=3 uid="uid://cfbphdd74su8c"]
 
 [ext_resource type="Script" path="res://src/ui/editor/editor.gd" id="1_rsqc6"]
+[ext_resource type="Script" path="res://src/ui/upper_panel_container.gd" id="2_11iii"]
 [ext_resource type="Script" path="res://src/ui/editor/code_editor.gd" id="2_didrn"]
+[ext_resource type="Script" path="res://src/ui/editor/find_box.gd" id="4_5ubg7"]
+[ext_resource type="Texture2D" uid="uid://dugnt34g7fnv0" path="res://src/assets/icons/select_all.png" id="5_d2sug"]
+[ext_resource type="Texture2D" uid="uid://dx3psko1icbxt" path="res://src/assets/icons/previous_match.png" id="5_hxmfn"]
+[ext_resource type="Texture2D" uid="uid://dg5dmfgq0njjm" path="res://src/assets/icons/next_match.png" id="6_ajrhi"]
+[ext_resource type="Texture2D" uid="uid://x5i0t7wrt83t" path="res://src/assets/icons/replace_all.png" id="6_ig3st"]
+[ext_resource type="Texture2D" uid="uid://h2p64urv4edg" path="res://src/assets/icons/case_insensitive.png" id="7_dkqao"]
+[ext_resource type="Texture2D" uid="uid://5odq30jvxch6" path="res://src/assets/icons/replace_single.png" id="7_kjjky"]
+[ext_resource type="Texture2D" uid="uid://d3wl4vltp8wun" path="res://src/assets/icons/regex.png" id="8_x0ufk"]
+[ext_resource type="Texture2D" uid="uid://c1gjf4wqnnwdv" path="res://src/assets/icons/replace.png" id="9_0gw0l"]
+[ext_resource type="Texture2D" uid="uid://dcl3wjt251p5s" path="res://src/assets/icons/close.png" id="13_j6gjy"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fdh43"]
 
@@ -196,25 +207,20 @@ grow_vertical = 2
 theme_override_constants/separation = 0
 script = ExtResource("1_rsqc6")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="UpperPanelContainer" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
+theme_type_variation = &"UpperPanelContainer"
+script = ExtResource("2_11iii")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 2
-theme_override_constants/margin_top = 2
-theme_override_constants/margin_right = 2
-theme_override_constants/margin_bottom = 2
-
-[node name="MenuBar" type="HBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="MenuBar" type="HBoxContainer" parent="UpperPanelContainer"]
 layout_mode = 2
 
-[node name="LeftBar" type="HBoxContainer" parent="PanelContainer/MarginContainer/MenuBar"]
+[node name="LeftBar" type="HBoxContainer" parent="UpperPanelContainer/MenuBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SaveButton" type="Button" parent="PanelContainer/MarginContainer/MenuBar/LeftBar"]
+[node name="SaveButton" type="Button" parent="UpperPanelContainer/MenuBar/LeftBar"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -225,12 +231,12 @@ flat = true
 alignment = 0
 text_overrun_behavior = 3
 
-[node name="RightBar" type="HBoxContainer" parent="PanelContainer/MarginContainer/MenuBar"]
+[node name="RightBar" type="HBoxContainer" parent="UpperPanelContainer/MenuBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 2
 
-[node name="PathButton" type="Button" parent="PanelContainer/MarginContainer/MenuBar/RightBar"]
+[node name="PathButton" type="Button" parent="UpperPanelContainer/MenuBar/RightBar"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -247,7 +253,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "hello there"
-scroll_smooth = true
 caret_blink = true
 syntax_highlighter = SubResource("CodeHighlighter_i4v8i")
 highlight_all_occurrences = true
@@ -261,6 +266,98 @@ indent_automatic_prefixes = Array[String](["{", "("])
 auto_brace_completion_highlight_matching = true
 script = ExtResource("2_didrn")
 
+[node name="FindBox" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_type_variation = &"LowerPanelContainer"
+script = ExtResource("4_5ubg7")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="FindBox"]
+layout_mode = 2
+
+[node name="PatternLineEdit" type="LineEdit" parent="FindBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Find..."
+
+[node name="ReplacementLineEdit" type="LineEdit" parent="FindBox/HBoxContainer" groups=["replace"]]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Replace with..."
+
+[node name="PreviousMatchButton" type="Button" parent="FindBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Go to previous occurrence"
+icon = ExtResource("5_hxmfn")
+
+[node name="MatchCountLabel" type="Label" parent="FindBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+vertical_alignment = 1
+
+[node name="NextMatchButton" type="Button" parent="FindBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Go to next occurrence"
+icon = ExtResource("6_ajrhi")
+
+[node name="ReplaceButton" type="Button" parent="FindBox/HBoxContainer" groups=["replace"]]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Replace currently selected occurrence"
+icon = ExtResource("7_kjjky")
+
+[node name="SelectAllOccurrencesButton" type="Button" parent="FindBox/HBoxContainer" groups=["find"]]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Select all occurences with multiple carets"
+icon = ExtResource("5_d2sug")
+
+[node name="ReplaceAllOccurrencesButton" type="Button" parent="FindBox/HBoxContainer" groups=["replace"]]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Select all occurences with multiple carets"
+icon = ExtResource("6_ig3st")
+
+[node name="CaseInsensitiveToggle" type="CheckBox" parent="FindBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Use a case-insensitive match"
+icon = ExtResource("7_dkqao")
+
+[node name="RegExToggle" type="CheckBox" parent="FindBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Use Regular expressions for pattern matching, instead of simple pattern matching"
+icon = ExtResource("8_x0ufk")
+
+[node name="ReplaceToggle" type="CheckBox" parent="FindBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Enter find-and-replace mode"
+icon = ExtResource("9_0gw0l")
+
+[node name="CloseButton" type="Button" parent="FindBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Hide"
+icon = ExtResource("13_j6gjy")
+
+[node name="InfoBox" type="PanelContainer" parent="."]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="InfoBox"]
+layout_mode = 2
+
+[node name="CaretPosLabel" type="Label" parent="InfoBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true
 title = "Unsaved changes"
@@ -273,11 +370,19 @@ unique_name_in_owner = true
 wait_time = 0.1
 one_shot = true
 
-[connection signal="pressed" from="PanelContainer/MarginContainer/MenuBar/LeftBar/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="pressed" from="UpperPanelContainer/MenuBar/LeftBar/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="caret_changed" from="CodeEditor" to="." method="_on_code_editor_caret_changed"]
 [connection signal="code_completion_requested" from="CodeEditor" to="." method="_on_code_editor_code_completion_requested"]
+[connection signal="find_requested" from="CodeEditor" to="." method="_on_code_editor_find_requested"]
 [connection signal="symbol_lookup" from="CodeEditor" to="." method="_on_code_editor_symbol_lookup"]
 [connection signal="symbol_validate" from="CodeEditor" to="." method="_on_code_editor_symbol_validate"]
 [connection signal="text_changed" from="CodeEditor" to="." method="_on_code_editor_text_changed"]
+[connection signal="go_to_next_requested" from="FindBox" to="." method="_on_find_box_go_to_next_requested"]
+[connection signal="go_to_previous_requested" from="FindBox" to="." method="_on_find_box_go_to_previous_requested"]
+[connection signal="pattern_changed" from="FindBox" to="." method="_on_find_box_pattern_changed"]
+[connection signal="select_all_occurrences_requested" from="FindBox" to="." method="_on_find_box_select_all_occurrences_requested"]
+[connection signal="text_submitted" from="FindBox/HBoxContainer/PatternLineEdit" to="FindBox" method="_on_pattern_line_edit_text_submitted"]
+[connection signal="pressed" from="FindBox/HBoxContainer/CloseButton" to="FindBox" method="_on_close_button_pressed"]
 [connection signal="canceled" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_canceled"]
 [connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_confirmed"]
 [connection signal="custom_action" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_custom_action"]

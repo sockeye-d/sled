@@ -45,7 +45,7 @@ func _input(event: InputEvent) -> void:
 
 func set_all_to_default() -> void:
 	if not setting_categories:
-		setting_categories = SETTING_CATEGORIES.setting_categories
+		setting_categories.assign(SETTING_CATEGORIES.setting_categories)
 	settings.clear()
 	for category in setting_categories:
 		for setting in category.settings:
@@ -127,7 +127,7 @@ func add_setting_category(category: SettingCategory) -> void:
 
 
 func load_settings(new_settings: Dictionary) -> void:
-	setting_categories = SETTING_CATEGORIES.setting_categories
+	setting_categories.assign(SETTING_CATEGORIES.setting_categories)
 	if not settings_items:
 		populate_setting_categories()
 	for s in settings:

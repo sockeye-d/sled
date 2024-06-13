@@ -472,7 +472,6 @@ class FileContents:
 			if simple_word in defs and defs[simple_word] is Macro:
 				var args: PackedStringArray = StringUtil.split_scoped(StringUtil.substr_pos(text, simple_word_bounds[1] + 1, StringUtil.find_scope_end(text, i + 1, "(", ")")), ",", "(", ")")
 				ArrayUtil.map_in_place_s(args, func(arg: String) -> String: return arg.strip_edges())
-				print(args)
 				return str(defs[simple_word]) + "\n\n" + (defs[simple_word] as Macro).get_expanded(args)
 			var m_funcs := funcs.merged(FileContents.built_in_contents.funcs)
 			if simple_word in m_funcs:

@@ -67,15 +67,13 @@ func change_theme_from_text(theme_text: String) -> void:
 	theme.set_stylebox(&"normal", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
 			
 	theme.set_color(&"font_color", &"CodeEdit", colors.text_color)
+	theme.set_color(&"word_highlighted_color", &"CodeEdit", Color(colors.word_highlighted_color, colors.word_highlighted_color.a * 0.5))
 	
-	theme.set_stylebox(&"panel", &"PanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [8, 8, 0, 0], [4]))
+	theme.set_stylebox(&"panel", &"PanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [8, 8, 8, 8], [4]))
+	theme.set_stylebox(&"panel", &"UpperPanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [8, 8, 0, 0], [4]))
+	theme.set_stylebox(&"panel", &"LowerPanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
 	
 	theme.set_stylebox(&"panel", &"Tree", StyleBoxUtil.new_flat(colors.background_color, [8], [4]))
-	
-	theme.set_stylebox(&"normal", &"LineEdit",
-			StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
-	theme.set_stylebox(&"read_only", &"LineEdit",
-			StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
 	
 	theme.set_color(&"font_color", &"Tree", colors.text_color)
 	
@@ -84,8 +82,30 @@ func change_theme_from_text(theme_text: String) -> void:
 	theme.set_color(&"font_hover_color", &"Button", colors.text_color.darkened(0.05))
 	theme.set_color(&"font_hover_pressed_color", &"Button", colors.text_color.darkened(0.15))
 	theme.set_color(&"font_pressed_color", &"Button", colors.text_color.darkened(0.1))
+	theme.set_stylebox(&"disabled", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
+	theme.set_stylebox(&"normal", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
+	theme.set_stylebox(&"hover", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
+	theme.set_stylebox(&"pressed", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
+	
+	theme.set_color(&"font_color", &"CheckBox", colors.text_color)
+	theme.set_color(&"font_focus_color", &"CheckBox", colors.text_color)
+	theme.set_color(&"font_hover_color", &"CheckBox", colors.text_color.darkened(0.05))
+	theme.set_color(&"font_hover_pressed_color", &"CheckBox", colors.text_color.darkened(0.15))
+	theme.set_color(&"font_pressed_color", &"CheckBox", colors.text_color.darkened(0.1))
+	theme.set_stylebox(&"disabled", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
+	theme.set_stylebox(&"normal", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
+	theme.set_stylebox(&"hover", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
+	theme.set_stylebox(&"hover_pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
+	theme.set_stylebox(&"pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
+	
+	theme.set_color(&"font_color", &"Label", colors.text_color)
 	
 	theme.set_color(&"font_color", &"LineEdit", colors.text_color)
+	
+	theme.set_stylebox(&"normal", &"LineEdit",
+			StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
+	theme.set_stylebox(&"read_only", &"LineEdit",
+			StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
 	
 	theme.set_color(&"font_color", &"OptionButton", colors.text_color)
 	theme.set_color(&"font_focus_color", &"OptionButton", colors.text_color)

@@ -12,7 +12,7 @@ enum {
 const NOTIFICATION_COLORS: Dictionary = {
 	TYPE_NORMAL: Color(0.5, 0.8, 0.5),
 	TYPE_WARNING: Color(0.95, 0.95, 0.0),
-	TYPE_ERROR: Color(0.8, 0.3, 0.3),
+	TYPE_ERROR: Color(1.0, 0.5, 0.5),
 }
 
 

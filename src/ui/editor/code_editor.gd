@@ -2,6 +2,8 @@ class_name CodeEditor extends CodeEdit
 
 
 signal save_requested()
+signal find_requested()
+
 
 @onready var editor: Editor = $".."
 
@@ -9,15 +11,19 @@ func _gui_input(event: InputEvent) -> void:
 	if not editable:
 		return
 	if event is InputEventKey:
-		if event.is_action_pressed("move_lines_down", true, false):
+		if event.is_action_pressed("find", false, true):
+			find_requested.emit()
+		if event.is_action_pressed("move_lines_down", true, true):
 			move_lines_down()
-		if event.is_action_pressed("move_lines_up", true, false):
+		if event.is_action_pressed("move_lines_up", true, true):
 			move_lines_up()
-		if event.is_action_pressed("duplicate_lines", true, false):
+		if event.is_action_pressed("duplicate_lines", true, true):
 			duplicate_lines()
-		if event.is_action_pressed("delete_lines", true, false):
+		if event.is_action_pressed("delete_lines", true, true):
 			delete_lines()
-		if event.is_action_pressed("save", true, false):
+			for caret_index in get_caret_count():
+				set_caret_line(get_caret_line(caret_index))
+		if event.is_action_pressed("save", true, true):
 			save_requested.emit()
 
 
@@ -40,43 +46,6 @@ func _get_tooltip(at_position: Vector2) -> String:
 		return ""
 	var index: int = StringUtil.get_index(text, line_column.y, line_column.x)
 	return editor.file_contents.get_tooltip(text, index)
-
-
-func move_lines_down():
-	var lines: PackedStringArray = text.split("\n")
-	var carets := get_carets(func(a: Vector2i, b: Vector2i): return a.y < b.y)
-	if carets[-1].y == lines.size() - 1:
-		return
-	
-	for caret_i in carets.size():
-		swap_lines(carets[caret_i].y, carets[caret_i].y + 1)
-
-
-func move_lines_up():
-	var lines: PackedStringArray = text.split("\n")
-	var carets = get_carets(func(a: Vector2i, b: Vector2i): return a.y < b.y)
-	if carets[0].y == 0:
-		return
-	
-	for caret_i in carets.size():
-		swap_lines(carets[caret_i].y, carets[caret_i].y - 1)
-
-
-func delete_lines():
-	var lines: PackedStringArray = text.split("\n")
-	var carets = get_carets(func(a: Vector2i, b: Vector2i): return a.y > b.y)
-	if carets[0].y == 0:
-		return
-	
-	for caret_i in carets.size():
-		lines.remove_at(carets[caret_i].y)
-		carets[caret_i].y -= 1
-	
-	text = "\n".join(lines)
-	
-	for caret in carets:
-		add_caret(caret.y, caret.x)
-	remove_caret(0)
 
 
 func get_carets(sort_func: Callable = Callable()) -> Array[Vector2i]:

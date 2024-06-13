@@ -1,4 +1,3 @@
-@tool
 class_name Editor extends Control
 
 
@@ -15,12 +14,14 @@ enum ConfirmationAction {
 signal _continue(action_taken: ConfirmationAction)
 
 
-@onready var panel_container: PanelContainer = %PanelContainer
+@onready var panel_container: PanelContainer = %UpperPanelContainer
 @onready var save_button: Button = %SaveButton
 @onready var path_button: Button = %PathButton
 @onready var code_editor: CodeEditor = %CodeEditor
 @onready var confirmation_dialog: ConfirmationDialog = %ConfirmationDialog
 @onready var code_completion_timer: Timer = %CodeCompletionTimer
+@onready var find_box: FindBox = %FindBox
+@onready var caret_pos_label: Label = %CaretPosLabel
 
 
 @export var editor_theme: String:
@@ -47,6 +48,8 @@ var file_contents: GLSLLanguage.FileContents:
 		if not file_contents:
 			refresh_file_contents()
 		return file_contents
+var found_ranges: Array[Vector2i]
+var current_range_index: int
 
 
 func _ready() -> void:
@@ -233,3 +236,84 @@ func _on_code_editor_symbol_validate(symbol: String) -> void:
 func _on_code_editor_symbol_lookup(symbol: String, line: int, column: int) -> void:
 	return
 	print(symbol)
+
+
+func _on_find_box_pattern_changed(pattern: String, use_regex: bool, case_insensitive: bool) -> void:
+	if use_regex:
+		var regex: RegEx
+		var text: String
+		if case_insensitive:
+			pattern = RegExUtil.as_lowercase(pattern)
+			text = code_editor.text.to_lower()
+		else:
+			text = code_editor.text
+		regex = RegExUtil.create(pattern)
+		if not regex:
+			find_box.set_invalid_pattern(true)
+			NotificationManager.notify("Pattern '%s' failed to compile" % pattern, NotificationManager.TYPE_ERROR)
+			found_ranges = []
+		else:
+			find_box.set_invalid_pattern(false)
+			# have to use assign because it treats Array and Array[Vector2i] as
+			# separate types :(
+			found_ranges.assign(regex.search_all(text).map(_match_to_range))
+	else:
+		find_box.set_invalid_pattern(false)
+		if case_insensitive:
+			found_ranges = StringUtil.findn_all_occurrences(code_editor.text, pattern)
+		else:
+			found_ranges = StringUtil.find_all_occurrences(code_editor.text, pattern)
+	current_range_index = 0
+	find_box.set_match_count(found_ranges.size())
+	if found_ranges:
+		_select_range(found_ranges[current_range_index])
+
+
+func _match_to_range(m: RegExMatch) -> Vector2i:
+	return Vector2i(m.get_start(), m.get_end())
+
+
+func _on_find_box_go_to_next_requested() -> void:
+	if not found_ranges:
+		return
+	current_range_index += 1
+	if current_range_index > found_ranges.size() - 1:
+		current_range_index = 0
+	_select_range(found_ranges[current_range_index])
+
+
+func _on_find_box_go_to_previous_requested() -> void:
+	if not found_ranges:
+		return
+	current_range_index -= 1
+	if current_range_index < 0:
+		current_range_index = found_ranges.size() - 1
+	_select_range(found_ranges[current_range_index])
+
+
+func _select_range(range: Vector2i, add_new_caret: bool = false) -> void:
+	var col_line_0: Vector2i = StringUtil.get_line_col(code_editor.text, range[0])
+	var col_line_1: Vector2i = StringUtil.get_line_col(code_editor.text, range[1])
+	if add_new_caret:
+		var caret_i: int = code_editor.add_caret(col_line_0.y, col_line_0.x)
+		code_editor.select(col_line_0.y, col_line_0.x, col_line_1.y, col_line_1.x, caret_i)
+	else:
+		code_editor.select(col_line_0.y, col_line_0.x, col_line_1.y, col_line_1.x, 0)
+	code_editor.center_viewport_to_caret(code_editor.get_caret_count() - 1)
+	#code_editor.grab_focus()
+
+
+func _on_code_editor_caret_changed() -> void:
+	caret_pos_label.text = "%s, %s" % [code_editor.get_caret_line(), code_editor.get_caret_column()]
+
+
+func _on_find_box_select_all_occurrences_requested() -> void:
+	code_editor.remove_secondary_carets()
+	for range in found_ranges:
+		_select_range(range, true)
+	code_editor.remove_caret(0)
+	code_editor.grab_focus()
+
+
+func _on_code_editor_find_requested() -> void:
+	find_box.visible = not find_box.visible

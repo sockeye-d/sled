@@ -86,24 +86,26 @@ func repopulate_tree() -> void:
 
 
 func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
-	var file_item = create_item(parent)
-	file_item.add_button(0, Icons.open_dir, Buttons.SHOW_IN_FILE_MANAGER)
-	file_item.add_button(0, Icons.rename, Buttons.RENAME_FILE)
-	file_item.add_button(0, Icons.delete, Buttons.DELETE_FILE)
-	file_item.set_text(0, path.get_file())
-	paths.add(file_item, path)
+	var item := create_item(parent)
+	item.add_button(0, Icons.open_dir, Buttons.SHOW_IN_FILE_MANAGER)
+	item.add_button(0, Icons.rename, Buttons.RENAME_FILE)
+	item.add_button(0, Icons.delete, Buttons.DELETE_FILE)
+	item.set_text(0, path.get_file())
+	item.set_icon_max_width(0, 1e10)
+	paths.add(item, path)
 
-	return file_item
+	return item
 
 
 func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
-	var item = create_item(parent)
+	var item := create_item(parent)
 	item.set_text(0, path.substr(path.rfind("/") + 1))
 	item.add_button(0, Icons.open_dir, Buttons.SHOW_IN_FILE_MANAGER)	
 	item.add_button(0, Icons.add_file, Buttons.ADD_FILE)
 	item.add_button(0, Icons.add_folder, Buttons.ADD_FOLDER)
 	item.add_button(0, Icons.rename, Buttons.RENAME_FOLDER)
 	item.add_button(0, Icons.delete, Buttons.DELETE_FOLDER)
+	item.set_icon_max_width(0, 1e10)
 	item.set_selectable(0, false)
 	paths.add(item, path)
 
