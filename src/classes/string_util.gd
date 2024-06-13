@@ -4,26 +4,6 @@ class_name StringUtil
 const WHITESPACE := ["\n", " ", "\r"]
 
 
-static func _static_init() -> void:
-	var text: String = """list=Array[Dictionary]([{
-"base": &"Object",
-"class": &"ArrayUtil",
-"icon": "",
-"language": &"GDScript",
-"path": "res://src/classes/array_util.gd"
-}, {
-"base": &"MenuBar",
-"class": &"AutoMenuBar",
-"icon": "",
-"language": &"GDScript",
-"path": "res://src/classes/auto_menu_bar.gd"
-}, {"""
-	var index: int = 217
-	var col_line := get_line_col(text, index)
-	var index2 := get_index(text, col_line.y, col_line.x)
-	assert(index == index2)
-
-
 static func remove_inaccesible_scope(string: String, scope_opening: String, scope_closing: String, start: int = -1) -> String:
 	var sb := StringBuilder.new()
 	var scope: int = 0
@@ -368,7 +348,7 @@ static func get_index(string: String, line: int, column: int) -> int:
 ## Returns (column, line)
 static func get_line_col(string: String, index: int) -> Vector2i:
 	var line: int = string.substr(0, index).count("\n")
-	var col: int = index - maxi(0, string.rfind("\n", index)) - 1
+	var col: int = index - string.rfind("\n", index) - 1
 	return Vector2i(col, line)
 
 ## Returns the start and end of the word

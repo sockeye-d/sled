@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://cfbphdd74su8c"]
+[gd_scene load_steps=18 format=3 uid="uid://cfbphdd74su8c"]
 
 [ext_resource type="Script" path="res://src/ui/editor/editor.gd" id="1_rsqc6"]
 [ext_resource type="Script" path="res://src/ui/upper_panel_container.gd" id="2_11iii"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://d3wl4vltp8wun" path="res://src/assets/icons/regex.png" id="8_x0ufk"]
 [ext_resource type="Texture2D" uid="uid://c1gjf4wqnnwdv" path="res://src/assets/icons/replace.png" id="9_0gw0l"]
 [ext_resource type="Texture2D" uid="uid://dcl3wjt251p5s" path="res://src/assets/icons/close.png" id="13_j6gjy"]
+[ext_resource type="Texture2D" uid="uid://dygo3oh200nbx" path="res://src/assets/icons/use_escape_sequences.png" id="13_y3rl4"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fdh43"]
 
@@ -321,7 +322,7 @@ icon = ExtResource("5_d2sug")
 [node name="ReplaceAllOccurrencesButton" type="Button" parent="FindBox/HBoxContainer" groups=["replace"]]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Select all occurences with multiple carets"
+tooltip_text = "Replace all occurences"
 icon = ExtResource("6_ig3st")
 
 [node name="CaseInsensitiveToggle" type="CheckBox" parent="FindBox/HBoxContainer"]
@@ -341,6 +342,12 @@ unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Enter find-and-replace mode"
 icon = ExtResource("9_0gw0l")
+
+[node name="EscapeSequencesToggle" type="CheckBox" parent="FindBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Use escape sequences. For example, entering [code]\\n[\\code] in the replace field would be replaced with an actual newline character. Supports all C escape codes."
+icon = ExtResource("13_y3rl4")
 
 [node name="CloseButton" type="Button" parent="FindBox/HBoxContainer"]
 unique_name_in_owner = true
@@ -379,9 +386,13 @@ one_shot = true
 [connection signal="text_changed" from="CodeEditor" to="." method="_on_code_editor_text_changed"]
 [connection signal="go_to_next_requested" from="FindBox" to="." method="_on_find_box_go_to_next_requested"]
 [connection signal="go_to_previous_requested" from="FindBox" to="." method="_on_find_box_go_to_previous_requested"]
+[connection signal="hidden" from="FindBox" to="." method="_on_find_box_hidden"]
 [connection signal="pattern_changed" from="FindBox" to="." method="_on_find_box_pattern_changed"]
+[connection signal="replace_all_occurrences_requested" from="FindBox" to="." method="_on_find_box_replace_all_occurrences_requested"]
+[connection signal="replace_requested" from="FindBox" to="." method="_on_find_box_replace_requested"]
 [connection signal="select_all_occurrences_requested" from="FindBox" to="." method="_on_find_box_select_all_occurrences_requested"]
-[connection signal="text_submitted" from="FindBox/HBoxContainer/PatternLineEdit" to="FindBox" method="_on_pattern_line_edit_text_submitted"]
+[connection signal="text_submitted" from="FindBox/HBoxContainer/PatternLineEdit" to="FindBox" method="_on_text_submitted"]
+[connection signal="text_submitted" from="FindBox/HBoxContainer/ReplacementLineEdit" to="FindBox" method="_on_text_submitted"]
 [connection signal="pressed" from="FindBox/HBoxContainer/CloseButton" to="FindBox" method="_on_close_button_pressed"]
 [connection signal="canceled" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_canceled"]
 [connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_confirmed"]

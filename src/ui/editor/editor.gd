@@ -187,6 +187,9 @@ func _on_code_editor_text_changed() -> void:
 		path_button.text = file_handle.get_path_absolute().get_file() + " (unsaved)"
 
 	old_text = code_editor.text
+	
+	if find_box.visible:
+		_on_find_box_pattern_changed(find_box.pattern, find_box.use_regex, find_box.case_insensitive, false)
 
 
 func _on_code_editor_code_completion_requested() -> void:
@@ -238,7 +241,7 @@ func _on_code_editor_symbol_lookup(symbol: String, line: int, column: int) -> vo
 	print(symbol)
 
 
-func _on_find_box_pattern_changed(pattern: String, use_regex: bool, case_insensitive: bool) -> void:
+func _on_find_box_pattern_changed(pattern: String, use_regex: bool, case_insensitive: bool, select_occurence: bool = true) -> void:
 	if use_regex:
 		var regex: RegEx
 		var text: String
@@ -263,10 +266,11 @@ func _on_find_box_pattern_changed(pattern: String, use_regex: bool, case_insensi
 			found_ranges = StringUtil.findn_all_occurrences(code_editor.text, pattern)
 		else:
 			found_ranges = StringUtil.find_all_occurrences(code_editor.text, pattern)
-	current_range_index = 0
 	find_box.set_match_count(found_ranges.size())
 	if found_ranges:
-		_select_range(found_ranges[current_range_index])
+		current_range_index = _find_closest_range(Util.get_caret_index(code_editor), found_ranges)
+		if select_occurence:
+			_select_range(found_ranges[current_range_index])
 
 
 func _match_to_range(m: RegExMatch) -> Vector2i:
@@ -279,7 +283,7 @@ func _on_find_box_go_to_next_requested() -> void:
 	current_range_index += 1
 	if current_range_index > found_ranges.size() - 1:
 		current_range_index = 0
-	_select_range(found_ranges[current_range_index])
+	_select_range()
 
 
 func _on_find_box_go_to_previous_requested() -> void:
@@ -288,10 +292,12 @@ func _on_find_box_go_to_previous_requested() -> void:
 	current_range_index -= 1
 	if current_range_index < 0:
 		current_range_index = found_ranges.size() - 1
-	_select_range(found_ranges[current_range_index])
+	_select_range()
 
 
-func _select_range(range: Vector2i, add_new_caret: bool = false) -> void:
+func _select_range(range: Vector2i = found_ranges[current_range_index] if current_range_index < found_ranges.size() else Vector2i(-1, -1), add_new_caret: bool = false) -> void:
+	if range == Vector2i(-1, -1):
+		return
 	var col_line_0: Vector2i = StringUtil.get_line_col(code_editor.text, range[0])
 	var col_line_1: Vector2i = StringUtil.get_line_col(code_editor.text, range[1])
 	if add_new_caret:
@@ -300,7 +306,6 @@ func _select_range(range: Vector2i, add_new_caret: bool = false) -> void:
 	else:
 		code_editor.select(col_line_0.y, col_line_0.x, col_line_1.y, col_line_1.x, 0)
 	code_editor.center_viewport_to_caret(code_editor.get_caret_count() - 1)
-	#code_editor.grab_focus()
 
 
 func _on_code_editor_caret_changed() -> void:
@@ -308,12 +313,53 @@ func _on_code_editor_caret_changed() -> void:
 
 
 func _on_find_box_select_all_occurrences_requested() -> void:
-	code_editor.remove_secondary_carets()
-	for range in found_ranges:
-		_select_range(range, true)
-	code_editor.remove_caret(0)
-	code_editor.grab_focus()
+	if found_ranges:
+		code_editor.remove_secondary_carets()
+		for range in found_ranges:
+			_select_range(range, true)
+		if found_ranges.size() > 1:
+			code_editor.remove_caret(0)
+		code_editor.grab_focus()
 
 
 func _on_code_editor_find_requested() -> void:
 	find_box.visible = not find_box.visible
+
+
+func _on_find_box_replace_requested(with_what: String) -> void:
+	if current_range_index > found_ranges.size() - 1:
+		return
+	var r := found_ranges[current_range_index]
+	var range_offset: int = with_what.length() - r.y + r.x
+	_select_range(r)
+	code_editor.insert_text_at_caret(with_what, 0)
+	found_ranges.remove_at(current_range_index)
+	if found_ranges:
+		for i in range(current_range_index, found_ranges.size()):
+			found_ranges[i] += Vector2i.ONE * range_offset
+		_select_range()
+
+
+func _find_closest_range(to_what: int, ranges: Array[Vector2i]) -> int:
+	var closest_range: Vector2i = Vector2i.ZERO
+	var closest_range_index: int = -1
+	for range_i in ranges.size():
+		var x_diff := absi(to_what - ranges[range_i].x) - absi(to_what - closest_range.x)
+		if x_diff == 0:
+			var y_diff := absi(to_what - ranges[range_i].y) - absi(to_what - closest_range.y)
+			if y_diff >= 0:
+				continue
+		elif x_diff > 0:
+			continue
+		closest_range_index = range_i
+		closest_range = ranges[range_i]
+	return closest_range_index
+
+
+func _on_find_box_replace_all_occurrences_requested(with_what: String) -> void:
+	_on_find_box_select_all_occurrences_requested()
+	code_editor.insert_text_at_caret(with_what)
+
+
+func _on_find_box_hidden() -> void:
+	code_editor.grab_focus()
