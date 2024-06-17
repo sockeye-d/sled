@@ -168,10 +168,8 @@ func analyze_file_on_thread() -> void:
 
 		if data_copy.exit_loop:
 			break
-
-		var start_time := Time.get_ticks_msec()
+		
 		var parse_results := GLSLLanguage.get_file_contents(data_copy.file_path, data_copy.text, 0, data_copy.base_path, true)
-		print(Time.get_ticks_msec() - start_time, "milliseconds")
 		
 		analyzer_mut.lock()
 		file_contents = parse_results
@@ -257,7 +255,6 @@ func _get_completion_suggestions() -> void:
 			),
 			code_editor,
 		)
-	print(file_contents)
 	analyzer_mut.unlock()
 	if not is_exclusive[0]:
 		CodeCompletionSuggestion.add_arr_to(GLSLLanguage.FileContents.built_in_contents.as_suggestions(0), code_editor)

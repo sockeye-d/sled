@@ -63,7 +63,7 @@ func save_settings(path: String = SETTINGS_PATH) -> Error:
 
 func load_settings(path: String = SETTINGS_PATH) -> Error:
 	if FileAccess.file_exists(path):
-		var new_settings = File.load_variant(path)
+		var new_settings: Dictionary = File.load_variant(path)
 		settings_window.load_settings(new_settings)
 		could_load_settings = true
 		return OK

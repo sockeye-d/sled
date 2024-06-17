@@ -75,6 +75,7 @@ static var var_const = preload("res://src/assets/icons/code/var_const.png")
 static var definition = preload("res://src/assets/icons/code/definition.png")
 static var macro = preload("res://src/assets/icons/code/macro.png")
 
+static var keyword = preload("res://src/assets/icons/code/keyword.png")
 static var keyword_break = preload("res://src/assets/icons/code/keyword_break.png")
 static var keyword_case = preload("res://src/assets/icons/code/keyword_case.png")
 static var keyword_const = preload("res://src/assets/icons/code/keyword_const.png")

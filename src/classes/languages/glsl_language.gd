@@ -168,7 +168,7 @@ static func _create_icons(arr: PackedStringArray) -> Dictionary:
 		if item.begins_with("#"):
 			icon = Icons.keyword_definition
 		else:
-			icon = Icons.sget("keyword_" + item)
+			icon = Util.default(Icons.sget("keyword_" + item), Icons.keyword)
 		dict[item] = icon
 	return dict
 
@@ -517,7 +517,7 @@ class Scope:
 		]
 	
 	func includes(index: int) -> bool:
-		return end_index == -1 or start_index < index and index < end_index
+		return end_index == -1 or start_index < index and index <= end_index
 	
 	func merge(with_variables: Dictionary) -> void:
 		variables.merge(with_variables)
