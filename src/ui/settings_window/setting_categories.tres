@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="SettingCategoryContainer" load_steps=40 format=3 uid="uid://x0tla7gkryo3"]
+[gd_resource type="Resource" script_class="SettingCategoryContainer" load_steps=41 format=3 uid="uid://x0tla7gkryo3"]
 
 [ext_resource type="Script" path="res://src/classes/setting_category_container.gd" id="1_jilef"]
 [ext_resource type="Script" path="res://src/classes/setting/setting_category.gd" id="2_n7kei"]
@@ -184,6 +184,16 @@ name = "Code completion delay"
 identifier = &"code_completion_delay"
 tooltip = "Sets the time between starting to type and the code completion popup appearing"
 
+[sub_resource type="Resource" id="Resource_srh0j"]
+script = ExtResource("9_6ym6o")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Show only members of a struct"
+identifier = &"exclusive_suggestions"
+tooltip = "If on, if you have something like [code]my_struct.[/code] with the caret at the end the [i]only[/i] suggestions shown will be the members of the variable."
+
 [sub_resource type="Resource" id="Resource_qq8tb"]
 script = ExtResource("4_5hvfy")
 value = null
@@ -270,7 +280,7 @@ tooltip = "Sets which files get syntax highlighting in a comma-separated list."
 [sub_resource type="Resource" id="Resource_ydeaw"]
 script = ExtResource("2_n7kei")
 name = "Behavior"
-settings = Array[ExtResource("3_n71xn")]([SubResource("Resource_j8c3w"), SubResource("Resource_pv3ng"), SubResource("Resource_k580q"), SubResource("Resource_qq8tb"), SubResource("Resource_1uxen"), SubResource("Resource_6tmdd"), SubResource("Resource_pkmub"), SubResource("Resource_dx61e"), SubResource("Resource_w6rj6"), SubResource("Resource_ncn2m"), SubResource("Resource_4h3dn"), SubResource("Resource_qxxpw")])
+settings = Array[ExtResource("3_n71xn")]([SubResource("Resource_j8c3w"), SubResource("Resource_pv3ng"), SubResource("Resource_k580q"), SubResource("Resource_srh0j"), SubResource("Resource_qq8tb"), SubResource("Resource_1uxen"), SubResource("Resource_6tmdd"), SubResource("Resource_pkmub"), SubResource("Resource_dx61e"), SubResource("Resource_w6rj6"), SubResource("Resource_ncn2m"), SubResource("Resource_4h3dn"), SubResource("Resource_qxxpw")])
 
 [resource]
 script = ExtResource("1_jilef")

@@ -346,7 +346,7 @@ icon = ExtResource("9_0gw0l")
 [node name="EscapeSequencesToggle" type="CheckBox" parent="FindBox/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Use escape sequences. For example, entering [code]\\n[\\code] in the replace field would be replaced with an actual newline character. Supports all C escape codes."
+tooltip_text = "Use escape sequences. For example, entering [code]\\n[/code] in the replace field would be replaced with an actual line break character. Supports all C escape codes."
 icon = ExtResource("13_y3rl4")
 
 [node name="CloseButton" type="Button" parent="FindBox/HBoxContainer"]

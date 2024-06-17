@@ -345,22 +345,34 @@ class FileContents:
 			ArrayUtil.join_line(ArrayUtil.to_string_array(funcs.values())),
 		]
 	
-	func as_suggestions(index: int, text: String = "") -> Array[CodeCompletionSuggestion]:
+	## Reports whether more suggestions should be added in the first item of
+	## [code]exclusive[/code]
+	func as_suggestions(index: int, text: String = "", exclusive_contextual_suggestions: bool = false, exclusive := []) -> Array[CodeCompletionSuggestion]:
 		var suggestions: Array[CodeCompletionSuggestion] = []
-		for struct in structs.values():
-			var s: CodeCompletionSuggestion = struct.as_completion_suggestion()
-			suggestions.append(s)
-		for scope in variables:
-			if scope.includes(index):
-				suggestions.append_array(scope.as_completion_suggestions())
-		for f in funcs.values():
-			suggestions.append(f[0].as_completion_suggestion())
-		for d: Definition in defs.values():
-			suggestions.append(d.as_completion_suggestion())
+		var contextual_suggestions := _get_contextual_suggestions(index, text)
+		if not exclusive_contextual_suggestions or not contextual_suggestions:
+			for struct in structs.values():
+				var s: CodeCompletionSuggestion = struct.as_completion_suggestion()
+				suggestions.append(s)
+			for scope in variables:
+				if scope.includes(index):
+					suggestions.append_array(scope.as_completion_suggestions())
+			for f in funcs.values():
+				suggestions.append(f[0].as_completion_suggestion())
+			for d: Definition in defs.values():
+				suggestions.append(d.as_completion_suggestion())
+			exclusive.append(false)
+		else:
+			exclusive.append(true)
+		suggestions.append_array(_get_contextual_suggestions(index, text))
+		return suggestions
+	
+	
+	func _get_contextual_suggestions(index: int, text: String) -> Array[CodeCompletionSuggestion]:
 		if not text:
-			return suggestions
+			return []
 		var dot_index: int = index
-		while true:
+		while dot_index > 0 and dot_index < text.length():
 			if text[dot_index] == ".":
 				break
 			if text[dot_index].to_lower() not in "abcdefghijklmnopqrstuvwxyz_" + "".join(StringUtil.WHITESPACE):
@@ -368,14 +380,15 @@ class FileContents:
 				break
 			dot_index -= 1
 		if dot_index == -1:
-			return suggestions
+			return []
 		var v := get_variable(StringUtil.substr_posv(text, StringUtil.get_word_code(text, dot_index)), dot_index)
-		if v:
-			var type: Struct = structs.merged(FileContents.built_in_contents.structs)[v.type]
-			for prop in type.properties.values():
-				suggestions.append(prop.as_completion_suggestion())
+		if not v:
+			return []
+		var suggestions: Array[CodeCompletionSuggestion] = []
+		var type: Struct = structs.merged(FileContents.built_in_contents.structs)[v.type]
+		for prop in type.properties.values():
+			suggestions.append(prop.as_completion_suggestion())
 		return suggestions
-	
 	
 	func add_depth(depth: int) -> void:
 		for key in structs:

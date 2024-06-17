@@ -52,6 +52,16 @@ var found_ranges: Array[Vector2i]
 var current_range_index: int
 
 
+var analysis_thread: Thread = Thread.new()
+var analyzer_invalidate_sem: Semaphore = Semaphore.new()
+var analyzer_exit_loop: bool = false
+## [code]{ file_path: String, text: String, base_path: String }[/code]
+var analysis_data: Dictionary
+var analyzer_exit_mut: Mutex = Mutex.new()
+var analyzer_data_mut: Mutex = Mutex.new()
+var analyzer_results_mut: Mutex = Mutex.new()
+
+
 func _ready() -> void:
 	load_theme(editor_theme)
 	
@@ -66,10 +76,18 @@ func _ready() -> void:
 	if code_editor:
 		code_editor.save_requested.connect(_on_save_button_pressed)
 	
-	Settings.settings_window.setting_changed.connect(func(identifier: StringName, new_value): _set_all_settings())
+	analysis_thread.start(analyze_file_on_thread)
+	
+	Settings.settings_window.setting_changed.connect(func(_identifier: StringName, _new_value): _set_all_settings())
 	await get_tree().process_frame
 	await get_tree().process_frame
 	_set_all_settings()
+
+
+func _exit_tree() -> void:
+	analyzer_exit_loop = true
+	analyzer_invalidate_sem.post()
+	analysis_thread.wait_to_finish()
 
 
 func load_file(path: String) -> void:
@@ -139,6 +157,28 @@ func load_theme(file: String) -> void:
 			code_editor.syntax_highlighter.add_color_region("#", "", get_theme_color("background_color").lightened(0.5))
 
 
+func analyze_file_on_thread() -> void:
+	while true:
+		analyzer_invalidate_sem.wait()
+
+		analyzer_exit_mut.lock()
+		var should_exit := analyzer_exit_loop
+		analyzer_exit_mut.unlock()
+
+		if should_exit:
+			break
+		
+		analyzer_data_mut.lock()
+		var data_copy = analysis_data.duplicate()
+		analyzer_data_mut.unlock()
+
+		var parse_results := GLSLLanguage.get_file_contents(data_copy.file_path, data_copy.text, 0, data_copy.base_path, true)
+		
+		analyzer_results_mut.lock()
+		file_contents = parse_results
+		analyzer_results_mut.unlock()
+
+
 func _set_all_settings() -> void:
 	code_editor.gutters_draw_line_numbers = Settings.show_line_numbers
 	code_editor.gutters_zero_pad_line_numbers = Settings.zero_pad_line_numbers
@@ -185,7 +225,7 @@ func _on_code_editor_text_changed() -> void:
 	else:
 		path_button.add_theme_font_override(&"font", MAIN_FONT_ITALICS)
 		path_button.text = file_handle.get_path_absolute().get_file() + " (unsaved)"
-
+	
 	old_text = code_editor.text
 	
 	if find_box.visible:
@@ -199,6 +239,11 @@ func _on_code_editor_code_completion_requested() -> void:
 
 func _get_completion_suggestions() -> void:
 	refresh_file_contents()
+	var is_exclusive: Array
+	analyzer_results_mut.lock()
+	if not file_contents:
+		analyzer_results_mut.unlock()
+		return
 	CodeCompletionSuggestion.add_arr_to(
 			file_contents.as_suggestions(
 				StringUtil.get_index(
@@ -206,23 +251,27 @@ func _get_completion_suggestions() -> void:
 					code_editor.get_caret_line(code_editor.get_caret_count() - 1),
 					code_editor.get_caret_column(code_editor.get_caret_count() - 1),
 				),
-				code_editor.text
+				code_editor.text,
+				Settings.exclusive_suggestions,
+				is_exclusive,
 			),
 			code_editor,
 		)
-	CodeCompletionSuggestion.add_arr_to(GLSLLanguage.FileContents.built_in_contents.as_suggestions(0), code_editor)
-	for keyword in GLSLLanguage.keywords:
-		code_editor.add_code_completion_option(CodeEdit.KIND_PLAIN_TEXT, keyword, keyword.lstrip("#"), Color.WHITE, GLSLLanguage.keywords[keyword])
+	analyzer_results_mut.unlock()
+	if not is_exclusive[0]:
+		CodeCompletionSuggestion.add_arr_to(GLSLLanguage.FileContents.built_in_contents.as_suggestions(0), code_editor)
+		for keyword in GLSLLanguage.keywords:
+			code_editor.add_code_completion_option(CodeEdit.KIND_PLAIN_TEXT, keyword, keyword.lstrip("#"), Color.WHITE, GLSLLanguage.keywords[keyword])
 
 
 func refresh_file_contents():
-	file_contents = GLSLLanguage.get_file_contents(
-			file_path, 
-			code_editor.text,
-			0,
-			FileManager.absolute_base_path if Settings.inc_absolute_paths else "",
-			true
-			)
+	analyzer_data_mut.lock()
+	analysis_data["file_path"] = file_path
+	analysis_data["text"] = code_editor.text
+	analysis_data["base_path"] = FileManager.absolute_base_path if Settings.inc_absolute_paths else ""
+	analyzer_data_mut.unlock()
+
+	analyzer_invalidate_sem.post()
 
 
 func _on_save_button_pressed() -> void:
@@ -312,18 +361,26 @@ func _on_code_editor_caret_changed() -> void:
 	caret_pos_label.text = "%s, %s" % [code_editor.get_caret_line(), code_editor.get_caret_column()]
 
 
+func _convert_range(range: Vector2i) -> Array[Vector2i]:
+	return [StringUtil.get_line_col(code_editor.text, range[0]), StringUtil.get_line_col(code_editor.text, range[1])]
+
+
 func _on_find_box_select_all_occurrences_requested() -> void:
 	if found_ranges:
-		code_editor.remove_secondary_carets()
-		for range in found_ranges:
-			_select_range(range, true)
-		if found_ranges.size() > 1:
-			code_editor.remove_caret(0)
+		var range_0 := _convert_range(found_ranges[0])
+		code_editor.select(range_0[0].y, range_0[0].x, range_0[1].y, range_0[1].x)
+		for range in found_ranges.slice(1):
+			var range_1 := _convert_range(range)
+			var caret := code_editor.add_caret(0, 0)
+			code_editor.select(range_1[0].y, range_1[0].x, range_1[1].y, range_1[1].x, caret)
+		##if found_ranges.size() > 1:
+			##code_editor.remove_caret(0)
 		code_editor.grab_focus()
 
 
 func _on_code_editor_find_requested() -> void:
-	find_box.visible = not find_box.visible
+	find_box.show_with_focus()
+	
 
 
 func _on_find_box_replace_requested(with_what: String) -> void:

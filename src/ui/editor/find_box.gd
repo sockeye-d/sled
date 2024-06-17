@@ -83,10 +83,6 @@ func _ready() -> void:
 		replace_requested.emit(replacement)
 	)
 	
-	visibility_changed.connect(func():
-		if visible: pattern_line_edit.grab_focus(), CONNECT_DEFERRED
-	)
-	
 	pattern_line_edit.gui_input.connect(_le_gui_input)
 	replacement_line_edit.gui_input.connect(_le_gui_input)
 	
@@ -119,6 +115,11 @@ func set_invalid_pattern(is_invalid: bool) -> void:
 		pattern_line_edit.add_theme_color_override(&"font_color", EditorThemeManager.theme.get_color(&"font_color", &"LineEdit").lerp(Color.RED, 0.3))
 	else:
 		pattern_line_edit.remove_theme_color_override(&"font_color")
+
+
+func show_with_focus() -> void:
+	show()
+	pattern_line_edit.grab_focus()
 
 
 func _emit_changed(_arg) -> void:
