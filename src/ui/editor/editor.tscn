@@ -259,6 +259,7 @@ syntax_highlighter = SubResource("CodeHighlighter_i4v8i")
 highlight_all_occurrences = true
 symbol_lookup_on_click = true
 gutters_draw_line_numbers = true
+delimiter_strings = Array[String]([])
 code_completion_enabled = true
 code_completion_prefixes = Array[String]([".", ",", "(", "=", "$", "@", "\"", "'"])
 indent_use_spaces = true

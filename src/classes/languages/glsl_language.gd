@@ -341,7 +341,7 @@ class FileContents:
 	func _to_string() -> String:
 		return "%s\n\n%s\n\n%s" % [
 			ArrayUtil.join_line(ArrayUtil.to_string_array(structs.values())),
-			#ArrayUtil.join_line(ArrayUtil.to_string_array(variables.values())),
+			ArrayUtil.join_line(ArrayUtil.to_string_array(variables)),
 			ArrayUtil.join_line(ArrayUtil.to_string_array(funcs.values())),
 		]
 	
@@ -510,10 +510,10 @@ class Scope:
 		start_index = _start_index
 	
 	func _to_string() -> String:
-		return "%s -> %s { %s }" % [
+		return "%s -> %s{\n\t%s\n}" % [
 			start_index,
 			end_index,
-			", ".join(variables.values().map(func(v: Variable): return str(v))),
+			"\n\t".join(variables.values().map(func(v: Variable): return str(v))),
 		]
 	
 	func includes(index: int) -> bool:
@@ -1288,6 +1288,8 @@ class Function extends Type:
 		name = _name
 		type = _type
 		arguments = _arguments
+		for argument in arguments:
+			argument.icon = Icons.param
 		icon = Icons.function
 	
 	func _to_string() -> String:

@@ -54,12 +54,9 @@ var current_range_index: int
 
 var analysis_thread: Thread = Thread.new()
 var analyzer_invalidate_sem: Semaphore = Semaphore.new()
-var analyzer_exit_loop: bool = false
-## [code]{ file_path: String, text: String, base_path: String }[/code]
+## [code]{ file_path: String, text: String, base_path: String, exit_loop: bool }[/code]
 var analysis_data: Dictionary
-var analyzer_exit_mut: Mutex = Mutex.new()
-var analyzer_data_mut: Mutex = Mutex.new()
-var analyzer_results_mut: Mutex = Mutex.new()
+var analyzer_mut: Mutex = Mutex.new()
 
 
 func _ready() -> void:
@@ -85,7 +82,9 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
-	analyzer_exit_loop = true
+	analyzer_mut.lock()
+	analysis_data = { "file_path": "", "text": "", "base_path": "", "exit_loop": true }
+	analyzer_mut.unlock()
 	analyzer_invalidate_sem.post()
 	analysis_thread.wait_to_finish()
 
@@ -131,6 +130,8 @@ func load_file(path: String) -> void:
 			code_editor.syntax_highlighter = null
 	else:
 		code_editor.syntax_highlighter = null
+	
+	refresh_file_contents()
 
 
 func save(path: String = file_path) -> void:
@@ -160,23 +161,21 @@ func load_theme(file: String) -> void:
 func analyze_file_on_thread() -> void:
 	while true:
 		analyzer_invalidate_sem.wait()
-
-		analyzer_exit_mut.lock()
-		var should_exit := analyzer_exit_loop
-		analyzer_exit_mut.unlock()
-
-		if should_exit:
-			break
 		
-		analyzer_data_mut.lock()
+		analyzer_mut.lock()
 		var data_copy = analysis_data.duplicate()
-		analyzer_data_mut.unlock()
+		analyzer_mut.unlock()
 
+		if data_copy.exit_loop:
+			break
+
+		var start_time := Time.get_ticks_msec()
 		var parse_results := GLSLLanguage.get_file_contents(data_copy.file_path, data_copy.text, 0, data_copy.base_path, true)
+		print(Time.get_ticks_msec() - start_time, "milliseconds")
 		
-		analyzer_results_mut.lock()
+		analyzer_mut.lock()
 		file_contents = parse_results
-		analyzer_results_mut.unlock()
+		analyzer_mut.unlock()
 
 
 func _set_all_settings() -> void:
@@ -209,6 +208,8 @@ func _on_confirmation_dialog_custom_action(action: StringName) -> void:
 
 
 func _on_code_editor_text_changed() -> void:
+	refresh_file_contents()
+	
 	if Settings.auto_code_completion:
 		if old_text.length() < code_editor.text.length():
 			if Settings.code_completion_delay < 0.0001:
@@ -238,11 +239,10 @@ func _on_code_editor_code_completion_requested() -> void:
 
 
 func _get_completion_suggestions() -> void:
-	refresh_file_contents()
 	var is_exclusive: Array
-	analyzer_results_mut.lock()
+	analyzer_mut.lock()
 	if not file_contents:
-		analyzer_results_mut.unlock()
+		analyzer_mut.unlock()
 		return
 	CodeCompletionSuggestion.add_arr_to(
 			file_contents.as_suggestions(
@@ -257,7 +257,8 @@ func _get_completion_suggestions() -> void:
 			),
 			code_editor,
 		)
-	analyzer_results_mut.unlock()
+	print(file_contents)
+	analyzer_mut.unlock()
 	if not is_exclusive[0]:
 		CodeCompletionSuggestion.add_arr_to(GLSLLanguage.FileContents.built_in_contents.as_suggestions(0), code_editor)
 		for keyword in GLSLLanguage.keywords:
@@ -265,11 +266,14 @@ func _get_completion_suggestions() -> void:
 
 
 func refresh_file_contents():
-	analyzer_data_mut.lock()
-	analysis_data["file_path"] = file_path
-	analysis_data["text"] = code_editor.text
-	analysis_data["base_path"] = FileManager.absolute_base_path if Settings.inc_absolute_paths else ""
-	analyzer_data_mut.unlock()
+	analyzer_mut.lock()
+	analysis_data = {
+		"file_path": file_path,
+		"text": code_editor.text,
+		"base_path": FileManager.absolute_base_path if Settings.inc_absolute_paths else "",
+		"exit_loop": false,
+	}
+	analyzer_mut.unlock()
 
 	analyzer_invalidate_sem.post()
 

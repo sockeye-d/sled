@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://mvfempiygpy"
-path="res://.godot/imported/keyword_continue.png-1572b6309512ea6e28b0aec59792f82c.ctex"
+uid="uid://b2k7mtcmnaa5e"
+path="res://.godot/imported/param.png-84960e581b0ad71cbebd255d8942aecd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://src/assets/icons/keyword_continue.png"
-dest_files=["res://.godot/imported/keyword_continue.png-1572b6309512ea6e28b0aec59792f82c.ctex"]
+source_file="res://src/assets/icons/code/param.png"
+dest_files=["res://.godot/imported/param.png-84960e581b0ad71cbebd255d8942aecd.ctex"]
 
 [params]
 

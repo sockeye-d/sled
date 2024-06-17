@@ -41,6 +41,8 @@ func _make_custom_tooltip(for_text: String) -> Object:
 
 
 func _get_tooltip(at_position: Vector2) -> String:
+	if not editor.file_contents:
+		return ""
 	var line_column: Vector2i = get_line_column_at_pos(at_position, false)
 	if line_column == Vector2i(-1, -1):
 		return ""

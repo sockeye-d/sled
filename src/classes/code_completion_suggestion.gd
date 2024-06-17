@@ -17,15 +17,13 @@ func _init(_type: CodeEdit.CodeCompletionKind, _text: String, _location: CodeEdi
 
 
 func add_to(editor: CodeEdit) -> void:
-	editor.add_code_completion_option(type, text, insert_text, Color.WHITE, icon, null, location)
+	var l := location
+	if l < CodeEdit.LOCATION_PARENT_MASK:
+		l = CodeEdit.LOCATION_PARENT_MASK - l - 1
+	editor.add_code_completion_option(type, text, insert_text, Color.WHITE, icon, null, l)
 
 
 static func add_arr_to(suggestions: Array[CodeCompletionSuggestion], editor: CodeEdit) -> void:
 	for suggestion in suggestions:
 		if suggestion:
-			if suggestion.location < CodeEdit.LOCATION_PARENT_MASK:
-				suggestion.location = CodeEdit.LOCATION_PARENT_MASK - suggestion.location - 1
-				suggestion.add_to(editor)
-				suggestion.location = CodeEdit.LOCATION_PARENT_MASK - suggestion.location - 1
-			else:
-				suggestion.add_to(editor)
+			suggestion.add_to(editor)

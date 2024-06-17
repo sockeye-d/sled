@@ -15,6 +15,7 @@ static var open_file: Texture2D = preload("res://src/assets/icons/open_file.png"
 static var open_dir: Texture2D = preload("res://src/assets/icons/open_dir.png")
 
 
+static var param: Texture2D = preload("res://src/assets/icons/code/param.png")
 static var function: Texture2D = preload("res://src/assets/icons/code/function.png")
 static var member: Texture2D = preload("res://src/assets/icons/code/member.png")
 static var struct: Texture2D = preload("res://src/assets/icons/code/struct.png")
