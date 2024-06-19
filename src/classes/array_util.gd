@@ -36,6 +36,11 @@ static func remove_s(array: PackedStringArray, fn: Callable) -> void:
 		if fn.call(array[i]):
 			new_array
 
+## If the selector returns a single value, the key will be the result of the
+## function call and the key will be the element
+## [br]
+## If it returns an array, the key will be the first element and the value will
+## be the second
 static func create_dictionary(array: Array, selector: Callable) -> Dictionary:
 	var d: Dictionary = { }
 	for element in array:

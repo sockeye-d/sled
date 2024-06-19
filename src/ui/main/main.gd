@@ -48,19 +48,20 @@ func _ready() -> void:
 
 func open_file(path: String) -> void:
 	var ext: String = path.get_extension().to_lower()
-	for pair in Settings.sbs_opening_file_exts.split(","):
-		var pair_arr: PackedStringArray = pair.split(":", false, 2)
-		
-		if pair_arr[0].to_lower() == ext or pair_arr[-1].to_lower() == ext:
-			editors.show()
-			image_viewer.hide()
-			var path_no_ext = path.get_basename()
-			left_editor.load_file("%s.%s" % [path_no_ext, pair_arr[0]])
-			right_editor.load_file("%s.%s" % [path_no_ext, pair_arr[-1]])
-			right_editor.show()
-			sbs_open = true
-			EditorManager.opened_side_by_side.emit()
-			return
+	if Settings.sbs_enabled:
+		for pair in Settings.sbs_opening_file_exts.split(","):
+			var pair_arr: PackedStringArray = pair.split(":", false, 2)
+			
+			if pair_arr[0].to_lower() == ext or pair_arr[-1].to_lower() == ext:
+				editors.show()
+				image_viewer.hide()
+				var path_no_ext = path.get_basename()
+				left_editor.load_file("%s.%s" % [path_no_ext, pair_arr[0]])
+				right_editor.load_file("%s.%s" % [path_no_ext, pair_arr[-1]])
+				right_editor.show()
+				sbs_open = true
+				EditorManager.opened_side_by_side.emit()
+				return
 	
 	if ext in Settings.image_file_types.split(",") and ext in ImageViewer.ALLOWED_FILES:
 		var err := image_viewer.load_image(path)

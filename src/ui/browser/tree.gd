@@ -16,10 +16,15 @@ enum Buttons {
 }
 
 
+@onready var add_file_dialog: AddFileDialog = %AddFileDialog
+@onready var add_folder_dialog: AddFolderDialog = %AddFolderDialog
+
+
 var last_path: String
 # Maps between TreeItems and paths
 var paths: TwoWayDictionary = TwoWayDictionary.new()
 var folded_paths: Dictionary
+var new_file_folder_path: String
 
 
 func _init() -> void:
@@ -189,42 +194,70 @@ func _rename_item(item: TreeItem, title: String) -> void:
 
 
 func _add_file(item: TreeItem) -> void:
-	var base_path: String = paths.get_value(item)
-
-	var dialog = LineEditDialog.new()
-	dialog.title = "Add file"
-	add_child(dialog)
-	dialog.text = ""
-	dialog.placeholder_text = "File name..."
-	dialog.disallowed_chars = r':/\?*"|%<>'
-	dialog.popup_centered()
-
-	var filename: String = await dialog.finished
-	if filename:
-		var path = base_path.path_join(filename)
-		FileAccess.open(path, FileAccess.WRITE)
-		repopulate_tree.call_deferred()
-	dialog.queue_free()
+	new_file_folder_path = paths.get_value(item)
+	
+	add_file_dialog.reset_and_show()
+	
+	#var dialog = LineEditDialog.new()
+	#dialog.title = "Add file"
+	#add_child(dialog)
+	#dialog.text = ""
+	#dialog.placeholder_text = "File name..."
+	#dialog.disallowed_chars = r':/\?*"|%<>'
+	#dialog.popup_centered()
+#
+	#var filename: String = await dialog.finished
+	#if filename:
+		#var path = base_path.path_join(filename)
+		#FileAccess.open(path, FileAccess.WRITE)
+		#repopulate_tree.call_deferred()
+	#dialog.queue_free()
 
 
 func _add_folder(item: TreeItem) -> void:
-	var base_path: String = paths.get_value(item)
+	new_file_folder_path = paths.get_value(item)
+	
+	add_file_dialog.reset_and_show()
 
-	var dialog = LineEditDialog.new()
-	dialog.title = "Add folder"
-	add_child(dialog)
-	dialog.text = ""
-	dialog.placeholder_text = "Folder name..."
-	dialog.disallowed_chars = r':/\?*"|%<>'
-	dialog.popup_centered()
+	#var filename: String = await dialog.finished
+	#if filename:
+		#var path = base_path.path_join(filename)
+		#DirAccess.make_dir_absolute(path)
+		#repopulate_tree.call_deferred()
+#
+	#dialog.queue_free()
 
-	var filename: String = await dialog.finished
-	if filename:
-		var path = base_path.path_join(filename)
-		DirAccess.make_dir_absolute(path)
-		repopulate_tree.call_deferred()
 
-	dialog.queue_free()
+func _on_add_file_dialog_confirmed_data(filename: String, create_matching_file: bool, add_include_guard: bool, include_guard_override: String) -> void:
+	_add_file_from_path(filename, add_include_guard)
+	if create_matching_file:
+		var sbs_ext := FileManager.file_is_sbs(filename)
+		if sbs_ext:
+			_add_file_from_path(
+				StringUtil.replace_extension(filename, sbs_ext),
+				add_include_guard,
+			)
+	repopulate_tree.call_deferred()
+
+
+func _add_file_from_path(filename: String, add_include_guard: bool) -> void:
+	var path := new_file_folder_path.path_join(filename)	
+	var string: String = ""
+	if add_include_guard:
+		var format := {
+			"filename": filename.get_file().get_basename(),
+			"filename_upper": filename.get_file().get_basename().to_pascal_case().to_upper(),
+			"extension": filename.get_extension(),
+			"extension_upper": filename.get_extension().to_pascal_case().to_upper(),
+		}
+		var guard_str: String = Settings.include_guard_string.format(format)
+		string = "#ifndef {0}\n#define {0}\n\n#endif".format([guard_str])
+	var handle := FileAccess.open(path, FileAccess.WRITE)
+	handle.store_string(string)
+
+
+func _on_add_folder_dialog_confirmed_data(name: String) -> void:
+	print(new_file_folder_path.path_join(name))
 
 
 func _on_item_collapsed(item: TreeItem) -> void:

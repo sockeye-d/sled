@@ -1,0 +1,55 @@
+[gd_scene load_steps=4 format=3 uid="uid://c1y3wecbymbg5"]
+
+[ext_resource type="Script" path="res://src/ui/add_file_folder_dialogs/add_file_dialog.gd" id="1_v8pk0"]
+[ext_resource type="Script" path="res://src/ui/filtered_line_edit.gd" id="2_nvwyh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ivxrr"]
+
+[node name="AddFileDialog" type="ConfirmationDialog"]
+title = "Add file"
+initial_position = 4
+size = Vector2i(340, 191)
+visible = true
+script = ExtResource("1_v8pk0")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 332.0
+offset_bottom = 144.0
+
+[node name="FileNameLineEdit" type="LineEdit" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "File name"
+script = ExtResource("2_nvwyh")
+disallowed_chars = ":/\\?*\"|%<>"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_ivxrr")
+
+[node name="CreateMatchingFileCheckBox" type="CheckBox" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Create matching file"
+
+[node name="AddIncludeGuardCheckBox" type="CheckBox" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Add an include guard"
+
+[node name="IncludeGuardOverrideLineEdit" type="LineEdit" parent="VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Include guard override"
+
+[connection signal="text_changed" from="VBoxContainer/FileNameLineEdit" to="." method="_on_file_name_line_edit_text_changed"]
+[connection signal="text_submitted" from="VBoxContainer/FileNameLineEdit" to="." method="_on_file_name_line_edit_text_submitted"]
+[connection signal="toggled" from="VBoxContainer/AddIncludeGuardCheckBox" to="." method="_on_add_include_guard_check_box_toggled"]

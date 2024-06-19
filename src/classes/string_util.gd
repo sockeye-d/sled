@@ -423,3 +423,7 @@ static func findn_all_occurrences(string: String, what: String) -> Array[Vector2
 		o.append(Vector2i(new_i, new_i + what.length()))
 		i = new_i + what.length()
 	return o
+
+
+static func replace_extension(string: String, new_ext: String) -> String:
+	return string.get_basename() + "." + new_ext

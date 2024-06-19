@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://blrmwwygqy4wt"]
+
+[ext_resource type="Script" path="res://src/ui/filtered_line_edit.gd" id="1_itoge"]
+[ext_resource type="Script" path="res://src/ui/add_file_folder_dialogs/add_folder_dialog.gd" id="1_xj7jq"]
+
+[node name="AddFolderDialog" type="ConfirmationDialog"]
+initial_position = 4
+size = Vector2i(300, 88)
+visible = true
+script = ExtResource("1_xj7jq")
+
+[node name="FileNameLineEdit" type="LineEdit" parent="."]
+unique_name_in_owner = true
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 292.0
+offset_bottom = 41.0
+placeholder_text = "Folder name"
+script = ExtResource("1_itoge")
+disallowed_chars = ":/\\?*\"|%<>"

@@ -46,7 +46,6 @@ size_flags_vertical = 3
 [node name="ImageDisplay" type="TextureRect" parent="VBoxContainer/PanZoomScrollContainer/CenterContainer"]
 unique_name_in_owner = true
 material = SubResource("ShaderMaterial_1bwg3")
-custom_minimum_size = Vector2(885.888, 472.935)
 layout_mode = 2
 texture = ExtResource("2_c1t0a")
 expand_mode = 2
@@ -90,5 +89,6 @@ popup/item_1/icon = ExtResource("4_bk72y")
 popup/item_1/id = 1
 popup/item_2/text = "Bicubic"
 popup/item_2/icon = ExtResource("3_wnv43")
+popup/item_2/id = 2
 
 [connection signal="item_selected" from="VBoxContainer/BottomToolbar/RightToolbar/FilterDropdown" to="." method="_on_filter_dropdown_item_selected"]

@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://b45p8nijrvd3v"]
+[gd_scene load_steps=6 format=3 uid="uid://b45p8nijrvd3v"]
 
 [ext_resource type="Script" path="res://src/ui/browser/browser.gd" id="1_pepdc"]
 [ext_resource type="Script" path="res://src/ui/browser/tree.gd" id="2_3wiph"]
+[ext_resource type="PackedScene" uid="uid://c1y3wecbymbg5" path="res://src/ui/add_file_folder_dialogs/add_file_dialog.tscn" id="3_evlqf"]
+[ext_resource type="PackedScene" uid="uid://blrmwwygqy4wt" path="res://src/ui/add_file_folder_dialogs/add_folder_dialog.tscn" id="4_3wydx"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hk8o6"]
 
@@ -20,9 +22,19 @@ size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_hk8o6")
 script = ExtResource("2_3wiph")
 
+[node name="AddFileDialog" parent="BrowserTree" instance=ExtResource("3_evlqf")]
+unique_name_in_owner = true
+visible = false
+
+[node name="AddFolderDialog" parent="BrowserTree" instance=ExtResource("4_3wydx")]
+unique_name_in_owner = true
+visible = false
+
 [node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
 
 [connection signal="button_clicked" from="BrowserTree" to="BrowserTree" method="_on_button_clicked"]
 [connection signal="empty_clicked" from="BrowserTree" to="BrowserTree" method="_on_empty_clicked"]
 [connection signal="item_collapsed" from="BrowserTree" to="BrowserTree" method="_on_item_collapsed"]
 [connection signal="item_selected" from="BrowserTree" to="BrowserTree" method="_on_item_selected"]
+[connection signal="confirmed_data" from="BrowserTree/AddFileDialog" to="BrowserTree" method="_on_add_file_dialog_confirmed_data"]
+[connection signal="confirmed_data" from="BrowserTree/AddFolderDialog" to="BrowserTree" method="_on_add_folder_dialog_confirmed_data"]

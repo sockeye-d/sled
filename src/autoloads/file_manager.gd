@@ -97,3 +97,15 @@ func clear_recent() -> void:
 	last_opened_paths = []
 	paths_changed.emit()
 	File.save_variant(LAST_OPENED_PATHS_PATH, last_opened_paths)
+
+## Given a file path, returns the matching extension or an empty string if none
+## exists
+func file_is_sbs(file: String) -> String:
+	var ext := file.get_extension()
+	for sbs_opening_ext: String in Settings.sbs_opening_file_exts.split(","):
+		var split := sbs_opening_ext.split(":")
+		if ext == split[0]:
+			return split[-1]
+		elif ext == split[-1]:
+			return split[0]
+	return ""

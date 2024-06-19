@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="SettingCategoryContainer" load_steps=44 format=3 uid="uid://x0tla7gkryo3"]
+[gd_resource type="Resource" script_class="SettingCategoryContainer" load_steps=47 format=3 uid="uid://x0tla7gkryo3"]
 
 [ext_resource type="Script" path="res://src/classes/setting_category_container.gd" id="1_jilef"]
 [ext_resource type="Script" path="res://src/classes/setting/setting_category.gd" id="2_n7kei"]
@@ -8,12 +8,14 @@
 [ext_resource type="Script" path="res://src/classes/setting/options_setting_item.gd" id="5_hruq1"]
 [ext_resource type="Script" path="res://src/classes/setting/file_setting_item.gd" id="6_wk4j2"]
 [ext_resource type="Script" path="res://src/classes/setting/string_setting_item.gd" id="7_2htcu"]
+[ext_resource type="Texture2D" uid="uid://d2ip4ty5yim8i" path="res://src/assets/icons/open_dir.png" id="7_lpyvm"]
 [ext_resource type="Script" path="res://src/classes/setting/init_scripts/font_init_script.gd" id="8_jbpf4"]
 [ext_resource type="Script" path="res://src/classes/setting/slider_setting_item.gd" id="8_w2up1"]
 [ext_resource type="Script" path="res://src/classes/setting/checkbox_setting_item.gd" id="9_6ym6o"]
 [ext_resource type="Script" path="res://src/classes/setting/init_scripts/gui_scale_init_script.gd" id="11_d30ah"]
 
 [sub_resource type="Resource" id="Resource_2e6wi"]
+resource_name = "theming (DividerSettingItem)"
 script = ExtResource("4_5hvfy")
 value = null
 name = "Theming"
@@ -21,10 +23,11 @@ identifier = &"theming"
 tooltip = ""
 
 [sub_resource type="Resource" id="Resource_3kvck"]
+resource_name = "theme (OptionsSettingItem)"
 script = ExtResource("5_hruq1")
-default_value = 0
+default_value = 24
 default_value_text = ""
-options = PackedStringArray()
+options = PackedStringArray("Custom", "apprentice", "atom dark", "ayu mirage", "catppuccin frappé", "catppuccin latte", "catppuccin macchiato", "catppuccin mocha", "darcula", "dracula", "gruvbox dark", "horizon", "metro", "monokai", "nord", "one dark", "one monokai", "quiet light", "solarized dark", "solarized light", "tokyo night moon", "tokyo night night", "tokyo night storm", "vs code dark", "vs code light", "xcode dark", "xcode light")
 value = null
 name = "Theme"
 identifier = &"theme"
@@ -33,9 +36,11 @@ Import your own using the \"Load custom theme\" setting"
 init_script = ExtResource("5_hot02")
 
 [sub_resource type="Resource" id="Resource_t67iy"]
+resource_name = "custom_theme_path (FileSettingItem)"
 script = ExtResource("6_wk4j2")
 filters = PackedStringArray()
 button_text = ""
+button_icon = ExtResource("7_lpyvm")
 default_value = ""
 value = null
 name = "Load custom theme"
@@ -43,10 +48,11 @@ identifier = &"custom_theme_path"
 tooltip = "Import a path to load a theme. Supports the themes in the godotengine/godot-syntax-themes repository"
 
 [sub_resource type="Resource" id="Resource_fbn8t"]
+resource_name = "font (OptionsSettingItem)"
 script = ExtResource("5_hruq1")
-default_value = 0
+default_value = 27
 default_value_text = ""
-options = PackedStringArray()
+options = PackedStringArray("Monospace", "Roboto", "Roboto Slab", "Roboto Flex", "Nixie One", "VALORANT", "Comic Mono", "Quicksand", "Dosis", "Comic Shanns", "Sacramento", "Yellowtail", "Comic Mono Fixed", "Rubik", "Noto Sans Mono", "Monocraft", "Monaspace Radon", "Monaspace Xenon", "Monaspace Argon", "Monaspace Krypton", "Monaspace Neon", "MADE Dillan", "Satisfy", "Oswald", "Galada", "Londrina Solid", "Montserrat", "Cascadia Code", "Cascadia Mono", "Arial", "Bahnschrift", "Calibri", "Cambria", "Cambria Math", "Candara", "Comic Sans MS", "Consolas", "Constantia", "Corbel", "Courier New", "Ebrima", "Franklin Gothic", "Gabriola", "Gadugi", "Georgia", "Impact", "Ink Free", "Javanese Text", "Leelawadee UI", "Lucida Console", "Lucida Sans Unicode", "Malgun Gothic", "Microsoft Himalaya", "Microsoft JhengHei", "Microsoft JhengHei UI", "Microsoft New Tai Lue", "Microsoft PhagsPa", "Microsoft Sans Serif", "Microsoft Tai Le", "Microsoft YaHei", "Microsoft YaHei UI", "Microsoft Yi Baiti", "MingLiU-ExtB", "PMingLiU-ExtB", "MingLiU_HKSCS-ExtB", "Mongolian Baiti", "MS Gothic", "MS UI Gothic", "MS PGothic", "MV Boli", "Myanmar Text", "Nirmala UI", "Palatino Linotype", "Segoe MDL2 Assets", "Segoe Print", "Segoe Script", "Segoe UI", "Segoe UI Emoji", "Segoe UI Historic", "Segoe UI Symbol", "SimSun", "NSimSun", "SimSun-ExtB", "Sitka Small", "Sitka Text", "Sitka Subheading", "Sitka Heading", "Sitka Display", "Sitka Banner", "Sylfaen", "Symbol", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana", "Webdings", "Wingdings", "Yu Gothic", "Yu Gothic UI", "HoloLens MDL2 Assets", "Agency FB", "Algerian", "Book Antiqua", "Arial Rounded MT", "Baskerville Old Face", "Bauhaus 93", "Bell MT", "Bernard MT", "Bodoni MT", "Bodoni MT Poster", "Bookman Old Style", "Bradley Hand ITC", "Britannic", "Berlin Sans FB", "Broadway", "Brush Script MT", "Bookshelf Symbol 7", "Californian FB", "Calisto MT", "Castellar", "Century Schoolbook", "Centaur", "Century", "Chiller", "Colonna MT", "Cooper", "Copperplate Gothic", "Curlz MT", "Dubai", "Elephant", "Engravers MT", "Eras ITC", "Felix Titling", "Forte", "Franklin Gothic Book", "Freestyle Script", "French Script MT", "Footlight MT", "Garamond", "Gigi", "Gill Sans MT", "Gill Sans", "Gloucester MT", "Century Gothic", "Goudy Old Style", "Goudy Stout", "Harlow Solid", "Harrington", "Haettenschweiler", "High Tower Text", "Imprint MT Shadow", "Informal Roman", "Blackadder ITC", "Edwardian Script ITC", "Kristen ITC", "Jokerman", "Juice ITC", "Kunstler Script", "Wide Latin", "Lucida Bright", "Lucida Calligraphy", "Leelawadee", "Lucida Fax", "Lucida Handwriting", "Lucida Sans", "Lucida Sans Typewriter", "Magneto", "Maiandra GD", "Matura MT Script Capitals", "Mistral", "Modern No. 20", "Microsoft Uighur", "Monotype Corsiva", "MT Extra", "Niagara Engraved", "Niagara Solid", "OCR A", "Old English Text MT", "Onyx", "MS Outlook", "Palace Script MT", "Papyrus", "Parchment", "Perpetua", "Perpetua Titling MT", "Playbill", "Poor Richard", "Pristina", "Rage", "Ravie", "MS Reference Sans Serif", "MS Reference Specialty", "Rockwell", "Script MT", "Showcard Gothic", "Snap ITC", "Stencil", "Tw Cen MT", "Tempus Sans ITC", "Viner Hand ITC", "Vivaldi", "Vladimir Script", "Wingdings 2", "Wingdings 3", "Unispace", "Marlett")
 value = null
 name = "Code editor font"
 identifier = &"font"
@@ -54,6 +60,7 @@ tooltip = ""
 init_script = ExtResource("8_jbpf4")
 
 [sub_resource type="Resource" id="Resource_42da8"]
+resource_name = "ligatures (StringSettingItem)"
 script = ExtResource("7_2htcu")
 default_value = "ss01,ss02,ss03,ss06,ss07,dlig"
 value = null
@@ -62,6 +69,7 @@ identifier = &"ligatures"
 tooltip = "The ligatures to use. Most are contained within the [code]ssXX[/code] format. GitHub's Monaspace font supports [code]ss01[/code] through [code]ss08[/code], and the Cascadia Code font supports a slashed zero using the [code]ss19[/code] set."
 
 [sub_resource type="Resource" id="Resource_jjevf"]
+resource_name = "gui_scale (SliderSettingItem)"
 script = ExtResource("8_w2up1")
 default_value = 1.0
 min_value = 0.25
@@ -77,6 +85,7 @@ Useful for hiDPI displays, if the text and buttons are too small."
 init_script = ExtResource("11_d30ah")
 
 [sub_resource type="Resource" id="Resource_qnedh"]
+resource_name = "text_editor (DividerSettingItem)"
 script = ExtResource("4_5hvfy")
 value = null
 name = "Text editor"
@@ -84,6 +93,7 @@ identifier = &"text_editor"
 tooltip = ""
 
 [sub_resource type="Resource" id="Resource_s7ufq"]
+resource_name = "show_line_numbers (CheckboxSettingItem)"
 script = ExtResource("9_6ym6o")
 default_value = true
 text_on = "On"
@@ -94,6 +104,7 @@ identifier = &"show_line_numbers"
 tooltip = "Shows or hides the line numbers"
 
 [sub_resource type="Resource" id="Resource_o3l8i"]
+resource_name = "zero_pad_line_numbers (CheckboxSettingItem)"
 script = ExtResource("9_6ym6o")
 default_value = true
 text_on = "On"
@@ -104,6 +115,7 @@ identifier = &"zero_pad_line_numbers"
 tooltip = "Makes all the line numbers the same length by padding the beginning with zeros"
 
 [sub_resource type="Resource" id="Resource_jbmoq"]
+resource_name = "caret_style (OptionsSettingItem)"
 script = ExtResource("5_hruq1")
 default_value = 0
 default_value_text = ""
@@ -116,6 +128,7 @@ tooltip = "Sets the style of the caret.
 [b]Block: [/b]A block-shaped caret"
 
 [sub_resource type="Resource" id="Resource_oppod"]
+resource_name = "scroll_past_eof (CheckboxSettingItem)"
 script = ExtResource("9_6ym6o")
 default_value = true
 text_on = "On"
@@ -126,6 +139,7 @@ identifier = &"scroll_past_eof"
 tooltip = "If true, allows scrolling into \"virtual space\" at the end of the file"
 
 [sub_resource type="Resource" id="Resource_dp7ij"]
+resource_name = "text_wrapping_mode (OptionsSettingItem)"
 script = ExtResource("5_hruq1")
 default_value = 0
 default_value_text = ""
@@ -140,6 +154,7 @@ tooltip = "Sets how text wrapping behaves. Useful for long lines.
 [b]Word (smart): [/b]Like [code]Word[/code] but will break a word arbitrarily if it doesn't fit in one line"
 
 [sub_resource type="Resource" id="Resource_vdvjn"]
+resource_name = "indent_wrapped_lines (CheckboxSettingItem)"
 script = ExtResource("9_6ym6o")
 default_value = true
 text_on = "On"
@@ -155,6 +170,7 @@ name = "Theme"
 settings = Array[ExtResource("3_n71xn")]([SubResource("Resource_2e6wi"), SubResource("Resource_3kvck"), SubResource("Resource_t67iy"), SubResource("Resource_fbn8t"), SubResource("Resource_42da8"), SubResource("Resource_jjevf"), SubResource("Resource_qnedh"), SubResource("Resource_s7ufq"), SubResource("Resource_o3l8i"), SubResource("Resource_jbmoq"), SubResource("Resource_oppod"), SubResource("Resource_dp7ij"), SubResource("Resource_vdvjn")])
 
 [sub_resource type="Resource" id="Resource_j8c3w"]
+resource_name = "code_completion_divider (DividerSettingItem)"
 script = ExtResource("4_5hvfy")
 value = null
 name = "Code completion"
@@ -162,6 +178,7 @@ identifier = &"code_completion_divider"
 tooltip = ""
 
 [sub_resource type="Resource" id="Resource_pv3ng"]
+resource_name = "auto_code_completion (CheckboxSettingItem)"
 script = ExtResource("9_6ym6o")
 default_value = true
 text_on = "On"
@@ -172,6 +189,7 @@ identifier = &"auto_code_completion"
 tooltip = "If turned off code completion can still be activated with [code]ctrl+space[/code]"
 
 [sub_resource type="Resource" id="Resource_k580q"]
+resource_name = "code_completion_delay (SliderSettingItem)"
 script = ExtResource("8_w2up1")
 default_value = 0.0
 min_value = 0.0
@@ -185,6 +203,7 @@ identifier = &"code_completion_delay"
 tooltip = "Sets the time between starting to type and the code completion popup appearing"
 
 [sub_resource type="Resource" id="Resource_srh0j"]
+resource_name = "exclusive_suggestions (CheckboxSettingItem)"
 script = ExtResource("9_6ym6o")
 default_value = true
 text_on = "On"
@@ -195,6 +214,7 @@ identifier = &"exclusive_suggestions"
 tooltip = "If on, if you have something like [code]my_struct.[/code] with the caret at the end the [i]only[/i] suggestions shown will be the members of the variable."
 
 [sub_resource type="Resource" id="Resource_qq8tb"]
+resource_name = "paths_divider (DividerSettingItem)"
 script = ExtResource("4_5hvfy")
 value = null
 name = "Paths"
@@ -202,6 +222,7 @@ identifier = &"paths_divider"
 tooltip = ""
 
 [sub_resource type="Resource" id="Resource_1uxen"]
+resource_name = "inc_absolute_paths (CheckboxSettingItem)"
 script = ExtResource("9_6ym6o")
 default_value = true
 text_on = "On"
@@ -213,6 +234,7 @@ tooltip = "[code]#include[/code] directives support absolute paths with a preced
 Disabling this will disable searching for a base path."
 
 [sub_resource type="Resource" id="Resource_6tmdd"]
+resource_name = "base_paths (StringSettingItem)"
 script = ExtResource("7_2htcu")
 default_value = "shaders"
 value = null
@@ -222,16 +244,18 @@ tooltip = "The folder names to look for as the base path for absolute [code]#inc
 Supports multiple paths, comma-separated."
 
 [sub_resource type="Resource" id="Resource_pkmub"]
+resource_name = "sbs_enabled (CheckboxSettingItem)"
 script = ExtResource("9_6ym6o")
 default_value = true
 text_on = "On"
 text_off = "Off"
 value = null
 name = "Open files side-by-side"
-identifier = &""
+identifier = &"sbs_enabled"
 tooltip = "If true, files defined with [b]Side-by-side-opening file extensions[/b] will be opened in two editors."
 
 [sub_resource type="Resource" id="Resource_w6rj6"]
+resource_name = "browser_drag_drop_mode (OptionsSettingItem)"
 script = ExtResource("5_hruq1")
 default_value = 2
 default_value_text = ""
@@ -245,6 +269,7 @@ tooltip = "Sets the behavior of dragging a file from the browser into the code e
 [b]Use [code]#include[/code]: [/b]Drops a [code]#include[/code] statement, relative to the base path specified with [b]Base path names[/b]"
 
 [sub_resource type="Resource" id="Resource_ncn2m"]
+resource_name = "syntax_highlighting_divider (DividerSettingItem)"
 script = ExtResource("4_5hvfy")
 value = null
 name = "Syntax highlighting"
@@ -252,6 +277,7 @@ identifier = &"syntax_highlighting_divider"
 tooltip = ""
 
 [sub_resource type="Resource" id="Resource_4h3dn"]
+resource_name = "syntax_highlighting_enabled (CheckboxSettingItem)"
 script = ExtResource("9_6ym6o")
 default_value = true
 text_on = "On"
@@ -262,6 +288,7 @@ identifier = &"syntax_highlighting_enabled"
 tooltip = "If on, enables syntax highlighting for files specified with [b]Syntax highlighted files[/b]"
 
 [sub_resource type="Resource" id="Resource_qxxpw"]
+resource_name = "syntax_highlighted_files (StringSettingItem)"
 script = ExtResource("7_2htcu")
 default_value = "fsh,vsh,gsh,csh,inc,glsl"
 value = null
@@ -270,6 +297,7 @@ identifier = &"syntax_highlighted_files"
 tooltip = "Sets which files get syntax highlighting in a comma-separated list."
 
 [sub_resource type="Resource" id="Resource_isoo2"]
+resource_name = "file_types_divider (DividerSettingItem)"
 script = ExtResource("4_5hvfy")
 value = null
 name = "File types"
@@ -277,6 +305,7 @@ identifier = &"file_types_divider"
 tooltip = ""
 
 [sub_resource type="Resource" id="Resource_dx61e"]
+resource_name = "sbs_opening_file_exts (StringSettingItem)"
 script = ExtResource("7_2htcu")
 default_value = "fsh:vsh,vert:frag,vertex:fragment"
 value = null
@@ -285,8 +314,9 @@ identifier = &"sbs_opening_file_exts"
 tooltip = "A list of files to open in two editors instead of one. Normally the fragment shader and the vertex shader. Values within pairs are separated by a colon, pairs are separated by a comma."
 
 [sub_resource type="Resource" id="Resource_qgblt"]
+resource_name = "text_file_types (StringSettingItem)"
 script = ExtResource("7_2htcu")
-default_value = "fsh,vsh,csh,gsh,mcmeta,properties,txt,md,glsl,"
+default_value = "inc,fsh,vsh,csh,gsh,mcmeta,properties,txt,md,glsl,"
 value = null
 name = "Text files"
 identifier = &"text_file_types"
@@ -294,6 +324,7 @@ tooltip = "The extensions of files that are treated as text, as comma-separated 
 "
 
 [sub_resource type="Resource" id="Resource_x4bxn"]
+resource_name = "image_file_types (StringSettingItem)"
 script = ExtResource("7_2htcu")
 default_value = "bmp,dds,ktx,exr,jpg,png,tga,svg,webp"
 value = null
@@ -301,10 +332,33 @@ name = "Image files"
 identifier = &"image_file_types"
 tooltip = "The extensions of files that can be opened in the image viewer. These files will also not be previewed in the quick switcher."
 
+[sub_resource type="Resource" id="Resource_7de2b"]
+resource_name = "include_file_types (StringSettingItem)"
+script = ExtResource("7_2htcu")
+default_value = "glsl,inc"
+value = ""
+name = "Include files"
+identifier = &"include_file_types"
+tooltip = "The file extensions for libary files, (those that are for use with [code]#include[/code]). These files will have their include guards automatically created when they are created."
+
+[sub_resource type="Resource" id="Resource_3vdl0"]
+resource_name = "include_guard_string (StringSettingItem)"
+script = ExtResource("7_2htcu")
+default_value = "INCLUDE_{filename_upper}"
+value = ""
+name = "Include guard string"
+identifier = &"include_guard_string"
+tooltip = "The include guard define name. Available replacements are:[code]
+{filename}
+{filename_upper}
+{extension}
+{extension_upper}
+[/code]"
+
 [sub_resource type="Resource" id="Resource_ydeaw"]
 script = ExtResource("2_n7kei")
 name = "Behavior"
-settings = Array[ExtResource("3_n71xn")]([SubResource("Resource_j8c3w"), SubResource("Resource_pv3ng"), SubResource("Resource_k580q"), SubResource("Resource_srh0j"), SubResource("Resource_qq8tb"), SubResource("Resource_1uxen"), SubResource("Resource_6tmdd"), SubResource("Resource_pkmub"), SubResource("Resource_w6rj6"), SubResource("Resource_ncn2m"), SubResource("Resource_4h3dn"), SubResource("Resource_qxxpw"), SubResource("Resource_isoo2"), SubResource("Resource_dx61e"), SubResource("Resource_qgblt"), SubResource("Resource_x4bxn")])
+settings = Array[ExtResource("3_n71xn")]([SubResource("Resource_j8c3w"), SubResource("Resource_pv3ng"), SubResource("Resource_k580q"), SubResource("Resource_srh0j"), SubResource("Resource_qq8tb"), SubResource("Resource_1uxen"), SubResource("Resource_6tmdd"), SubResource("Resource_pkmub"), SubResource("Resource_w6rj6"), SubResource("Resource_ncn2m"), SubResource("Resource_4h3dn"), SubResource("Resource_qxxpw"), SubResource("Resource_isoo2"), SubResource("Resource_dx61e"), SubResource("Resource_qgblt"), SubResource("Resource_x4bxn"), SubResource("Resource_7de2b"), SubResource("Resource_3vdl0")])
 
 [resource]
 script = ExtResource("1_jilef")

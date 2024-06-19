@@ -7,7 +7,7 @@ static var theme: Theme:
 signal theme_changed(new_theme: String)
 
 
-const DEFAULT_THEME: String = "vs code light"
+const DEFAULT_THEME: String = "vs code dark"
 const THEMES: ThemeLibrary = preload("res://src/themes/themes.tres")
 const LIGATURE_SHORTHANDS: Dictionary = {
 	"ss": "stylistic_set_",

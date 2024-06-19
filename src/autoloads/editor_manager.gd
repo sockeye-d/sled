@@ -6,6 +6,7 @@ signal browser_visible_change_requested(visible: bool)
 signal opened_side_by_side()
 signal opened_single()
 signal save_requested()
+signal file_free_requested(path: String)
 
 
 func change_editor_visibility(index: int, visible: bool) -> void:

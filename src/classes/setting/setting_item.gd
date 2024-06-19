@@ -1,3 +1,4 @@
+@tool
 class_name SettingItem extends Resource
 
 
@@ -12,7 +13,12 @@ signal setting_changed(new_value)
 		return value
 var control: Control
 @export var name: String
-@export var identifier: StringName
+@export var identifier: StringName:
+	get:
+		return identifier
+	set(value):
+		identifier = value
+		resource_name = "%s (%s)" % [identifier, get_script().get_global_name()]
 @export_multiline var tooltip: String
 @export var init_script: Script
 
