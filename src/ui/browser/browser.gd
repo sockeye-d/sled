@@ -22,4 +22,5 @@ func _ready() -> void:
 
 func refresh_tree() -> void:
 	if path:
-		browser_tree.populate_tree(path)
+		browser_tree.last_path = path
+		browser_tree.repopulate_tree()

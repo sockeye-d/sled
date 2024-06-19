@@ -94,8 +94,10 @@ func _on_search_box_text_submitted(new_text: String) -> void:
 
 func _on_item_list_item_selected(index: int) -> void:
 	get_ok_button().disabled = false
-	preview_container.show()
-	preview.text = FileAccess.get_file_as_string(base_path.path_join(item_list.get_item_text(index)))
+	var is_text: bool = item_list.get_item_text(index).get_extension() in Settings.text_file_types
+	preview_container.visible = is_text
+	if is_text:
+		preview.text = FileAccess.get_file_as_string(base_path.path_join(item_list.get_item_text(index)))
 	item_list.ensure_current_is_visible.call_deferred()
 
 

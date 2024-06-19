@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cpp730e50fn3p"]
+[gd_scene load_steps=9 format=3 uid="uid://cpp730e50fn3p"]
 
 [ext_resource type="Script" path="res://src/ui/main/main.gd" id="1_86qe4"]
 [ext_resource type="PackedScene" uid="uid://b45p8nijrvd3v" path="res://src/ui/browser/browser.tscn" id="1_prqn1"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="3_3bsis"]
 [ext_resource type="FontVariation" uid="uid://b0slpuo2u08uv" path="res://src/assets/fonts/main_font_bold.tres" id="3_thik5"]
 [ext_resource type="Script" path="res://src/ui/main/logo.gd" id="4_ytbde"]
+[ext_resource type="PackedScene" uid="uid://b5buokqgbn0uf" path="res://src/ui/image_viewer/image_viewer.tscn" id="8_b55ab"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -65,7 +66,7 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 theme_override_constants/autohide = 1
-split_offset = 14
+split_offset = 227
 script = ExtResource("3_3bsis")
 relative_split_offset = 0.2
 
@@ -75,8 +76,8 @@ layout_mode = 2
 
 [node name="Editors" type="SplitContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
-split_offset = 26
 script = ExtResource("3_3bsis")
 relative_split_offset = 0.5
 
@@ -87,6 +88,11 @@ layout_mode = 2
 [node name="RightEditor" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer/Editors" instance=ExtResource("1_x2835")]
 unique_name_in_owner = true
 auto_translate_mode = 1
+layout_mode = 2
+
+[node name="ImageViewer" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer" instance=ExtResource("8_b55ab")]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
 
 [node name="Spacer" type="Label" parent="VBoxContainer"]

@@ -12,6 +12,7 @@ signal setting_changed(identifier: StringName, new_value)
 @onready var category_container: VBoxContainer = %CategoryContainer
 @onready var setting_option_container: VBoxContainer = %SettingOptionContainer
 @onready var button: Button = %Button
+@onready var right_container: PanelContainer = %RightContainer
 
 
 @export var repopulate_settings: bool = false:
@@ -123,7 +124,10 @@ func add_setting_category(category: SettingCategory) -> void:
 	if category_container:
 		category_container.add_child(button)
 	
-	button.pressed.connect(populate_settings.bind(category))
+	button.pressed.connect(func():
+		right_container.show()
+		populate_settings(category)
+	)
 
 
 func load_settings(new_settings: Dictionary) -> void:

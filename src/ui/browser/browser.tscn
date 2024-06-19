@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://src/ui/browser/browser.gd" id="1_pepdc"]
 [ext_resource type="Script" path="res://src/ui/browser/tree.gd" id="2_3wiph"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l6x4e"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hk8o6"]
 
 [node name="Browser" type="PanelContainer"]
 anchors_preset = 15
@@ -11,13 +11,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_l6x4e")
 script = ExtResource("1_pepdc")
 
 [node name="BrowserTree" type="Tree" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_hk8o6")
 script = ExtResource("2_3wiph")
 
 [node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]

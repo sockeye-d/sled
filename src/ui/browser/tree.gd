@@ -12,6 +12,7 @@ enum Buttons {
 	DELETE_FILE,
 	DELETE_FOLDER,
 	SHOW_IN_FILE_MANAGER,
+	REFRESH,
 }
 
 
@@ -24,6 +25,7 @@ var folded_paths: Dictionary
 func _init() -> void:
 	hide_root = true
 	var scroll_bar: HScrollBar
+	get_scroll()
 	for child in get_children(true):
 		if child is HScrollBar:
 			scroll_bar = child
@@ -52,8 +54,8 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	return data
 
 
-func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed("refresh"):
+func _gui_input(event: InputEvent) -> void:
+	if event.is_action_pressed("refresh", false):
 		repopulate_tree()
 
 
@@ -64,8 +66,9 @@ func populate_tree(path: String, parent: TreeItem = null, first: bool = true) ->
 		clear()
 		parent = create_item()
 		parent.disable_folding = true
-	var item = _create_folder_item(path, parent)
+	var item := _create_folder_item(path, parent)
 	if first:
+		item.add_button(0, Icons.refresh, Buttons.REFRESH)
 		item.disable_folding = true
 
 	for dir in DirAccess.get_directories_at(path):
@@ -77,12 +80,24 @@ func populate_tree(path: String, parent: TreeItem = null, first: bool = true) ->
 
 func repopulate_tree() -> void:
 	if last_path:
-		get_root().free()
+		if get_root():
+			get_root().free()
 		populate_tree(last_path)
-		for path in folded_paths:
-			var item: TreeItem = paths.get_key(path)
-			item.collapsed = true
+		if folded_paths.size() == 0:
+			set_all_collapsed(true)
+		else:
+			for path in folded_paths:
+				var item: TreeItem = paths.get_key(path)
+				if item and not item.disable_folding:
+					item.collapsed = true
 		deselect_all()
+
+
+func set_all_collapsed(state: bool, root := get_root()) -> void:
+	if not root.disable_folding:
+		root.collapsed = state
+	for child in root.get_children():
+		set_all_collapsed(state, child)
 
 
 func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
@@ -150,6 +165,8 @@ func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_ind
 			OS.move_to_trash(paths.get_value(item))
 		Buttons.SHOW_IN_FILE_MANAGER:
 			OS.shell_show_in_file_manager(ProjectSettings.globalize_path(paths.get_value(item)))
+		Buttons.REFRESH:
+			repopulate_tree()
 
 
 func _rename_item(item: TreeItem, title: String) -> void:

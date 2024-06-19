@@ -7,6 +7,7 @@ class_name Main extends Control
 @onready var editors: RelativeSplitContainer = %Editors
 @onready var left_editor: Editor = %LeftEditor
 @onready var right_editor: Editor = %RightEditor
+@onready var image_viewer: ImageViewer = %ImageViewer
 
 
 var sbs_open: bool = false
@@ -46,15 +47,13 @@ func _ready() -> void:
 
 
 func open_file(path: String) -> void:
-	if path.get_extension() == "":
-		return
-	editors.show()
-	
 	var ext: String = path.get_extension().to_lower()
 	for pair in Settings.sbs_opening_file_exts.split(","):
 		var pair_arr: PackedStringArray = pair.split(":", false, 2)
 		
 		if pair_arr[0].to_lower() == ext or pair_arr[-1].to_lower() == ext:
+			editors.show()
+			image_viewer.hide()
 			var path_no_ext = path.get_basename()
 			left_editor.load_file("%s.%s" % [path_no_ext, pair_arr[0]])
 			right_editor.load_file("%s.%s" % [path_no_ext, pair_arr[-1]])
@@ -62,8 +61,20 @@ func open_file(path: String) -> void:
 			sbs_open = true
 			EditorManager.opened_side_by_side.emit()
 			return
-
-	left_editor.load_file(path)
-	right_editor.hide()
-	sbs_open = false
-	EditorManager.opened_single.emit()
+	
+	if ext in Settings.image_file_types.split(",") and ext in ImageViewer.ALLOWED_FILES:
+		var err := image_viewer.load_image(path)
+		NotificationManager.notify_if_err(err, "Opened %s" % path.get_file(), "Failed to open %s with error %s" % [path.get_file(), "%s"], true)
+		if not err:
+			editors.hide()
+			sbs_open = false
+			image_viewer.show()
+		return
+	
+	if ext in Settings.text_file_types:
+		editors.show()
+		image_viewer.hide()
+		left_editor.load_file(path)
+		right_editor.hide()
+		sbs_open = false
+		EditorManager.opened_single.emit()

@@ -13,7 +13,7 @@ static var reset_value: Texture2D = preload("res://src/assets/icons/reset_value.
 static var open_folder: Texture2D = preload("res://src/assets/icons/open_folder.png")
 static var open_file: Texture2D = preload("res://src/assets/icons/open_file.png")
 static var open_dir: Texture2D = preload("res://src/assets/icons/open_dir.png")
-
+static var refresh = preload("res://src/assets/icons/refresh.png")
 
 static var param: Texture2D = preload("res://src/assets/icons/code/param.png")
 static var function: Texture2D = preload("res://src/assets/icons/code/function.png")
