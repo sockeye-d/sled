@@ -4,17 +4,21 @@
 [ext_resource type="Script" path="res://src/ui/add_file_folder_dialogs/add_folder_dialog.gd" id="1_xj7jq"]
 
 [node name="AddFolderDialog" type="ConfirmationDialog"]
+title = "Add folder"
 initial_position = 4
-size = Vector2i(300, 88)
+size = Vector2i(300, 84)
 visible = true
 script = ExtResource("1_xj7jq")
 
-[node name="FileNameLineEdit" type="LineEdit" parent="."]
+[node name="FolderNameLineEdit" type="LineEdit" parent="."]
 unique_name_in_owner = true
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 292.0
-offset_bottom = 41.0
+offset_bottom = 37.0
 placeholder_text = "Folder name"
 script = ExtResource("1_itoge")
 disallowed_chars = ":/\\?*\"|%<>"
+
+[connection signal="text_changed" from="FolderNameLineEdit" to="." method="_on_folder_name_line_edit_text_changed"]
+[connection signal="text_submitted" from="FolderNameLineEdit" to="." method="_on_folder_name_line_edit_text_submitted"]

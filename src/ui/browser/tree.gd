@@ -16,6 +16,13 @@ enum Buttons {
 }
 
 
+enum Columns {
+	ICON = 0,
+	TEXT = 0,
+	BUTTON = 0,
+}
+
+
 @onready var add_file_dialog: AddFileDialog = %AddFileDialog
 @onready var add_folder_dialog: AddFolderDialog = %AddFolderDialog
 
@@ -28,6 +35,10 @@ var new_file_folder_path: String
 
 
 func _init() -> void:
+	#set_column_expand(Columns.ICON, false)
+	#set_column_custom_minimum_width(Columns.ICON, 21)
+	#set_column_expand(Columns.TEXT, true)
+	#set_column_expand(Columns.BUTTON, false)
 	hide_root = true
 	var scroll_bar: HScrollBar
 	get_scroll()
@@ -39,7 +50,7 @@ func _init() -> void:
 
 
 func _get_drag_data(at_position: Vector2) -> Variant:
-	if Settings.browser_drag_drop_mode == 0:
+	if Settings.browser_drag_drop_mode == 0 or not get_selected():
 		return
 	var data := paths.get_value(get_selected()) as String
 	
@@ -73,7 +84,7 @@ func populate_tree(path: String, parent: TreeItem = null, first: bool = true) ->
 		parent.disable_folding = true
 	var item := _create_folder_item(path, parent)
 	if first:
-		item.add_button(0, Icons.refresh, Buttons.REFRESH)
+		item.add_button(Columns.BUTTON, Icons.refresh, Buttons.REFRESH)
 		item.disable_folding = true
 
 	for dir in DirAccess.get_directories_at(path):
@@ -92,6 +103,8 @@ func repopulate_tree() -> void:
 			set_all_collapsed(true)
 		else:
 			for path in folded_paths:
+				if not paths.has_key(path):
+					continue
 				var item: TreeItem = paths.get_key(path)
 				if item and not item.disable_folding:
 					item.collapsed = true
@@ -106,30 +119,79 @@ func set_all_collapsed(state: bool, root := get_root()) -> void:
 
 
 func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
-	var item := create_item(parent)
-	item.add_button(0, Icons.open_dir, Buttons.SHOW_IN_FILE_MANAGER)
-	item.add_button(0, Icons.rename, Buttons.RENAME_FILE)
-	item.add_button(0, Icons.delete, Buttons.DELETE_FILE)
-	item.set_text(0, path.get_file())
-	item.set_icon_max_width(0, 1e10)
+	var item := _create_item(parent, Icons.file)
+	
+	item.set_metadata(Columns.TEXT, path.get_file())
+	item.set_tooltip_text(Columns.TEXT, FileManager.get_short_path(path))
+		
+	item.add_button(Columns.BUTTON, Icons.open_dir, Buttons.SHOW_IN_FILE_MANAGER)
+	item.add_button(Columns.BUTTON, Icons.rename, Buttons.RENAME_FILE)
+	item.add_button(Columns.BUTTON, Icons.delete, Buttons.DELETE_FILE)
+	
 	paths.add(item, path)
 
 	return item
 
 
 func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
-	var item := create_item(parent)
-	item.set_text(0, path.substr(path.rfind("/") + 1))
-	item.add_button(0, Icons.open_dir, Buttons.SHOW_IN_FILE_MANAGER)	
-	item.add_button(0, Icons.add_file, Buttons.ADD_FILE)
-	item.add_button(0, Icons.add_folder, Buttons.ADD_FOLDER)
-	item.add_button(0, Icons.rename, Buttons.RENAME_FOLDER)
-	item.add_button(0, Icons.delete, Buttons.DELETE_FOLDER)
-	item.set_icon_max_width(0, 1e10)
-	item.set_selectable(0, false)
+	var item := _create_item(parent, Icons.folder)
+	
+	item.set_metadata(Columns.TEXT, path.substr(path.rfind("/") + 1))
+	item.set_tooltip_text(Columns.TEXT, path)
+	item.set_tooltip_text(Columns.TEXT, FileManager.get_short_path(path))
+		
+	item.add_button(Columns.BUTTON, Icons.open_dir, Buttons.SHOW_IN_FILE_MANAGER)	
+	item.add_button(Columns.BUTTON, Icons.add_file, Buttons.ADD_FILE)
+	item.add_button(Columns.BUTTON, Icons.add_folder, Buttons.ADD_FOLDER)
+	item.add_button(Columns.BUTTON, Icons.rename, Buttons.RENAME_FOLDER)
+	item.add_button(Columns.BUTTON, Icons.delete, Buttons.DELETE_FOLDER)
+	
 	paths.add(item, path)
-
+	
 	return item
+
+
+func _create_item(parent: TreeItem, icon: Texture2D) -> TreeItem:
+	var item := create_item(parent)
+	#item.set_cell_mode(Columns.ICON, TreeItem.CELL_MODE_ICON)
+	item.set_cell_mode(Columns.TEXT, TreeItem.CELL_MODE_CUSTOM)
+	item.set_custom_draw_callback(Columns.TEXT, func(item: TreeItem, rect: Rect2) -> void: _item_custom_draw(item, rect, icon))
+	#item.set_cell_mode(Columns.BUTTON, TreeItem.CELL_MODE_STRING)
+	#item.set_icon(Columns.ICON, icon)
+	#item.set_expand_right(Columns.ICON, false)
+	#item.set_expand_right(Columns.TEXT, true)
+	return item
+
+
+func _item_custom_draw(item: TreeItem, rect: Rect2, icon: Texture2D) -> void:
+	var f := get_theme_font(&"font")
+	var f_size := get_theme_font_size(&"font_size")
+	var text: String = item.get_metadata(Columns.TEXT)
+	var ascent := f.get_ascent(f_size)
+	var string_size := f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, f_size)
+	var icon_width := get_theme_constant(&"icon_max_width")
+	if icon_width == 0:
+		icon_width = icon.get_width()
+	else:
+		icon_width = mini(icon_width, icon.get_width())
+	var icon_offset := (rect.size.y - icon_width) / 2.0
+	var icon_rect := Rect2(round(rect.position + Vector2.ONE * icon_offset), Vector2(icon_width, icon_width))
+	if icon_rect.size.x + 2.0 * icon_offset > rect.size.x:
+		return
+	draw_texture_rect(icon,	icon_rect, false)
+	draw_string(
+		f,
+		Vector2(
+			rect.position.x + icon_width + icon_offset * 2.0,
+			rect.get_center().y + ascent / 2.0
+		),
+		text,
+		HORIZONTAL_ALIGNMENT_LEFT,
+		maxi(rect.size.x - icon_width - icon_offset * 2.0, 1),
+		f_size,
+		get_theme_color(&"font_color"),
+		TextServer.JUSTIFICATION_CONSTRAIN_ELLIPSIS,
+	)
 
 
 func _on_empty_clicked(_position: Vector2, _mouse_button_index: int) -> void:
@@ -148,13 +210,14 @@ func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_ind
 			_rename_item(item, "Rename folder")
 		Buttons.DELETE_FILE:
 			var cd := ConfirmationDialog.new()
-			cd.dialog_text = "Delete %s?" % item.get_text(0)
+			cd.dialog_text = "Delete %s?" % item.get_metadata(Columns.TEXT)
 			cd.ok_button_text = "Delete"
 			cd.title = "Confirm deletion"
 			add_child(cd)
 			cd.popup_centered()
 			cd.confirmed.connect(
 					func():
+						EditorManager.file_free_requested.emit(paths.get_value(item))
 						var err: Error = OS.move_to_trash(paths.get_value(item))
 						NotificationManager.notify_if_err(
 							err,
@@ -178,7 +241,7 @@ func _rename_item(item: TreeItem, title: String) -> void:
 	var dialog = LineEditDialog.new()
 	dialog.title = title
 	add_child(dialog)
-	dialog.text = item.get_text(0)
+	dialog.text = item.get_metadata(Columns.TEXT)
 	dialog.disallowed_chars = r':/\?*"|%<>'
 	dialog.popup_centered()
 	var new_name = await dialog.finished
@@ -187,7 +250,7 @@ func _rename_item(item: TreeItem, title: String) -> void:
 		var new_path: String = path.get_base_dir().path_join(new_name)
 		var err: Error = DirAccess.rename_absolute(path, new_path)
 		if not err:
-			item.set_text(0, new_name)
+			item.set_metadata(Columns.TEXT, new_name)
 			paths.add(item, path.get_base_dir().path_join(new_name))
 		NotificationManager.notify_if_err(err, "%s renamed to %s successfully" % [path.get_file(), new_name], "%s failed to be renamed to %s" % [path.get_file(), new_name])
 	dialog.queue_free()
@@ -195,40 +258,17 @@ func _rename_item(item: TreeItem, title: String) -> void:
 
 func _add_file(item: TreeItem) -> void:
 	new_file_folder_path = paths.get_value(item)
-	
 	add_file_dialog.reset_and_show()
-	
-	#var dialog = LineEditDialog.new()
-	#dialog.title = "Add file"
-	#add_child(dialog)
-	#dialog.text = ""
-	#dialog.placeholder_text = "File name..."
-	#dialog.disallowed_chars = r':/\?*"|%<>'
-	#dialog.popup_centered()
-#
-	#var filename: String = await dialog.finished
-	#if filename:
-		#var path = base_path.path_join(filename)
-		#FileAccess.open(path, FileAccess.WRITE)
-		#repopulate_tree.call_deferred()
-	#dialog.queue_free()
 
 
 func _add_folder(item: TreeItem) -> void:
 	new_file_folder_path = paths.get_value(item)
-	
-	add_file_dialog.reset_and_show()
-
-	#var filename: String = await dialog.finished
-	#if filename:
-		#var path = base_path.path_join(filename)
-		#DirAccess.make_dir_absolute(path)
-		#repopulate_tree.call_deferred()
-#
-	#dialog.queue_free()
+	add_folder_dialog.reset_and_show()
 
 
 func _on_add_file_dialog_confirmed_data(filename: String, create_matching_file: bool, add_include_guard: bool, include_guard_override: String) -> void:
+	if not filename:
+		return
 	_add_file_from_path(filename, add_include_guard)
 	if create_matching_file:
 		var sbs_ext := FileManager.file_is_sbs(filename)
@@ -256,8 +296,12 @@ func _add_file_from_path(filename: String, add_include_guard: bool) -> void:
 	handle.store_string(string)
 
 
-func _on_add_folder_dialog_confirmed_data(name: String) -> void:
-	print(new_file_folder_path.path_join(name))
+func _on_add_folder_dialog_confirmed_data(filename: String) -> void:
+	if not filename:
+		return
+	var path := new_file_folder_path.path_join(filename)
+	var err := DirAccess.make_dir_absolute(path)
+	NotificationManager.notify_if_err(err, "Created directory at %s" % path, "Failed to create directory at %s" % path)
 
 
 func _on_item_collapsed(item: TreeItem) -> void:

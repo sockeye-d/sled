@@ -21,3 +21,11 @@ func _ready() -> void:
 			set_item_disabled(1, true)
 			set_item_disabled(2, false)
 			)
+	
+	EditorManager.view_menu_state_change_requested.connect(func(index: int, state: bool):
+			if is_item_checked(index) and not state:
+				set_item_checked(index, false)
+			if not state:
+				set_item_disabled(1 - index, true)
+			set_item_disabled(index, not state)
+	)

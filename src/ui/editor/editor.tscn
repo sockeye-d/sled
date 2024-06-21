@@ -254,6 +254,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "hello there"
+scroll_smooth = true
 caret_blink = true
 syntax_highlighter = SubResource("CodeHighlighter_i4v8i")
 highlight_all_occurrences = true

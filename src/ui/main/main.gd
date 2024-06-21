@@ -55,9 +55,10 @@ func open_file(path: String) -> void:
 			if pair_arr[0].to_lower() == ext or pair_arr[-1].to_lower() == ext:
 				editors.show()
 				image_viewer.hide()
-				var path_no_ext = path.get_basename()
+				var path_no_ext := path.get_basename()
 				left_editor.load_file("%s.%s" % [path_no_ext, pair_arr[0]])
 				right_editor.load_file("%s.%s" % [path_no_ext, pair_arr[-1]])
+				left_editor.show()
 				right_editor.show()
 				sbs_open = true
 				EditorManager.opened_side_by_side.emit()
@@ -67,12 +68,15 @@ func open_file(path: String) -> void:
 		var err := image_viewer.load_image(path)
 		NotificationManager.notify_if_err(err, "Opened %s" % path.get_file(), "Failed to open %s with error %s" % [path.get_file(), "%s"], true)
 		if not err:
+			left_editor.unload_file()
+			right_editor.unload_file()
 			editors.hide()
 			sbs_open = false
 			image_viewer.show()
 		return
 	
 	if ext in Settings.text_file_types:
+		right_editor.unload_file()
 		editors.show()
 		image_viewer.hide()
 		left_editor.load_file(path)

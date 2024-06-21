@@ -28,6 +28,10 @@ func _ready() -> void:
 		loaded_recent_paths.emit(false)
 
 
+func get_short_path(absolute_path: String) -> String:
+	return absolute_path.trim_prefix(current_path).trim_prefix("/")
+
+
 func request_open_file(path: String):
 	file_open_requested.emit(path)
 

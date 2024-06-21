@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="SettingCategoryContainer" load_steps=47 format=3 uid="uid://x0tla7gkryo3"]
+[gd_resource type="Resource" script_class="SettingCategoryContainer" load_steps=51 format=3 uid="uid://x0tla7gkryo3"]
 
 [ext_resource type="Script" path="res://src/classes/setting_category_container.gd" id="1_jilef"]
 [ext_resource type="Script" path="res://src/classes/setting/setting_category.gd" id="2_n7kei"]
@@ -13,14 +13,6 @@
 [ext_resource type="Script" path="res://src/classes/setting/slider_setting_item.gd" id="8_w2up1"]
 [ext_resource type="Script" path="res://src/classes/setting/checkbox_setting_item.gd" id="9_6ym6o"]
 [ext_resource type="Script" path="res://src/classes/setting/init_scripts/gui_scale_init_script.gd" id="11_d30ah"]
-
-[sub_resource type="Resource" id="Resource_2e6wi"]
-resource_name = "theming (DividerSettingItem)"
-script = ExtResource("4_5hvfy")
-value = null
-name = "Theming"
-identifier = &"theming"
-tooltip = ""
 
 [sub_resource type="Resource" id="Resource_3kvck"]
 resource_name = "theme (OptionsSettingItem)"
@@ -84,90 +76,10 @@ tooltip = "Changes the overall scale of the interface.
 Useful for hiDPI displays, if the text and buttons are too small."
 init_script = ExtResource("11_d30ah")
 
-[sub_resource type="Resource" id="Resource_qnedh"]
-resource_name = "text_editor (DividerSettingItem)"
-script = ExtResource("4_5hvfy")
-value = null
-name = "Text editor"
-identifier = &"text_editor"
-tooltip = ""
-
-[sub_resource type="Resource" id="Resource_s7ufq"]
-resource_name = "show_line_numbers (CheckboxSettingItem)"
-script = ExtResource("9_6ym6o")
-default_value = true
-text_on = "On"
-text_off = "Off"
-value = null
-name = "Show line numbers"
-identifier = &"show_line_numbers"
-tooltip = "Shows or hides the line numbers"
-
-[sub_resource type="Resource" id="Resource_o3l8i"]
-resource_name = "zero_pad_line_numbers (CheckboxSettingItem)"
-script = ExtResource("9_6ym6o")
-default_value = true
-text_on = "On"
-text_off = "Off"
-value = null
-name = "Zero-pad line numbers"
-identifier = &"zero_pad_line_numbers"
-tooltip = "Makes all the line numbers the same length by padding the beginning with zeros"
-
-[sub_resource type="Resource" id="Resource_jbmoq"]
-resource_name = "caret_style (OptionsSettingItem)"
-script = ExtResource("5_hruq1")
-default_value = 0
-default_value_text = ""
-options = PackedStringArray("Line", "Block")
-value = null
-name = "Caret style"
-identifier = &"caret_style"
-tooltip = "Sets the style of the caret.
-[b]Line: [/b]A line-shaped caret
-[b]Block: [/b]A block-shaped caret"
-
-[sub_resource type="Resource" id="Resource_oppod"]
-resource_name = "scroll_past_eof (CheckboxSettingItem)"
-script = ExtResource("9_6ym6o")
-default_value = true
-text_on = "On"
-text_off = "Off"
-value = null
-name = "Scroll past end of file"
-identifier = &"scroll_past_eof"
-tooltip = "If true, allows scrolling into \"virtual space\" at the end of the file"
-
-[sub_resource type="Resource" id="Resource_dp7ij"]
-resource_name = "text_wrapping_mode (OptionsSettingItem)"
-script = ExtResource("5_hruq1")
-default_value = 0
-default_value_text = ""
-options = PackedStringArray("None", "Arbitrary", "Word", "Word (smart)")
-value = null
-name = "Text wrapping mode"
-identifier = &"text_wrapping_mode"
-tooltip = "Sets how text wrapping behaves. Useful for long lines.
-[b]None: [/b]No wrapping is performed.
-[b]Arbitrary: [/b] Letters are individually wrapped, breaking words across lines.
-[b]Word: [/b]Only breaks lines at spaces
-[b]Word (smart): [/b]Like [code]Word[/code] but will break a word arbitrarily if it doesn't fit in one line"
-
-[sub_resource type="Resource" id="Resource_vdvjn"]
-resource_name = "indent_wrapped_lines (CheckboxSettingItem)"
-script = ExtResource("9_6ym6o")
-default_value = true
-text_on = "On"
-text_off = "Off"
-value = null
-name = "Indent wrapped lines"
-identifier = &"indent_wrapped_lines"
-tooltip = "If on, indents wrapped lines are indented to the same level as the unwrapped line"
-
 [sub_resource type="Resource" id="Resource_moc02"]
 script = ExtResource("2_n7kei")
 name = "Theme"
-settings = Array[ExtResource("3_n71xn")]([SubResource("Resource_2e6wi"), SubResource("Resource_3kvck"), SubResource("Resource_t67iy"), SubResource("Resource_fbn8t"), SubResource("Resource_42da8"), SubResource("Resource_jjevf"), SubResource("Resource_qnedh"), SubResource("Resource_s7ufq"), SubResource("Resource_o3l8i"), SubResource("Resource_jbmoq"), SubResource("Resource_oppod"), SubResource("Resource_dp7ij"), SubResource("Resource_vdvjn")])
+settings = Array[ExtResource("3_n71xn")]([SubResource("Resource_3kvck"), SubResource("Resource_t67iy"), SubResource("Resource_fbn8t"), SubResource("Resource_42da8"), SubResource("Resource_jjevf")])
 
 [sub_resource type="Resource" id="Resource_j8c3w"]
 resource_name = "code_completion_divider (DividerSettingItem)"
@@ -316,7 +228,7 @@ tooltip = "A list of files to open in two editors instead of one. Normally the f
 [sub_resource type="Resource" id="Resource_qgblt"]
 resource_name = "text_file_types (StringSettingItem)"
 script = ExtResource("7_2htcu")
-default_value = "inc,fsh,vsh,csh,gsh,mcmeta,properties,txt,md,glsl,"
+default_value = "inc,fsh,vsh,csh,gsh,mcmeta,properties,txt,md,glsl,json"
 value = null
 name = "Text files"
 identifier = &"text_file_types"
@@ -360,6 +272,138 @@ script = ExtResource("2_n7kei")
 name = "Behavior"
 settings = Array[ExtResource("3_n71xn")]([SubResource("Resource_j8c3w"), SubResource("Resource_pv3ng"), SubResource("Resource_k580q"), SubResource("Resource_srh0j"), SubResource("Resource_qq8tb"), SubResource("Resource_1uxen"), SubResource("Resource_6tmdd"), SubResource("Resource_pkmub"), SubResource("Resource_w6rj6"), SubResource("Resource_ncn2m"), SubResource("Resource_4h3dn"), SubResource("Resource_qxxpw"), SubResource("Resource_isoo2"), SubResource("Resource_dx61e"), SubResource("Resource_qgblt"), SubResource("Resource_x4bxn"), SubResource("Resource_7de2b"), SubResource("Resource_3vdl0")])
 
+[sub_resource type="Resource" id="Resource_776dd"]
+resource_name = "show_line_numbers (CheckboxSettingItem)"
+script = ExtResource("9_6ym6o")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Show line numbers"
+identifier = &"show_line_numbers"
+tooltip = "Shows or hides the line numbers"
+
+[sub_resource type="Resource" id="Resource_wslst"]
+resource_name = "zero_pad_line_numbers (CheckboxSettingItem)"
+script = ExtResource("9_6ym6o")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Zero-pad line numbers"
+identifier = &"zero_pad_line_numbers"
+tooltip = "Makes all the line numbers the same length by padding the beginning with zeros"
+
+[sub_resource type="Resource" id="Resource_t5i6l"]
+resource_name = "caret_style (OptionsSettingItem)"
+script = ExtResource("5_hruq1")
+default_value = 0
+default_value_text = ""
+options = PackedStringArray("Line", "Block")
+value = null
+name = "Caret style"
+identifier = &"caret_style"
+tooltip = "Sets the style of the caret.
+[b]Line: [/b]A line-shaped caret
+[b]Block: [/b]A block-shaped caret"
+
+[sub_resource type="Resource" id="Resource_6ap5h"]
+resource_name = "scroll_past_eof (CheckboxSettingItem)"
+script = ExtResource("9_6ym6o")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Scroll past end of file"
+identifier = &"scroll_past_eof"
+tooltip = "If true, allows scrolling into \"virtual space\" at the end of the file"
+
+[sub_resource type="Resource" id="Resource_m611l"]
+resource_name = "text_wrapping_mode (OptionsSettingItem)"
+script = ExtResource("5_hruq1")
+default_value = 0
+default_value_text = ""
+options = PackedStringArray("None", "Arbitrary", "Word", "Word (smart)")
+value = null
+name = "Text wrapping mode"
+identifier = &"text_wrapping_mode"
+tooltip = "Sets how text wrapping behaves. Useful for long lines.
+[b]None: [/b]No wrapping is performed.
+[b]Arbitrary: [/b] Letters are individually wrapped, breaking words across lines.
+[b]Word: [/b]Only breaks lines at spaces
+[b]Word (smart): [/b]Like [code]Word[/code] but will break a word arbitrarily if it doesn't fit in one line"
+
+[sub_resource type="Resource" id="Resource_m70ea"]
+resource_name = "indent_wrapped_lines (CheckboxSettingItem)"
+script = ExtResource("9_6ym6o")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = null
+name = "Indent wrapped lines"
+identifier = &"indent_wrapped_lines"
+tooltip = "If on, indents wrapped lines are indented to the same level as the unwrapped line"
+
+[sub_resource type="Resource" id="Resource_5myo0"]
+resource_name = "use_smooth_scrolling (CheckboxSettingItem)"
+script = ExtResource("9_6ym6o")
+default_value = false
+text_on = "On"
+text_off = "Off"
+value = false
+name = "Smooth scrolling"
+identifier = &"use_smooth_scrolling"
+tooltip = "If on, text editors will scroll smoothly"
+
+[sub_resource type="Resource" id="Resource_5ye5j"]
+resource_name = "scroll_speed (SliderSettingItem)"
+script = ExtResource("8_w2up1")
+default_value = 80.0
+min_value = 1.0
+max_value = 240.0
+step = 1.0
+allow_greater = true
+allow_lesser = false
+value = 1.0
+name = "Scrolling speed"
+identifier = &"scroll_speed"
+tooltip = "The maximum speed in px/s that the text editor will scroll at. Only applies when [b]Use smooth scrolling[/b] is enabled."
+
+[sub_resource type="Resource" id="Resource_h2m0w"]
+resource_name = "show_minimap (CheckboxSettingItem)"
+script = ExtResource("9_6ym6o")
+default_value = true
+text_on = "On"
+text_off = "Off"
+value = false
+name = "Show minimap"
+identifier = &"show_minimap"
+tooltip = "If on, text editors will display a code minimap"
+
+[sub_resource type="Resource" id="Resource_mp4i0"]
+resource_name = "minimap_width (SliderSettingItem)"
+script = ExtResource("8_w2up1")
+default_value = 50.0
+min_value = 0.0
+max_value = 120.0
+step = 1.0
+allow_greater = true
+allow_lesser = false
+value = 1.0
+name = "Minimap width"
+identifier = &"minimap_width"
+tooltip = "Sets the width of the minimap"
+
+[sub_resource type="Resource" id="Resource_tjpq5"]
+script = ExtResource("2_n7kei")
+name = "Text editor"
+settings = Array[ExtResource("3_n71xn")]([SubResource("Resource_776dd"), SubResource("Resource_wslst"), SubResource("Resource_t5i6l"), SubResource("Resource_6ap5h"), SubResource("Resource_m611l"), SubResource("Resource_m70ea"), SubResource("Resource_5myo0"), SubResource("Resource_5ye5j"), SubResource("Resource_h2m0w"), SubResource("Resource_mp4i0")])
+
+[sub_resource type="Resource" id="Resource_2hn5u"]
+script = ExtResource("2_n7kei")
+name = "File types"
+settings = Array[ExtResource("3_n71xn")]([])
+
 [resource]
 script = ExtResource("1_jilef")
-setting_categories = Array[ExtResource("2_n7kei")]([SubResource("Resource_moc02"), SubResource("Resource_ydeaw")])
+setting_categories = Array[ExtResource("2_n7kei")]([SubResource("Resource_moc02"), SubResource("Resource_ydeaw"), SubResource("Resource_tjpq5"), SubResource("Resource_2hn5u")])

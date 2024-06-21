@@ -69,6 +69,10 @@ func _ready() -> void:
 	
 	if EditorManager:
 		EditorManager.save_requested.connect(_on_save_button_pressed)
+		EditorManager.file_free_requested.connect(func(path: String):
+			if path == file_path:
+				unload_file()
+		)
 	
 	if code_editor:
 		code_editor.save_requested.connect(_on_save_button_pressed)
@@ -103,13 +107,13 @@ func load_file(path: String) -> void:
 			# No ConfirmationAction.DISCARD block, because it will just continue down
 
 	# Save the old one in case loading fails
-	var old_file_handle = file_handle
+	var old_file_handle := file_handle
 	file_handle = FileAccess.open(path, FileAccess.READ)
 
 	if file_handle == null:
 		NotificationManager.notify("%s failed to open" % path.get_file(), NotificationManager.TYPE_ERROR)
-		file_handle = old_file_handle
-		code_editor.editable = false
+		#file_handle = old_file_handle
+		unload_file.call_deferred()
 		return
 
 	NotificationManager.notify("Opened %s" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_NORMAL)
@@ -132,6 +136,16 @@ func load_file(path: String) -> void:
 		code_editor.syntax_highlighter = null
 	
 	refresh_file_contents()
+
+
+func unload_file() -> void:
+	code_editor.text = ""
+	code_editor.editable = false
+	hide()
+	EditorManager.view_menu_state_change_requested.emit(get_index(), false)
+	if file_handle:
+		NotificationManager.notify("Closed %s" % file_path.get_file(), NotificationManager.TYPE_NORMAL)
+		file_handle = null
 
 
 func save(path: String = file_path) -> void:
@@ -188,6 +202,10 @@ func _set_all_settings() -> void:
 		code_editor.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
 		code_editor.autowrap_mode = mode as TextServer.AutowrapMode
 	code_editor.indent_wrapped_lines = Settings.indent_wrapped_lines
+	code_editor.scroll_smooth = Settings.use_smooth_scrolling
+	code_editor.scroll_v_scroll_speed = Settings.scroll_speed
+	code_editor.minimap_draw = Settings.show_minimap
+	code_editor.minimap_width = Settings.minimap_width
 
 
 func _on_confirmation_dialog_canceled() -> void:

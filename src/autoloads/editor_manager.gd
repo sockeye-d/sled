@@ -5,6 +5,7 @@ signal editor_visible_change_requested(index: int, visible: bool)
 signal browser_visible_change_requested(visible: bool)
 signal opened_side_by_side()
 signal opened_single()
+signal view_menu_state_change_requested(index: int, new_state: bool)
 signal save_requested()
 signal file_free_requested(path: String)
 

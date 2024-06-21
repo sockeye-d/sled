@@ -13,6 +13,14 @@ func _init(dictionary: Dictionary = { }) -> void:
 			add(key, dictionary[key])
 
 
+func has_key(key: Variant) -> bool:
+	return values_dict.has(key)
+
+
+func has_value(value: Variant) -> bool:
+	return keys_dict.has(value)
+
+
 func get_value(key: Variant) -> Variant:
 	return keys_dict[key]
 

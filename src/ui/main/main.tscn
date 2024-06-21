@@ -66,6 +66,7 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 theme_override_constants/autohide = 1
+split_offset = 227
 script = ExtResource("3_3bsis")
 relative_split_offset = 0.2
 
@@ -94,27 +95,15 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
-[node name="Spacer" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -14.0
-grow_horizontal = 2
-grow_vertical = 0
-mouse_filter = 2
-theme_override_constants/margin_bottom = 6
-
-[node name="NotificationTray" type="HBoxContainer" parent="MarginContainer"]
+[node name="NotificationTray" type="HBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 8
 mouse_filter = 2
 alignment = 2
+
+[node name="Spacer" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/NotificationTray"]
+layout_mode = 2
 
 [connection signal="file_opened" from="VBoxContainer/MarginContainer/VBoxContainer/MainContainer/Browser" to="." method="open_file"]
