@@ -47,6 +47,10 @@ func _get(property: StringName) -> Variant:
 	return null
 
 
+func get_arr(item_identifier: StringName, delim := ",") -> PackedStringArray:
+	return Settings.get(item_identifier).split(delim)
+
+
 func get_item(item_identifier: StringName) -> SettingItem:
 	return settings_window.settings_items[item_identifier]
 

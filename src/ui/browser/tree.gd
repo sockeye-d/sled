@@ -119,7 +119,7 @@ func set_all_collapsed(state: bool, root := get_root()) -> void:
 
 
 func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
-	var item := _create_item(parent, Icons.file)
+	var item := _create_item(parent, FileManager.get_icon(path.get_extension()))
 	
 	item.set_metadata(Columns.TEXT, path.get_file())
 	item.set_tooltip_text(Columns.TEXT, FileManager.get_short_path(path))
@@ -146,6 +146,8 @@ func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
 	item.add_button(Columns.BUTTON, Icons.rename, Buttons.RENAME_FOLDER)
 	item.add_button(Columns.BUTTON, Icons.delete, Buttons.DELETE_FOLDER)
 	
+	item.set_selectable(Columns.TEXT, false)
+	
 	paths.add(item, path)
 	
 	return item
@@ -153,13 +155,8 @@ func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
 
 func _create_item(parent: TreeItem, icon: Texture2D) -> TreeItem:
 	var item := create_item(parent)
-	#item.set_cell_mode(Columns.ICON, TreeItem.CELL_MODE_ICON)
 	item.set_cell_mode(Columns.TEXT, TreeItem.CELL_MODE_CUSTOM)
 	item.set_custom_draw_callback(Columns.TEXT, func(item: TreeItem, rect: Rect2) -> void: _item_custom_draw(item, rect, icon))
-	#item.set_cell_mode(Columns.BUTTON, TreeItem.CELL_MODE_STRING)
-	#item.set_icon(Columns.ICON, icon)
-	#item.set_expand_right(Columns.ICON, false)
-	#item.set_expand_right(Columns.TEXT, true)
 	return item
 
 

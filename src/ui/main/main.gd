@@ -80,6 +80,7 @@ func open_file(path: String) -> void:
 		editors.show()
 		image_viewer.hide()
 		left_editor.load_file(path)
+		left_editor.show()
 		right_editor.hide()
 		sbs_open = false
 		EditorManager.opened_single.emit()

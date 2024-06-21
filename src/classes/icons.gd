@@ -16,8 +16,10 @@ static var open_dir: Texture2D = preload("res://src/assets/icons/open_dir.png")
 static var refresh = preload("res://src/assets/icons/refresh.png")
 
 static var file = preload("res://src/assets/icons/file.png")
+static var folder = preload("res://src/assets/icons/folder.png")
 static var file_binary = preload("res://src/assets/icons/file_binary.png")
 static var file_image = preload("res://src/assets/icons/file_image.png")
+static var file_include = preload("res://src/assets/icons/file_include.png")
 static var file_json = preload("res://src/assets/icons/file_json.png")
 static var file_md = preload("res://src/assets/icons/file_md.png")
 static var file_properties = preload("res://src/assets/icons/file_properties.png")
@@ -26,7 +28,6 @@ static var file_shader_fsh = preload("res://src/assets/icons/file_shader_fsh.png
 static var file_shader_gsh = preload("res://src/assets/icons/file_shader_gsh.png")
 static var file_shader_vsh = preload("res://src/assets/icons/file_shader_vsh.png")
 static var file_txt = preload("res://src/assets/icons/file_txt.png")
-static var folder = preload("res://src/assets/icons/folder.png")
 
 static var param: Texture2D = preload("res://src/assets/icons/code/param.png")
 static var function: Texture2D = preload("res://src/assets/icons/code/function.png")

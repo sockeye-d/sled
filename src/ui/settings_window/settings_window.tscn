@@ -1,8 +1,12 @@
-[gd_scene load_steps=4 format=3 uid="uid://bhh21mxu6765g"]
+[gd_scene load_steps=6 format=3 uid="uid://bhh21mxu6765g"]
 
 [ext_resource type="Theme" uid="uid://brmolr535bgtw" path="res://src/main.theme" id="1_8ki8x"]
 [ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="1_k1b4t"]
 [ext_resource type="Script" path="res://src/ui/settings_window/settings_window.gd" id="1_qsncc"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0ro8k"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4oaw7"]
 
 [node name="SettingsWindow" type="Window"]
 title = "Settings"
@@ -13,62 +17,57 @@ exclusive = true
 theme = ExtResource("1_8ki8x")
 script = ExtResource("1_qsncc")
 
-[node name="SplitContainer" type="SplitContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SplitContainer" type="SplitContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
 split_offset = 175
 script = ExtResource("1_k1b4t")
 relative_split_offset = 0.25
 
-[node name="LeftContainer" type="PanelContainer" parent="SplitContainer"]
+[node name="LeftContainer" type="PanelContainer" parent="PanelContainer/VBoxContainer/SplitContainer"]
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_0ro8k")
 
-[node name="MarginContainer2" type="MarginContainer" parent="SplitContainer/LeftContainer"]
+[node name="MarginContainer2" type="MarginContainer" parent="PanelContainer/VBoxContainer/SplitContainer/LeftContainer"]
 auto_translate_mode = 1
 layout_mode = 2
 
-[node name="CategoryContainer" type="VBoxContainer" parent="SplitContainer/LeftContainer/MarginContainer2"]
+[node name="CategoryContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/SplitContainer/LeftContainer/MarginContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="RightContainer" type="PanelContainer" parent="SplitContainer"]
+[node name="RightContainer" type="PanelContainer" parent="PanelContainer/VBoxContainer/SplitContainer"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_4oaw7")
 
-[node name="MarginContainer" type="MarginContainer" parent="SplitContainer/RightContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/VBoxContainer/SplitContainer/RightContainer"]
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="SplitContainer/RightContainer/MarginContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer/SplitContainer/RightContainer/MarginContainer"]
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="SettingOptionContainer" type="VBoxContainer" parent="SplitContainer/RightContainer/MarginContainer/ScrollContainer"]
+[node name="SettingOptionContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/SplitContainer/RightContainer/MarginContainer/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -74.0
-offset_top = -45.0
-grow_horizontal = 0
-grow_vertical = 0
-mouse_filter = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
-
-[node name="Button" type="Button" parent="MarginContainer"]
+[node name="Button" type="Button" parent="PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4

@@ -111,7 +111,7 @@ func _on_search_box_gui_input(event: InputEvent) -> void:
 			if event.get_modifiers_mask() & KEY_MODIFIER_MASK:
 				return
 			
-			if event.is_action_pressed("ui_text_caret_up"):
+			if event.is_action_pressed("ui_text_caret_up", true):
 				if item_list.get_selected_items():
 					var selected: int = item_list.get_selected_items()[0]
 					item_list.select(posmod(selected - 1, item_list.item_count))
@@ -121,7 +121,7 @@ func _on_search_box_gui_input(event: InputEvent) -> void:
 				else:
 					item_list.select(0)
 			
-			if event.is_action_pressed("ui_text_caret_down"):
+			if event.is_action_pressed("ui_text_caret_down", true):
 				if item_list.get_selected_items():
 					var selected: int = item_list.get_selected_items()[0]
 					item_list.select(posmod(selected + 1, item_list.item_count))

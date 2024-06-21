@@ -35,6 +35,7 @@ visible = false
 [connection signal="button_clicked" from="BrowserTree" to="BrowserTree" method="_on_button_clicked"]
 [connection signal="empty_clicked" from="BrowserTree" to="BrowserTree" method="_on_empty_clicked"]
 [connection signal="item_collapsed" from="BrowserTree" to="BrowserTree" method="_on_item_collapsed"]
+[connection signal="item_mouse_selected" from="BrowserTree" to="BrowserTree" method="_on_item_mouse_selected"]
 [connection signal="item_selected" from="BrowserTree" to="BrowserTree" method="_on_item_selected"]
 [connection signal="confirmed_data" from="BrowserTree/AddFileDialog" to="BrowserTree" method="_on_add_file_dialog_confirmed_data"]
 [connection signal="confirmed_data" from="BrowserTree/AddFolderDialog" to="BrowserTree" method="_on_add_folder_dialog_confirmed_data"]

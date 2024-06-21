@@ -18,6 +18,22 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_86qe4")
 
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NotificationTray" type="HBoxContainer" parent="MarginContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+mouse_filter = 2
+alignment = 2
+
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -95,7 +111,7 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
-[node name="NotificationTray" type="HBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
+[node name="Spacer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 8
@@ -103,7 +119,7 @@ size_flags_vertical = 8
 mouse_filter = 2
 alignment = 2
 
-[node name="Spacer" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/NotificationTray"]
+[node name="Spacer" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/Spacer"]
 layout_mode = 2
 
 [connection signal="file_opened" from="VBoxContainer/MarginContainer/VBoxContainer/MainContainer/Browser" to="." method="open_file"]
