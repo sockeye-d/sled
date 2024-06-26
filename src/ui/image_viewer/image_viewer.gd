@@ -33,3 +33,7 @@ func load_image(path: String) -> Error:
 
 func _on_filter_dropdown_item_selected(index: int) -> void:
 	(image_display.material as ShaderMaterial).set_shader_parameter(&"filter", index)
+
+
+func _on_channel_dropdown_item_selected(index: int) -> void:
+	(image_display.material as ShaderMaterial).set_shader_parameter(&"channel", index)

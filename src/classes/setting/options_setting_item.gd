@@ -18,10 +18,12 @@ func _create_control() -> Control:
 	
 	new_control.item_selected.connect(
 			func(index: int):
+				print("chaaaaaaaanged: ", index)
 				value = index
 				)
 	setting_changed.connect(
 			func(new_value):
+				print("thingy")
 				control.select(new_value)
 				)
 	

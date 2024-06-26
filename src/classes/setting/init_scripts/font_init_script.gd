@@ -4,6 +4,7 @@ extends SettingInitScript
 func on_init(item: SettingItem) -> void:
 	item.options.append("Monospace")
 	var fonts := OS.get_system_fonts()
+	fonts.sort()
 	var cascadia_code_index = -1
 	for font_index in fonts.size():
 		if fonts[font_index].to_lower() == "cascadia code":

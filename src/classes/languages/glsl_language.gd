@@ -1439,18 +1439,34 @@ class Variable extends Type:
 	
 	static func from_def(def: String, scope: int = 0) -> Array[Variable]:
 		def = def.strip_edges()
-		var def_scope_removed := StringUtil.remove_scope(StringUtil.remove_scope(def, "(", ")"), "=", ",", 0, true)
-		# idk what this does, but it works
-		var def_split := StringUtil.split_at(def_scope_removed,
-				StringUtil.rfind_any(
-						def_scope_removed,
-						StringUtil.WHITESPACE,
-						StringUtil.rtrim_index(
-							def_scope_removed, StringUtil.WHITESPACE,
-							posmod(def_scope_removed.find(","), def_scope_removed.length()) - 1
-						)
-					)
-				)
+		var def_scope_removed := StringUtil.remove_scope(
+			# Remove parenthesis
+			StringUtil.remove_scope(
+				def,
+				"(", ")"
+			),
+			# Remove the "scope" created by the "name0 = ... , name1" chain
+			"=",
+			",",
+			0,
+			true
+		)
+		var split_index: int = def_scope_removed.find(",")
+		if split_index == -1:
+			split_index = StringUtil.rfind_any(def_scope_removed, StringUtil.WHITESPACE, -1)
+		else:
+			split_index = StringUtil.rfind_any(
+				def_scope_removed,
+				StringUtil.WHITESPACE,
+				StringUtil.rtrim_index(
+					def_scope_removed,
+					StringUtil.WHITESPACE,
+					posmod(split_index, def_scope_removed.length()),
+				),
+			)
+			split_index = StringUtil.rfind_any(def_scope_removed, StringUtil.WHITESPACE, split_index - 1)
+		
+		var def_split := StringUtil.split_at(def_scope_removed, split_index)
 		var left := StringUtil.split_at_first_any(def_split[0], StringUtil.WHITESPACE, true, false)
 		
 		var var_names := def_split[1].split(",", false)

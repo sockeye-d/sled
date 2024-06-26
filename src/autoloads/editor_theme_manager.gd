@@ -3,8 +3,12 @@ extends Node
 static var theme: Theme:
 	get:
 		return preload("res://src/main.theme")
+static var last_imported_theme: Dictionary
 
 signal theme_changed(new_theme: String)
+signal scale_changed(new_scale: float)
+signal code_font_size_changed()
+signal main_font_size_changed()
 
 
 const DEFAULT_THEME: String = "vs code dark"
@@ -17,29 +21,48 @@ const LIGATURE_SHORTHANDS: Dictionary = {
 
 
 func _ready() -> void:
-	Settings.connect_setting(&"ligatures",
-		func(new_value):
-			var f = Settings.get_item(&"font").get_text()
-			EditorThemeManager.set_font(f, Settings.ligatures)
-			)
+	Settings.connect_setting(&"ligatures", func(_new_value):
+		var f = Settings.get_item(&"font").get_text()
+		EditorThemeManager.set_font(f, Settings.ligatures)
+	)
 	
-	Settings.connect_setting(&"font",
-		func(new_value):
-			var f = Settings.get_item(&"font").get_text()
-			EditorThemeManager.set_font(f, Settings.ligatures)
-			)
+	Settings.connect_setting(&"font", func(_new_value) -> void:
+		var f = Settings.get_item(&"font").get_text()
+		EditorThemeManager.set_font(f, Settings.ligatures)
+	)
 	
-	Settings.connect_setting(&"theme",
-			func(new_value):
-				var new_theme: String = Settings.get_item(&"theme").options[new_value]
-				if new_theme == "Custom":
-					await SceneTreeUtil.process_frame
-					EditorThemeManager.change_theme_from_path.call_deferred(Settings.custom_theme_path)
-					return
-				if new_theme:
-					EditorThemeManager.change_theme(new_theme)
-				)
+	Settings.connect_setting(&"theme", func(_new_value) -> void:
+		var new_theme: String = Settings.get_item(&"theme").get_text()
+		if new_theme.to_lower() == "custom":
+			await SceneTreeUtil.process_frame
+			EditorThemeManager.change_theme_from_path.call_deferred(Settings.custom_theme_path)
+			return
+		if new_theme:
+			EditorThemeManager.change_theme(new_theme)
+		)
+	
+	Settings.connect_setting(&"code_font_size", func(new_value: float) -> void:
+		theme.set_font_size(&"font_size", &"CodeEdit", new_value as int)
+		code_font_size_changed.emit()
+	)
+	
+	Settings.connect_setting(&"main_font_size", func(new_value: float) -> void:
+		theme.default_font_size = new_value
+		main_font_size_changed.emit()
+	)
 
+
+func get_scale() -> float:
+	if theme.has_default_base_scale():
+		return theme.default_base_scale
+	else:
+		return 1.0
+
+
+func set_scale(scale: float) -> void:
+	#theme.default_font_size = 16 * scale as int
+	theme.default_base_scale = scale
+	scale_changed.emit(scale)
 
 
 func change_theme_custom(theme_name: String):
@@ -62,79 +85,86 @@ func change_theme_from_path(theme_path: String):
 
 
 func change_theme_from_text(theme_text: String) -> void:
-	var colors = ThemeImporter.import_theme(theme_text, null, GLSLLanguage.base_types, GLSLLanguage.keywords.keys(), GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
+	print("frame ", Engine.get_process_frames())
+	#print_stack()
+	var start_time := Time.get_ticks_usec()
+	var colors := ThemeImporter.get_theme_dict(theme_text)
+	last_imported_theme = colors
+	ThemeImporter.add_code_edit_themes(EditorThemeManager.theme, colors)
+	print(colors)
+	print("time taken: ", (Time.get_ticks_usec() - start_time) / 1000000.0, " seconds")
+	var t: Theme = theme
 	
-	theme.set_stylebox(&"normal", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
+	t.set_stylebox(&"normal", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
 			
-	theme.set_color(&"font_color", &"CodeEdit", colors.text_color)
-	theme.set_color(&"word_highlighted_color", &"CodeEdit", Color(colors.word_highlighted_color, colors.word_highlighted_color.a * 0.5))
+	t.set_color(&"font_color", &"CodeEdit", colors.text_color)
+	t.set_color(&"word_highlighted_color", &"CodeEdit", Color(colors.word_highlighted_color, colors.word_highlighted_color.a * 0.5))
 	
-	theme.set_stylebox(&"panel", &"PanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [8, 8, 8, 8], [4]))
-	theme.set_stylebox(&"panel", &"UpperPanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [8, 8, 0, 0], [4]))
-	theme.set_stylebox(&"panel", &"LowerPanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
+	t.set_stylebox(&"panel", &"PanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [8, 8, 8, 8], [4]))
+	t.set_stylebox(&"panel", &"UpperPanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [8, 8, 0, 0], [4]))
+	t.set_stylebox(&"panel", &"LowerPanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
 	
-	theme.set_stylebox(&"panel", &"Tree", StyleBoxUtil.new_flat(colors.background_color, [8], [4]))
+	t.set_stylebox(&"panel", &"Tree", StyleBoxUtil.new_flat(colors.background_color, [8], [4]))
 	
-	theme.set_color(&"font_color", &"Tree", colors.text_color)
+	t.set_color(&"font_color", &"Tree", colors.text_color)
 	
-	theme.set_color(&"font_color", &"Button", colors.text_color)
-	theme.set_color(&"font_focus_color", &"Button", colors.text_color)
-	theme.set_color(&"font_hover_color", &"Button", colors.text_color.darkened(0.05))
-	theme.set_color(&"font_hover_pressed_color", &"Button", colors.text_color.darkened(0.15))
-	theme.set_color(&"font_pressed_color", &"Button", colors.text_color.darkened(0.1))
-	theme.set_stylebox(&"disabled", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
-	theme.set_stylebox(&"normal", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
-	theme.set_stylebox(&"hover", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
-	theme.set_stylebox(&"pressed", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
+	t.set_color(&"font_color", &"Button", colors.text_color)
+	t.set_color(&"font_focus_color", &"Button", colors.text_color)
+	t.set_color(&"font_hover_color", &"Button", colors.text_color.darkened(0.05))
+	t.set_color(&"font_hover_pressed_color", &"Button", colors.text_color.darkened(0.15))
+	t.set_color(&"font_pressed_color", &"Button", colors.text_color.darkened(0.1))
+	t.set_stylebox(&"disabled", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
+	t.set_stylebox(&"normal", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
+	t.set_stylebox(&"hover", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
+	t.set_stylebox(&"pressed", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
 	
-	theme.set_color(&"font_color", &"CheckBox", colors.text_color)
-	theme.set_color(&"font_focus_color", &"CheckBox", colors.text_color)
-	theme.set_color(&"font_hover_color", &"CheckBox", colors.text_color.darkened(0.05))
-	theme.set_color(&"font_hover_pressed_color", &"CheckBox", colors.text_color.darkened(0.15))
-	theme.set_color(&"font_pressed_color", &"CheckBox", colors.text_color.darkened(0.1))
-	theme.set_stylebox(&"disabled", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
-	theme.set_stylebox(&"normal", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
-	theme.set_stylebox(&"hover", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
-	theme.set_stylebox(&"hover_pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
-	theme.set_stylebox(&"pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
+	t.set_color(&"font_color", &"CheckBox", colors.text_color)
+	t.set_color(&"font_focus_color", &"CheckBox", colors.text_color)
+	t.set_color(&"font_hover_color", &"CheckBox", colors.text_color.darkened(0.05))
+	t.set_color(&"font_hover_pressed_color", &"CheckBox", colors.text_color.darkened(0.15))
+	t.set_color(&"font_pressed_color", &"CheckBox", colors.text_color.darkened(0.1))
+	t.set_stylebox(&"disabled", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
+	t.set_stylebox(&"normal", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
+	t.set_stylebox(&"hover", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
+	t.set_stylebox(&"hover_pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
+	t.set_stylebox(&"pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
 	
-	theme.set_color(&"font_color", &"Label", colors.text_color)
+	t.set_color(&"font_color", &"Label", colors.text_color)
 	
-	theme.set_color(&"font_color", &"LineEdit", colors.text_color)
+	t.set_color(&"font_color", &"LineEdit", colors.text_color)
 	
-	theme.set_stylebox(&"normal", &"LineEdit",
-			StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
-	theme.set_stylebox(&"read_only", &"LineEdit",
-			StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
+	t.set_stylebox(&"normal", &"LineEdit",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
+	t.set_stylebox(&"read_only", &"LineEdit",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
 	
-	theme.set_color(&"font_color", &"OptionButton", colors.text_color)
-	theme.set_color(&"font_focus_color", &"OptionButton", colors.text_color)
-	theme.set_color(&"font_hover_color", &"OptionButton", colors.text_color.lightened(0.05))
-	theme.set_color(&"font_hover_pressed_color", &"OptionButton", colors.text_color.lightened(0.15))
-	theme.set_color(&"font_pressed_color", &"OptionButton", colors.text_color.lightened(0.1))
-	theme.set_stylebox(&"normal", &"OptionButton",
-			StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
-	theme.set_stylebox(&"hover", &"OptionButton",
-			StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
-	theme.set_stylebox(&"pressed", &"OptionButton",
-			StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
+	t.set_color(&"font_color", &"OptionButton", colors.text_color)
+	t.set_color(&"font_focus_color", &"OptionButton", colors.text_color)
+	t.set_color(&"font_hover_color", &"OptionButton", colors.text_color.lightened(0.05))
+	t.set_color(&"font_hover_pressed_color", &"OptionButton", colors.text_color.lightened(0.15))
+	t.set_color(&"font_pressed_color", &"OptionButton", colors.text_color.lightened(0.1))
+	t.set_stylebox(&"normal", &"OptionButton",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
+	t.set_stylebox(&"hover", &"OptionButton",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
+	t.set_stylebox(&"pressed", &"OptionButton",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
 	
-	theme.set_stylebox(&"panel", &"AcceptDialog",
-			StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [0], [4]))
+	t.set_stylebox(&"panel", &"AcceptDialog",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [0], [4]))
 	
-	theme.set_stylebox(&"panel", &"PopupMenu",
-			StyleBoxUtil.new_flat(colors.background_color, [4], [4], [2], colors.background_color.darkened(0.2)))
-	theme.set_stylebox(&"hover", &"PopupMenu",
-			StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
-	theme.set_color(&"font_color", &"PopupMenu", colors.text_color)
-	theme.set_color(&"font_hover_color", &"PopupMenu", colors.text_color)
+	t.set_stylebox(&"panel", &"PopupMenu",
+		StyleBoxUtil.new_flat(colors.background_color, [4], [4], [2], colors.background_color.darkened(0.2)))
+	t.set_stylebox(&"hover", &"PopupMenu",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
+	t.set_color(&"font_color", &"PopupMenu", colors.text_color)
+	t.set_color(&"font_hover_color", &"PopupMenu", colors.text_color)
 	
-	theme.set_stylebox(&"panel", &"TooltipPanel",
-			StyleBoxUtil.new_flat(colors.background_color, [4], [8, 4], [2],
-			colors.background_color.lightened(0.2)))
+	t.set_stylebox(&"panel", &"TooltipPanel",
+		StyleBoxUtil.new_flat(colors.background_color, [4], [8, 4], [2],
+		colors.background_color.lightened(0.2)))
 	
-	theme.set_color(&"font_color", &"TooltipLabel", colors.text_color)
-	
+	t.set_color(&"font_color", &"TooltipLabel", colors.text_color)
 	RenderingServer.set_default_clear_color(colors.background_color.darkened(0.2))
 	
 	theme_changed.emit(theme_text)

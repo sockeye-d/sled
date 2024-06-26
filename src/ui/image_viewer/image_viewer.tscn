@@ -11,6 +11,7 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1bwg3"]
 shader = ExtResource("3_qexas")
 shader_parameter/filter = 1
+shader_parameter/channel = 0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kgole"]
 
@@ -46,6 +47,7 @@ size_flags_vertical = 3
 [node name="ImageDisplay" type="TextureRect" parent="VBoxContainer/PanZoomScrollContainer/CenterContainer"]
 unique_name_in_owner = true
 material = SubResource("ShaderMaterial_1bwg3")
+custom_minimum_size = Vector2(885.888, 472.935)
 layout_mode = 2
 texture = ExtResource("2_c1t0a")
 expand_mode = 2
@@ -91,4 +93,21 @@ popup/item_2/text = "Bicubic"
 popup/item_2/icon = ExtResource("3_wnv43")
 popup/item_2/id = 2
 
+[node name="ChannelDropdown" type="OptionButton" parent="VBoxContainer/BottomToolbar/RightToolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 5
+popup/item_0/text = "Full"
+popup/item_0/id = 2
+popup/item_1/text = "R"
+popup/item_1/id = 1
+popup/item_2/text = "G"
+popup/item_2/id = 2
+popup/item_3/text = "B"
+popup/item_3/id = 3
+popup/item_4/text = "A"
+popup/item_4/id = 4
+
 [connection signal="item_selected" from="VBoxContainer/BottomToolbar/RightToolbar/FilterDropdown" to="." method="_on_filter_dropdown_item_selected"]
+[connection signal="item_selected" from="VBoxContainer/BottomToolbar/RightToolbar/ChannelDropdown" to="." method="_on_channel_dropdown_item_selected"]

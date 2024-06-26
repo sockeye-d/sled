@@ -6,6 +6,15 @@ signal find_requested()
 
 
 @onready var editor: Editor = $".."
+@onready var zoom_label: Label = %ZoomLabel
+var zoom: float = 1.0
+
+
+func _ready() -> void:
+	_set_zoom()
+	EditorThemeManager.scale_changed.connect(func(_new_scale: float) -> void: _set_zoom())
+	EditorThemeManager.code_font_size_changed.connect(func() -> void: _set_zoom())
+
 
 func _gui_input(event: InputEvent) -> void:
 	if not editable:
@@ -25,6 +34,22 @@ func _gui_input(event: InputEvent) -> void:
 				set_caret_line(get_caret_line(caret_index))
 		if event.is_action_pressed("save", true, true):
 			save_requested.emit()
+		if event.is_action_pressed(&"reset_zoom", false, true):
+			zoom = 1.0
+			_set_zoom()
+	if event.is_action_pressed(&"zoom_in", true, true):
+		zoom += 0.2
+		zoom = clampf(zoom, 0.2, 3.0)
+		_set_zoom()
+	if event.is_action_pressed(&"zoom_out", true, true):
+		zoom -= 0.2
+		zoom = clampf(zoom, 0.2, 3.0)
+		_set_zoom()
+
+
+func _set_zoom() -> void:
+	add_theme_font_size_override(&"font_size", EditorThemeManager.theme.get_font_size(&"font_size", &"CodeEdit") * zoom * EditorThemeManager.get_scale() as int)
+	zoom_label.text = "%.f" % (zoom * 100.0) + "%"
 
 
 func _make_custom_tooltip(for_text: String) -> Object:

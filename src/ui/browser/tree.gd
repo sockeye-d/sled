@@ -168,9 +168,9 @@ func _item_custom_draw(item: TreeItem, rect: Rect2, icon: Texture2D) -> void:
 	var string_size := f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, f_size)
 	var icon_width := get_theme_constant(&"icon_max_width")
 	if icon_width == 0:
-		icon_width = icon.get_width()
+		icon_width = icon.get_width() * EditorThemeManager.get_scale()
 	else:
-		icon_width = mini(icon_width, icon.get_width())
+		icon_width = mini(icon_width, icon.get_width() * EditorThemeManager.get_scale())
 	var icon_offset := (rect.size.y - icon_width) / 2.0
 	var icon_rect := Rect2(round(rect.position + Vector2.ONE * icon_offset), Vector2(icon_width, icon_width))
 	if icon_rect.size.x + 2.0 * icon_offset > rect.size.x:

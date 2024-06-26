@@ -9,13 +9,3 @@ func on_init(item: SettingItem) -> void:
 	
 	item.default_value = item.options.find(EditorThemeManager.DEFAULT_THEME)
 	
-	item.setting_changed.connect.call_deferred(
-			func(new_value):
-				var new_theme: String = item.options[new_value]
-				if new_theme == "Custom":
-					await SceneTreeUtil.process_frame
-					EditorThemeManager.change_theme_from_path.call_deferred(Settings.custom_theme_path)
-					return
-				if new_theme:
-					EditorThemeManager.change_theme(new_theme)
-				)

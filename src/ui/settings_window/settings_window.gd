@@ -15,14 +15,7 @@ signal setting_changed(identifier: StringName, new_value)
 @onready var right_container: PanelContainer = %RightContainer
 
 
-@export var repopulate_settings: bool = false:
-	set(value):
-		if value:
-			populate_setting_categories()
-		repopulate_settings = value
-	get:
-		return repopulate_settings
-@export var setting_categories: Array[SettingCategory]
+var setting_categories: Array[SettingCategory]
 var settings: Dictionary
 var settings_items: Dictionary
 
@@ -33,7 +26,11 @@ func _init() -> void:
 
 func _ready() -> void:
 	populate_setting_categories()
-	button.pressed.connect(func(): OS.shell_show_in_file_manager(ProjectSettings.globalize_path(Settings.SETTINGS_PATH)))
+	button.pressed.connect(func():
+		OS.shell_show_in_file_manager(
+			ProjectSettings.globalize_path(Settings.SETTINGS_PATH)
+		)
+	)
 	await SceneTreeUtil.process_frame
 	await SceneTreeUtil.process_frame
 	emit_changed_all()
@@ -58,28 +55,51 @@ func set_all_to_default() -> void:
 
 
 func populate_setting_categories() -> void:
-	NodeUtil.free_children(category_container)
+	NodeUtil.remove_children(category_container)
 	settings.clear()
-	
 	for setting_category in setting_categories:
 		add_setting_category(setting_category)
 		
 		for setting in setting_category.settings:
 			settings[setting.identifier] = setting.value if setting.value else setting._get_default_value()
-			setting.setting_changed.connect(
-					func(new_value):
-						settings[setting.identifier] = new_value
-						setting_changed.emit(setting.identifier, new_value)
-						)
+			if setting.setting_changed.get_connections().size() == 0:
+				setting.setting_changed.connect(
+						func(new_value):
+							settings[setting.identifier] = new_value
+							print("emitted0")
+							setting_changed.emit(setting.identifier, new_value)
+							)
 			settings_items[setting.identifier] = setting
 	
 	population_complete.emit()
 
+
+func add_setting_category(category: SettingCategory) -> void:
+	var button = HighlightButton.new()
+	
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.text = category.name
+	button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	
+	if category_container:
+		category_container.add_child(button)
+	
+	button.pressed.connect(func():
+		right_container.show()
+		populate_settings(category)
+	)
+
+
 func populate_settings(category: SettingCategory) -> void:
-	NodeUtil.free_children(setting_option_container)
+	var removed_nodes := NodeUtil.remove_children(setting_option_container, true)
+	for node in removed_nodes:
+		if not node.has_meta(&"item_control"):
+			node.queue_free()
 	
 	for setting in category.settings:
 		setting.create_control()
+		setting.run_init_script.call_deferred()
 		setting.control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		
 		var button = HighlightButton.new()
@@ -101,11 +121,10 @@ func populate_settings(category: SettingCategory) -> void:
 		container.add_child(button)
 		container.add_child(reset_button)
 		container.add_child(setting.control)
-		setting.setting_changed.connect(
-			func(new_value):
-				if reset_button:
-					reset_button.visible = not new_value == setting._get_default_value()
-				)
+		setting.setting_changed.connect(func(new_value):
+			if reset_button:
+				reset_button.visible = not new_value == setting._get_default_value()
+		)
 		
 		if setting is DividerSettingItem:
 			button.add_theme_font_override(&"font", Fonts.main_font_bold)
@@ -113,27 +132,11 @@ func populate_settings(category: SettingCategory) -> void:
 		setting_option_container.add_child(container)
 
 
-func add_setting_category(category: SettingCategory) -> void:
-	var button = HighlightButton.new()
-	
-	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	button.text = category.name
-	button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	
-	if category_container:
-		category_container.add_child(button)
-	
-	button.pressed.connect(func():
-		right_container.show()
-		populate_settings(category)
-	)
-
-
 func load_settings(new_settings: Dictionary) -> void:
 	setting_categories.assign(SETTING_CATEGORIES.setting_categories)
 	if not settings_items:
 		populate_setting_categories()
+	#settings = new_settings
 	for s in settings:
 		if s in settings_items and s in new_settings:
 			settings_items[s].value = new_settings[s]

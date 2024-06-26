@@ -1,6 +1,7 @@
 shader_type canvas_item;
 
 uniform int filter;
+uniform int channel;
 
 float mip_level(vec2 uv, vec2 tex_size) {
 	vec2 dx = dFdx( uv * tex_size );
@@ -15,7 +16,7 @@ float mip_level(vec2 uv, vec2 tex_size) {
 
 vec4 texture_nearest(sampler2D t, vec2 uv, int lod) {
 	vec2 size = vec2(textureSize(t, lod));
-	uv = round(uv * size) / size;
+	uv = floor(uv * size) / size;
 	return textureLod(t, uv, float(lod));
 }
 
@@ -88,5 +89,21 @@ void fragment() {
 			t = texture_bicubic_lod(TEXTURE, UV, lod);
 			break;
 	}
+	
+	switch(channel) {
+		case 1:
+			t = vec4(t.xxx, 1.0);
+			break;
+		case 2:
+			t = vec4(t.yyy, 1.0);
+			break;
+		case 3:
+			t = vec4(t.zzz, 1.0);
+			break;
+		case 4:
+			t = vec4(t.www, 1.0);
+			break;
+	}
+	
 	COLOR = t;
 }

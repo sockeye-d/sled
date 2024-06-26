@@ -63,3 +63,4 @@ func change_zoom(fac: float, toward_mouse: bool = true) -> void:
 		ZoomMode.EXPONENTIAL:
 			new_zoom *= exp(fac * zoom_step)
 	zoom = clampf(new_zoom, zoom_min, zoom_max)
+	zoomed.emit(zoom)

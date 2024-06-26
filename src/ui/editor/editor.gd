@@ -52,6 +52,9 @@ var found_ranges: Array[Vector2i]
 var current_range_index: int
 
 
+var highlighter: CodeHighlighter = CodeHighlighter.new()
+
+
 var analysis_thread: Thread = Thread.new()
 var analyzer_invalidate_sem: Semaphore = Semaphore.new()
 ## [code]{ file_path: String, text: String, base_path: String, exit_loop: bool }[/code]
@@ -126,12 +129,9 @@ func load_file(path: String) -> void:
 
 	path_button.text = path.get_file()
 	
-	if Settings.syntax_highlighting_enabled:
-		if path.get_extension() in Settings.syntax_highlighted_files.split(",", false):
-			if code_editor.syntax_highlighter == null:
-				load_theme(ThemeImporter.last_imported_theme)
-		else:
-			code_editor.syntax_highlighter = null
+	if Settings.syntax_highlighting_enabled and path.get_extension() in Settings.get_arr(&"syntax_highlighted_files"):
+		if code_editor.syntax_highlighter != null:
+			code_editor.syntax_highlighter = highlighter
 	else:
 		code_editor.syntax_highlighter = null
 	
@@ -167,7 +167,7 @@ func save(path: String = file_path) -> void:
 
 func load_theme(file: String) -> void:
 	if file and code_editor:
-		ThemeImporter.import_theme(file, code_editor, GLSLLanguage.base_types, GLSLLanguage.keywords.keys(), GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
+		ThemeImporter.mut_highlighter(EditorThemeManager.last_imported_theme, highlighter, GLSLLanguage.base_types, GLSLLanguage.keywords.keys(), GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
 		if not code_editor.syntax_highlighter.has_color_region("#"):
 			code_editor.syntax_highlighter.add_color_region("#", "", get_theme_color("background_color").lightened(0.5))
 
