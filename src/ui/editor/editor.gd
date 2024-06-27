@@ -88,15 +88,16 @@ func _ready() -> void:
 	_set_all_settings()
 
 
-func _exit_tree() -> void:
-	analyzer_mut.lock()
-	analysis_data = { "file_path": "", "text": "", "base_path": "", "exit_loop": true }
-	analyzer_mut.unlock()
-	analyzer_invalidate_sem.post()
-	analysis_thread.wait_to_finish()
+#func _exit_tree() -> void:
+	#unload_file()
+	#analyzer_mut.lock()
+	#analysis_data = { "file_path": "", "text": "", "base_path": "", "exit_loop": true }
+	#analyzer_mut.unlock()
+	#analyzer_invalidate_sem.post()
+	#analysis_thread.wait_to_finish()
 
 
-func load_file(path: String) -> void:
+func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -> void:
 	if file_handle and path == file_handle.get_path_absolute():
 		return
 	if file_handle and not code_editor.text == last_saved_text:
@@ -118,15 +119,21 @@ func load_file(path: String) -> void:
 		#file_handle = old_file_handle
 		unload_file.call_deferred()
 		return
-
+	
 	NotificationManager.notify("Opened %s" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_NORMAL)
 	if old_file_handle:
 		old_file_handle.close()
 	code_editor.editable = true
 	code_editor.text = file_handle.get_as_text(true)
+	code_editor.clear_undo_history()
 	last_saved_text = code_editor.text
 	old_text = code_editor.text
-
+	
+	if selection_from > 0:
+		var a := StringUtil.get_line_col(code_editor.text, selection_from)
+		var b := StringUtil.get_line_col(code_editor.text, selection_to)
+		code_editor.select(a.y, a.x, b.y, b.x)
+	
 	path_button.text = path.get_file()
 	
 	if Settings.syntax_highlighting_enabled and path.get_extension() in Settings.get_arr(&"syntax_highlighted_files"):
@@ -168,8 +175,8 @@ func save(path: String = file_path) -> void:
 func load_theme(file: String) -> void:
 	if file and code_editor:
 		ThemeImporter.mut_highlighter(EditorThemeManager.last_imported_theme, highlighter, GLSLLanguage.base_types, GLSLLanguage.keywords.keys(), GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
-		if not code_editor.syntax_highlighter.has_color_region("#"):
-			code_editor.syntax_highlighter.add_color_region("#", "", get_theme_color("background_color").lightened(0.5))
+		if not highlighter.has_color_region("#"):
+			highlighter.add_color_region("#", "", get_theme_color("background_color").lightened(0.5))
 
 
 func analyze_file_on_thread() -> void:

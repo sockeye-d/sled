@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://b45p8nijrvd3v"]
+[gd_scene load_steps=7 format=3 uid="uid://b45p8nijrvd3v"]
 
 [ext_resource type="Script" path="res://src/ui/browser/browser.gd" id="1_pepdc"]
 [ext_resource type="Script" path="res://src/ui/browser/tree.gd" id="2_3wiph"]
 [ext_resource type="PackedScene" uid="uid://c1y3wecbymbg5" path="res://src/ui/add_file_folder_dialogs/add_file_dialog.tscn" id="3_evlqf"]
 [ext_resource type="PackedScene" uid="uid://blrmwwygqy4wt" path="res://src/ui/add_file_folder_dialogs/add_folder_dialog.tscn" id="4_3wydx"]
+[ext_resource type="PackedScene" uid="uid://uyiydlj6idmu" path="res://src/ui/find_dialog/find_dialog.tscn" id="5_myltl"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hk8o6"]
 
@@ -27,6 +28,10 @@ unique_name_in_owner = true
 visible = false
 
 [node name="AddFolderDialog" parent="BrowserTree" instance=ExtResource("4_3wydx")]
+unique_name_in_owner = true
+visible = false
+
+[node name="FindDialog" parent="BrowserTree" instance=ExtResource("5_myltl")]
 unique_name_in_owner = true
 visible = false
 

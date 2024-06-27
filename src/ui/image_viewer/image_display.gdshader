@@ -7,9 +7,9 @@ float mip_level(vec2 uv, vec2 tex_size) {
 	vec2 dx = dFdx( uv * tex_size );
 	vec2 dy = dFdy( uv * tex_size );
 	float d = max( dot( dx, dx ), dot( dy, dy ) );
-	    
+
 	float mipLevel = 0.5 * log2(d);
-	mipLevel = floor(mipLevel);   
+	mipLevel = floor(mipLevel);
 
 	return max(0.0, mipLevel);
 }
@@ -89,7 +89,7 @@ void fragment() {
 			t = texture_bicubic_lod(TEXTURE, UV, lod);
 			break;
 	}
-	
+
 	switch(channel) {
 		case 1:
 			t = vec4(t.xxx, 1.0);
@@ -104,6 +104,6 @@ void fragment() {
 			t = vec4(t.www, 1.0);
 			break;
 	}
-	
+
 	COLOR = t;
 }

@@ -22,8 +22,8 @@ func _create_control() -> Control:
 	
 	line_edit.text_changed.connect(func(new_text: String): value = new_text)
 	button.pressed.connect(_show_file_dialog)
-	hbox.add_child(line_edit)
-	hbox.add_child(button)
+	hbox.add_child(line_edit, false, Node.INTERNAL_MODE_BACK)
+	hbox.add_child(button, false, Node.INTERNAL_MODE_BACK)
 	
 	return hbox
 

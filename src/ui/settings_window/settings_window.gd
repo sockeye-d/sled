@@ -1,4 +1,3 @@
-@tool
 class_name SettingsWindow extends Window
 
 
@@ -7,6 +6,7 @@ const SETTING_CATEGORIES = preload("res://src/ui/settings_window/setting_categor
 
 signal population_complete()
 signal setting_changed(identifier: StringName, new_value)
+signal secret_signaled
 
 
 @onready var category_container: VBoxContainer = %CategoryContainer
@@ -15,9 +15,14 @@ signal setting_changed(identifier: StringName, new_value)
 @onready var right_container: PanelContainer = %RightContainer
 
 
+@export var secret_code: Array[InputEvent]
+
+
 var setting_categories: Array[SettingCategory]
 var settings: Dictionary
 var settings_items: Dictionary
+var current_category := ""
+var current_secret_index: int
 
 
 func _init() -> void:
@@ -34,11 +39,22 @@ func _ready() -> void:
 	await SceneTreeUtil.process_frame
 	await SceneTreeUtil.process_frame
 	emit_changed_all()
+	
+	secret_signaled.connect(func(): print("hello"))
 
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("escape"):
 		hide()
+	if event.is_pressed():
+		if event.is_match(secret_code[current_secret_index], false):
+			current_secret_index += 1
+			if current_secret_index == secret_code.size():
+				secret_signaled.emit()
+				current_secret_index = 0
+		elif event is InputEventKey:
+			current_secret_index = 0
+		print(current_secret_index)
 
 
 func set_all_to_default() -> void:
@@ -86,16 +102,17 @@ func add_setting_category(category: SettingCategory) -> void:
 		category_container.add_child(button)
 	
 	button.pressed.connect(func():
-		right_container.show()
-		populate_settings(category)
+		if category.name != current_category:
+			current_category = category.name
+			right_container.show()
+			populate_settings(category)
 	)
 
 
 func populate_settings(category: SettingCategory) -> void:
-	var removed_nodes := NodeUtil.remove_children(setting_option_container, true)
+	var removed_nodes := NodeUtil.remove_children(setting_option_container, true, false, func(node: Node) -> bool: return not node.has_meta(&"item_control"))
 	for node in removed_nodes:
-		if not node.has_meta(&"item_control"):
-			node.queue_free()
+		node.queue_free()
 	
 	for setting in category.settings:
 		setting.create_control()

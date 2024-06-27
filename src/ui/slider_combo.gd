@@ -39,16 +39,21 @@ enum DraggingStates {
 		_resize()
 	get:
 		return slider_visible
+var _slider_value: float:
+	get:
+		return _slider_value
+	set(v):
+		slider.value = v
+		line_edit.text = "%s%.*f" % [prefix, max(ceil(log(1.0 / step) / log(10.0)), 0.0), v]
+		_slider_value = v
 @export var slider_value: float:
 	set(v):
 		v = _constrain(v)
-		slider.value = v
-		line_edit.text = "%s%.*f" % [prefix, max(ceil(log(1.0 / step) / log(10.0)), 0.0), v]
+		_slider_value = v
 		slider_value_changed.emit(v)
-		slider_value = v
 		set_value_no_signal(v)
 	get:
-		return slider_value
+		return _slider_value
 
 
 var line_edit: LineEdit
@@ -66,11 +71,11 @@ func _init() -> void:
 	if outer_container == null:
 		outer_container = PanelContainer.new()
 		outer_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		add_child(outer_container)
+		add_child(outer_container, false, Node.INTERNAL_MODE_BACK)
 	else:
 		remove_child(outer_container)
 		outer_container = outer_container.duplicate()
-		add_child(outer_container)
+		add_child(outer_container, false, Node.INTERNAL_MODE_BACK)
 	
 	if margin_container == null:
 		margin_container = MarginContainer.new()
@@ -79,7 +84,7 @@ func _init() -> void:
 		margin_container.add_theme_constant_override("margin_right",  0)
 		margin_container.add_theme_constant_override("margin_top",    0)
 		margin_container.add_theme_constant_override("margin_bottom", 0)
-		outer_container.add_child(margin_container)
+		outer_container.add_child(margin_container, false, Node.INTERNAL_MODE_BACK)
 	
 	if container == null:
 		container = VBoxContainer.new()
@@ -87,7 +92,7 @@ func _init() -> void:
 		container.resized.connect(_resize)
 		container.add_theme_constant_override("separation", 0)
 		
-		margin_container.add_child(container)
+		margin_container.add_child(container, false, Node.INTERNAL_MODE_BACK)
 	
 	if line_edit == null:
 		line_edit = LineEdit.new()
@@ -99,7 +104,7 @@ func _init() -> void:
 		line_edit.context_menu_enabled = false
 		line_edit.caret_blink = true
 		line_edit.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
-		container.add_child(line_edit)
+		container.add_child(line_edit, false, Node.INTERNAL_MODE_BACK)
 	
 	if slider == null:
 		slider = HSlider.new()
@@ -108,7 +113,7 @@ func _init() -> void:
 		slider.min_value = min_value
 		slider.max_value = max_value
 		slider.step = step
-		container.add_child(slider)
+		container.add_child(slider, false, Node.INTERNAL_MODE_BACK)
 		slider.drag_ended.connect(func(v): changed_ended.emit())
 	
 	if not value_changed.is_connected(_on_value_changed):
@@ -122,6 +127,12 @@ func _init() -> void:
 
 func _ready() -> void:
 	line_edit.text = "%s%.*f" % [prefix, max(ceil(log(1.0 / step) / log(10.0)), 0.0), slider_value]
+
+
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_THEME_CHANGED:
+			outer_container.add_theme_stylebox_override(&"panel", get_theme_stylebox(&"panel", &"SliderCombo"))
 
 
 func _on_changed() -> void:
@@ -204,3 +215,8 @@ func _constrain(v: float) -> float:
 func _value_changed(new_value: float) -> void:
 	slider_value = _constrain(new_value)
 	slider_value_changed_without_set.emit(slider_value)
+
+
+func set_value_no_signal_(v: float) -> void:
+	v = _constrain(v)
+	_slider_value = v

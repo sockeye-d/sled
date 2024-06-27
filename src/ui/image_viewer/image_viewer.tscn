@@ -47,7 +47,6 @@ size_flags_vertical = 3
 [node name="ImageDisplay" type="TextureRect" parent="VBoxContainer/PanZoomScrollContainer/CenterContainer"]
 unique_name_in_owner = true
 material = SubResource("ShaderMaterial_1bwg3")
-custom_minimum_size = Vector2(885.888, 472.935)
 layout_mode = 2
 texture = ExtResource("2_c1t0a")
 expand_mode = 2

@@ -36,6 +36,23 @@ func _init(_name: String = "") -> void:
 		).call_deferred()
 
 
+func _property_can_revert(property: StringName) -> bool:
+	match property:
+		&"identifier":
+			return true
+	return false
+
+
+func _property_get_revert(property: StringName) -> Variant:
+	match property:
+		&"identifier":
+			if name:
+				return name.to_snake_case()
+			else:
+				return null
+	return null
+
+
 func run_init_script() -> void:
 	if not init_script_ran and init_script:
 		ScriptUtils.run(init_script, SettingInitScript.METHOD, [self])

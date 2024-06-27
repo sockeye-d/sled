@@ -1,8 +1,65 @@
-[gd_scene load_steps=6 format=3 uid="uid://bhh21mxu6765g"]
+[gd_scene load_steps=17 format=3 uid="uid://bhh21mxu6765g"]
 
 [ext_resource type="Theme" uid="uid://brmolr535bgtw" path="res://src/main.theme" id="1_8ki8x"]
 [ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="1_k1b4t"]
 [ext_resource type="Script" path="res://src/ui/settings_window/settings_window.gd" id="1_qsncc"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_4l4ss"]
+device = -1
+pressed = true
+keycode = 4194320
+
+[sub_resource type="InputEventKey" id="InputEventKey_var2v"]
+device = -1
+pressed = true
+keycode = 4194320
+
+[sub_resource type="InputEventKey" id="InputEventKey_yd07q"]
+device = -1
+pressed = true
+keycode = 4194322
+
+[sub_resource type="InputEventKey" id="InputEventKey_rrtgh"]
+device = -1
+pressed = true
+keycode = 4194322
+
+[sub_resource type="InputEventKey" id="InputEventKey_xaci1"]
+device = -1
+pressed = true
+keycode = 4194319
+
+[sub_resource type="InputEventKey" id="InputEventKey_lv2as"]
+device = -1
+pressed = true
+keycode = 4194321
+
+[sub_resource type="InputEventKey" id="InputEventKey_h2c1i"]
+device = -1
+pressed = true
+keycode = 4194319
+
+[sub_resource type="InputEventKey" id="InputEventKey_lolqo"]
+device = -1
+pressed = true
+keycode = 4194321
+
+[sub_resource type="InputEventKey" id="InputEventKey_7dvbk"]
+device = -1
+pressed = true
+keycode = 66
+unicode = 98
+
+[sub_resource type="InputEventKey" id="InputEventKey_t8w3d"]
+device = -1
+pressed = true
+keycode = 65
+unicode = 97
+
+[sub_resource type="InputEventKey" id="InputEventKey_1h8ub"]
+device = -1
+pressed = true
+keycode = 4194309
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0ro8k"]
 
@@ -16,6 +73,7 @@ transient = true
 exclusive = true
 theme = ExtResource("1_8ki8x")
 script = ExtResource("1_qsncc")
+secret_code = Array[InputEvent]([SubResource("InputEventKey_4l4ss"), SubResource("InputEventKey_var2v"), SubResource("InputEventKey_yd07q"), SubResource("InputEventKey_rrtgh"), SubResource("InputEventKey_xaci1"), SubResource("InputEventKey_lv2as"), SubResource("InputEventKey_h2c1i"), SubResource("InputEventKey_lolqo"), SubResource("InputEventKey_7dvbk"), SubResource("InputEventKey_t8w3d"), SubResource("InputEventKey_1h8ub")])
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 anchors_preset = 15
@@ -50,7 +108,6 @@ layout_mode = 2
 
 [node name="RightContainer" type="PanelContainer" parent="PanelContainer/VBoxContainer/SplitContainer"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4oaw7")
 

@@ -25,7 +25,7 @@ func _create_control() -> Control:
 		new_control.slider_value = _get_default_value()
 	
 	new_control.changed_ended.connect(func(): value = control.slider_value)
-	self.setting_changed.connect(func(new_value): control.set_value_no_signal(new_value))
+	self.setting_changed.connect(func(new_value): control.set_value_no_signal_(new_value))
 	
 	return new_control
 

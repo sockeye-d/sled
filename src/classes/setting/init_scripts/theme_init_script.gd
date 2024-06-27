@@ -3,7 +3,7 @@ extends SettingInitScript
 
 func on_init(item: SettingItem) -> void:
 	item.options.clear()
-	item.options.append("Custom")
+	item.options.append("custom")
 	for t in EditorThemeManager.THEMES.themes:
 		item.options.append(t)
 	

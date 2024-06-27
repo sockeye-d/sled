@@ -42,7 +42,7 @@ static func mut_highlighter(
 	return highlighter
 
 
-static func get_theme_dict(file: String) -> Dictionary:
+static func get_theme_dict(file: String, random: bool = false) -> Dictionary:
 	var theme_dict: Dictionary = { }
 	if last_imported_theme == file:
 		theme_dict = last_imported_theme_dict
@@ -51,7 +51,7 @@ static func get_theme_dict(file: String) -> Dictionary:
 			var key_value: PackedStringArray = line.replace(" ", "") .split("=")
 			if not key_value.size() == 2:
 				continue
-			var value = Color(key_value[1].strip_edges().trim_prefix('"').trim_suffix('"'))
+			var value = Color(randf(), randf(), randf()) if random else Color(key_value[1].strip_edges().trim_prefix('"').trim_suffix('"'))
 			theme_dict[key_value[0]] = value
 	
 	last_imported_theme_dict = theme_dict
@@ -60,7 +60,7 @@ static func get_theme_dict(file: String) -> Dictionary:
 
 static func add_code_edit_themes(theme: Theme, colors: Dictionary) -> void:
 	for key in colors:
-		if ThemeDB.get_default_theme().has_color(key, &"CodeEdit"):
+		if String(key).is_valid_identifier():
 			theme.set_color(key, &"CodeEdit", colors[key])
 
 

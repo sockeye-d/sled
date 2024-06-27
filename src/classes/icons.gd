@@ -14,6 +14,7 @@ static var open_folder: Texture2D = preload("res://src/assets/icons/open_folder.
 static var open_file: Texture2D = preload("res://src/assets/icons/open_file.png")
 static var open_dir: Texture2D = preload("res://src/assets/icons/open_dir.png")
 static var refresh = preload("res://src/assets/icons/refresh.png")
+static var folder_find = preload("res://src/assets/icons/folder_find.png")
 
 static var file = preload("res://src/assets/icons/file.png")
 static var folder = preload("res://src/assets/icons/folder.png")

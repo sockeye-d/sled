@@ -4,7 +4,7 @@ extends Node
 const SETTINGS_PATH: String = "user://settings.sled"
 
 
-var settings_window: SettingsWindow = preload("res://src/ui/settings_window/settings_window.tscn").instantiate()
+var settings_window: SettingsWindow = load("res://src/ui/settings_window/settings_window.tscn").instantiate()
 var settings: Dictionary:
 	get:
 		if settings_window:

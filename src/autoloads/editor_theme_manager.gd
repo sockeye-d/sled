@@ -1,9 +1,9 @@
 extends Node
 
-static var theme: Theme:
+var theme: Theme:
 	get:
-		return preload("res://src/main.theme")
-static var last_imported_theme: Dictionary
+		return ThemeDB.get_project_theme()
+var last_imported_theme: Dictionary
 
 signal theme_changed(new_theme: String)
 signal scale_changed(new_scale: float)
@@ -39,7 +39,13 @@ func _ready() -> void:
 			return
 		if new_theme:
 			EditorThemeManager.change_theme(new_theme)
-		)
+	)
+	
+	Settings.connect_setting(&"custom_theme_path", func(path: String) -> void:
+		var current_theme: String = Settings.get_item(&"theme").get_text()
+		if current_theme.to_lower() == "custom" and FileAccess.file_exists(path):
+			EditorThemeManager.change_theme_from_path(Settings.custom_theme_path)
+	)
 	
 	Settings.connect_setting(&"code_font_size", func(new_value: float) -> void:
 		theme.set_font_size(&"font_size", &"CodeEdit", new_value as int)
@@ -50,6 +56,8 @@ func _ready() -> void:
 		theme.default_font_size = new_value
 		main_font_size_changed.emit()
 	)
+	
+	Settings.settings_window.secret_signaled.connect(func(): EditorThemeManager.change_theme("vs code dark", true))
 
 
 func get_scale() -> float:
@@ -70,9 +78,9 @@ func change_theme_custom(theme_name: String):
 		change_theme_from_text(THEMES.themes[theme_name])
 
 
-func change_theme(theme_name: String):
+func change_theme(theme_name: String, random := false):
 	if theme_name in THEMES.themes:
-		change_theme_from_text(THEMES.themes[theme_name])
+		change_theme_from_text(THEMES.themes[theme_name], random)
 
 
 func change_theme_from_path(theme_path: String):
@@ -84,19 +92,25 @@ func change_theme_from_path(theme_path: String):
 	change_theme_from_text(file)
 
 
-func change_theme_from_text(theme_text: String) -> void:
-	print("frame ", Engine.get_process_frames())
-	#print_stack()
-	var start_time := Time.get_ticks_usec()
-	var colors := ThemeImporter.get_theme_dict(theme_text)
+func change_theme_from_text(theme_text: String, random: bool = false) -> void:
+	var root := get_tree().root
+	var main_scene := get_node_or_null(^"/root/Main")
+	var settings_window_scene := get_node_or_null(^"/root/SettingsWindow")
+	if main_scene:
+		root.remove_child(main_scene)
+	if settings_window_scene:
+		root.remove_child(settings_window_scene)
+	
+	await get_tree().process_frame
+	
+	var colors := ThemeImporter.get_theme_dict(theme_text, random)
 	last_imported_theme = colors
 	ThemeImporter.add_code_edit_themes(EditorThemeManager.theme, colors)
-	print(colors)
-	print("time taken: ", (Time.get_ticks_usec() - start_time) / 1000000.0, " seconds")
 	var t: Theme = theme
 	
+	t.clear_color(&"background_color", &"CodeEdit")
 	t.set_stylebox(&"normal", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
-			
+	
 	t.set_color(&"font_color", &"CodeEdit", colors.text_color)
 	t.set_color(&"word_highlighted_color", &"CodeEdit", Color(colors.word_highlighted_color, colors.word_highlighted_color.a * 0.5))
 	
@@ -110,13 +124,23 @@ func change_theme_from_text(theme_text: String) -> void:
 	
 	t.set_color(&"font_color", &"Button", colors.text_color)
 	t.set_color(&"font_focus_color", &"Button", colors.text_color)
-	t.set_color(&"font_hover_color", &"Button", colors.text_color.darkened(0.05))
-	t.set_color(&"font_hover_pressed_color", &"Button", colors.text_color.darkened(0.15))
-	t.set_color(&"font_pressed_color", &"Button", colors.text_color.darkened(0.1))
+	t.set_color(&"font_hover_color", &"Button", colors.text_color)
+	t.set_color(&"font_hover_pressed_color", &"Button", colors.text_color)
+	t.set_color(&"font_pressed_color", &"Button", colors.text_color)
 	t.set_stylebox(&"disabled", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
 	t.set_stylebox(&"normal", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
 	t.set_stylebox(&"hover", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
 	t.set_stylebox(&"pressed", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
+	
+	t.set_color(&"font_color", &"MenuBar", colors.text_color)
+	t.set_color(&"font_focus_color", &"MenuBar", colors.text_color)
+	t.set_color(&"font_hover_color", &"MenuBar", colors.text_color.darkened(0.05))
+	t.set_color(&"font_hover_pressed_color", &"MenuBar", colors.text_color.darkened(0.15))
+	t.set_color(&"font_pressed_color", &"MenuBar", colors.text_color.darkened(0.1))
+	t.set_stylebox(&"disabled", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
+	t.set_stylebox(&"normal", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color, [4], [4]))
+	t.set_stylebox(&"hover", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.lightened(0.05), [4], [4]))
+	t.set_stylebox(&"pressed", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.lightened(0.075), [4], [4]))
 	
 	t.set_color(&"font_color", &"CheckBox", colors.text_color)
 	t.set_color(&"font_focus_color", &"CheckBox", colors.text_color)
@@ -127,16 +151,35 @@ func change_theme_from_text(theme_text: String) -> void:
 	t.set_stylebox(&"normal", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
 	t.set_stylebox(&"hover", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
 	t.set_stylebox(&"hover_pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
-	t.set_stylebox(&"pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
+	t.set_stylebox(&"pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
 	
 	t.set_color(&"font_color", &"Label", colors.text_color)
 	
 	t.set_color(&"font_color", &"LineEdit", colors.text_color)
-	
 	t.set_stylebox(&"normal", &"LineEdit",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
 	t.set_stylebox(&"read_only", &"LineEdit",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
+	
+	t.set_stylebox(&"panel", &"SliderCombo",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
+	
+	t.set_stylebox(&"slider", &"HSlider",
+		StyleBoxUtil.new_flat(colors.background_color, [4], [0, 2]))
+	t.set_stylebox(&"grabber_area", &"HSlider",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(0.08), [4], [0, 2]))
+	t.set_stylebox(&"grabber_area_highlight", &"HSlider",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(0.1), [4], [4]))
+	
+	t.set_stylebox(&"slider", &"VSlider",
+		StyleBoxUtil.new_flat(colors.background_color, [4], [0, 2]))
+	t.set_stylebox(&"grabber_area", &"VSlider",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(0.08), [4], [2, 0]))
+	t.set_stylebox(&"grabber_area_highlight", &"VSlider",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(0.1), [4], [4]))
+	
+	t.set_stylebox(&"invalid", &"FileLineEdit",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4], [2], Color(0.8, 0.3, 0.2)))
 	
 	t.set_color(&"font_color", &"OptionButton", colors.text_color)
 	t.set_color(&"font_focus_color", &"OptionButton", colors.text_color)
@@ -151,8 +194,12 @@ func change_theme_from_text(theme_text: String) -> void:
 		StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
 	
 	t.set_stylebox(&"panel", &"AcceptDialog",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [0], [4]))
+		StyleBoxUtil.new_flat(colors.background_color.darkened(0.0), [0], [4]))
 	
+	t.set_color(&"font_color", &"PopupMenu", colors.text_color)
+	t.set_color(&"font_disabled_color", &"PopupMenu", colors.text_color.darkened(0.2))
+	t.set_color(&"font_hover_color", &"PopupMenu", colors.text_color.lightened(0.05))
+	t.set_color(&"font_accelerator_color", &"PopupMenu", Color(colors.text_color, 0.5))
 	t.set_stylebox(&"panel", &"PopupMenu",
 		StyleBoxUtil.new_flat(colors.background_color, [4], [4], [2], colors.background_color.darkened(0.2)))
 	t.set_stylebox(&"hover", &"PopupMenu",
@@ -166,6 +213,13 @@ func change_theme_from_text(theme_text: String) -> void:
 	
 	t.set_color(&"font_color", &"TooltipLabel", colors.text_color)
 	RenderingServer.set_default_clear_color(colors.background_color.darkened(0.2))
+	
+	await get_tree().process_frame
+	
+	if main_scene:
+		root.add_child(main_scene)
+	if settings_window_scene:
+		root.add_child(settings_window_scene)
 	
 	theme_changed.emit(theme_text)
 

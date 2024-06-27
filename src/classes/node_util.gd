@@ -2,6 +2,9 @@
 class_name NodeUtil extends Object
 
 
+const _CALLABLE_EMPTY := Callable()
+
+
 static func free_children(node: Node, include_internal: bool = false) -> void:
 	if not node:
 		return
@@ -10,12 +13,16 @@ static func free_children(node: Node, include_internal: bool = false) -> void:
 		child.queue_free()
 
 ## Returns a list of all the removed nodes
-static func remove_children(node: Node, deep: bool = false, include_internal: bool = false) -> Array[Node]:
+## [param predicate] should return true if the node is to be removed, false if not
+static func remove_children(node: Node, deep: bool = false, include_internal: bool = false, predicate: Callable = _CALLABLE_EMPTY) -> Array[Node]:
 	var arr: Array[Node] = []
 	if not node:
 		return []
 	
 	for child in node.get_children(include_internal):
+		if predicate != _CALLABLE_EMPTY:
+			if not predicate.call(child):
+				continue
 		node.remove_child(child)
 		arr.append(child)
 		if deep:

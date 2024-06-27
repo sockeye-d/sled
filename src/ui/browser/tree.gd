@@ -13,6 +13,7 @@ enum Buttons {
 	DELETE_FOLDER,
 	SHOW_IN_FILE_MANAGER,
 	REFRESH,
+	FOLDER_FIND,
 }
 
 
@@ -25,6 +26,7 @@ enum Columns {
 
 @onready var add_file_dialog: AddFileDialog = %AddFileDialog
 @onready var add_folder_dialog: AddFolderDialog = %AddFolderDialog
+@onready var find_dialog: ConfirmationDialog = %FindDialog
 
 
 var last_path: String
@@ -145,6 +147,7 @@ func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
 	item.add_button(Columns.BUTTON, Icons.add_folder, Buttons.ADD_FOLDER)
 	item.add_button(Columns.BUTTON, Icons.rename, Buttons.RENAME_FOLDER)
 	item.add_button(Columns.BUTTON, Icons.delete, Buttons.DELETE_FOLDER)
+	item.add_button(Columns.BUTTON, Icons.folder_find, Buttons.FOLDER_FIND)
 	
 	item.set_selectable(Columns.TEXT, false)
 	
@@ -232,6 +235,8 @@ func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_ind
 			OS.shell_show_in_file_manager(ProjectSettings.globalize_path(paths.get_value(item)))
 		Buttons.REFRESH:
 			repopulate_tree()
+		Buttons.FOLDER_FIND:
+			find_dialog.show()
 
 
 func _rename_item(item: TreeItem, title: String) -> void:

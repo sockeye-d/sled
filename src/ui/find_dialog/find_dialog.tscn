@@ -1,0 +1,60 @@
+[gd_scene load_steps=5 format=3 uid="uid://uyiydlj6idmu"]
+
+[ext_resource type="Script" path="res://src/ui/file_line_edit.gd" id="1_1u5i5"]
+[ext_resource type="Texture2D" uid="uid://d3wl4vltp8wun" path="res://src/assets/icons/regex.png" id="1_lgevj"]
+[ext_resource type="Texture2D" uid="uid://d2ip4ty5yim8i" path="res://src/assets/icons/open_dir.png" id="2_8jjvu"]
+[ext_resource type="Texture2D" uid="uid://c77818v1kf4a4" path="res://src/assets/icons/filter_files.png" id="2_nlnh2"]
+
+[node name="FindDialog" type="ConfirmationDialog"]
+initial_position = 1
+size = Vector2i(360, 220)
+visible = true
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 352.0
+offset_bottom = 173.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="FileLineEdit" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("1_1u5i5")
+button_icon = ExtResource("2_8jjvu")
+
+[node name="FindQueryLineEdit" type="LineEdit" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Find query"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="PanelContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UseRegExCheckBox" type="CheckBox" parent="PanelContainer/VBoxContainer/HBoxContainer/CenterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Use regular expressions for matching"
+icon = ExtResource("1_lgevj")
+
+[node name="CenterContainer2" type="CenterContainer" parent="PanelContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UseFilterCheckBox" type="CheckBox" parent="PanelContainer/VBoxContainer/HBoxContainer/CenterContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Use regular expressions for matching"
+icon = ExtResource("2_nlnh2")
+
+[node name="FilterLineEdit" type="LineEdit" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "File filter pattern (glob)"
