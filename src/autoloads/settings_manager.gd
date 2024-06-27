@@ -34,7 +34,7 @@ func _ready() -> void:
 
 
 func show_settings_window():
-	settings_window.show()
+	settings_window.popup_centered()
 
 
 func _get(property: StringName) -> Variant:

@@ -88,13 +88,15 @@ func _ready() -> void:
 	_set_all_settings()
 
 
-#func _exit_tree() -> void:
-	#unload_file()
-	#analyzer_mut.lock()
-	#analysis_data = { "file_path": "", "text": "", "base_path": "", "exit_loop": true }
-	#analyzer_mut.unlock()
-	#analyzer_invalidate_sem.post()
-	#analysis_thread.wait_to_finish()
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_WM_CLOSE_REQUEST:
+			unload_file()
+			analyzer_mut.lock()
+			analysis_data = { "file_path": "", "text": "", "base_path": "", "exit_loop": true }
+			analyzer_mut.unlock()
+			analyzer_invalidate_sem.post()
+			analysis_thread.wait_to_finish()
 
 
 func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -> void:

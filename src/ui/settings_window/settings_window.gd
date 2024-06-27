@@ -16,6 +16,7 @@ signal secret_signaled
 
 
 @export var secret_code: Array[InputEvent]
+@export var secret_offsets: PackedVector2Array
 
 
 var setting_categories: Array[SettingCategory]
@@ -23,6 +24,8 @@ var settings: Dictionary
 var settings_items: Dictionary
 var current_category := ""
 var current_secret_index: int
+var old_window_pos: Vector2i
+var window_offset: Vector2
 
 
 func _init() -> void:
@@ -43,18 +46,25 @@ func _ready() -> void:
 	secret_signaled.connect(func(): print("hello"))
 
 
+func _process(delta: float) -> void:
+	if window_offset.length_squared() > 0.01 * 0.01:
+		window_offset *= exp(-15.0 * delta)
+		position = old_window_pos + Vector2i(window_offset)
+
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("escape"):
 		hide()
 	if event.is_pressed():
 		if event.is_match(secret_code[current_secret_index], false):
+			old_window_pos = position
+			window_offset += 16.0 * secret_offsets[current_secret_index]
 			current_secret_index += 1
 			if current_secret_index == secret_code.size():
 				secret_signaled.emit()
 				current_secret_index = 0
 		elif event is InputEventKey:
 			current_secret_index = 0
-		print(current_secret_index)
 
 
 func set_all_to_default() -> void:
@@ -82,7 +92,6 @@ func populate_setting_categories() -> void:
 				setting.setting_changed.connect(
 						func(new_value):
 							settings[setting.identifier] = new_value
-							print("emitted0")
 							setting_changed.emit(setting.identifier, new_value)
 							)
 			settings_items[setting.identifier] = setting

@@ -8,7 +8,6 @@ signal setting_changed(new_value)
 @export_storage var value:
 	set(v):
 		value = v
-		print("emitted1")
 		setting_changed.emit(v)
 	get:
 		return value

@@ -67,13 +67,14 @@ keycode = 4194309
 
 [node name="SettingsWindow" type="Window"]
 title = "Settings"
-initial_position = 2
+position = Vector2i(226, 74)
 size = Vector2i(700, 500)
 transient = true
 exclusive = true
 theme = ExtResource("1_8ki8x")
 script = ExtResource("1_qsncc")
 secret_code = Array[InputEvent]([SubResource("InputEventKey_4l4ss"), SubResource("InputEventKey_var2v"), SubResource("InputEventKey_yd07q"), SubResource("InputEventKey_rrtgh"), SubResource("InputEventKey_xaci1"), SubResource("InputEventKey_lv2as"), SubResource("InputEventKey_h2c1i"), SubResource("InputEventKey_lolqo"), SubResource("InputEventKey_7dvbk"), SubResource("InputEventKey_t8w3d"), SubResource("InputEventKey_1h8ub")])
+secret_offsets = PackedVector2Array(0, -1, 0, -1, 0, 1, 0, 1, -1, 0, 1, 0, -1, 0, 1, 0, 0, -1, 0, 1, 0, 0)
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 anchors_preset = 15
