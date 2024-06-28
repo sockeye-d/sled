@@ -7,6 +7,7 @@ signal icons_changed
 
 static var is_light_mode: bool = true
 static var loaded_icons: Dictionary = { }
+static var icon_textures: Dictionary = { }
 static var singleton: Icons:
 	get:
 		if singleton == null:
@@ -15,12 +16,15 @@ static var singleton: Icons:
 	set(value):
 		singleton = value
 
-
 static func create(icon: String, return_null_on_failure: bool = false) -> IconTexture2D:
+	print("Loaded an icon yippee")
+	if icon in icon_textures:
+		return icon_textures[icon]
 	var tex := IconTexture2D.new()
 	tex.icon = icon
 	if return_null_on_failure and not tex.found_icon:
 		return null
+	icon_textures[icon] = tex
 	return tex
 
 
