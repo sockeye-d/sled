@@ -13,6 +13,7 @@ signal secret_signaled
 @onready var setting_option_container: VBoxContainer = %SettingOptionContainer
 @onready var button: Button = %Button
 @onready var right_container: PanelContainer = %RightContainer
+@onready var button_2: Button = %Button2
 
 
 @export var secret_code: Array[InputEvent]
@@ -42,8 +43,6 @@ func _ready() -> void:
 	await SceneTreeUtil.process_frame
 	await SceneTreeUtil.process_frame
 	emit_changed_all()
-	
-	secret_signaled.connect(func(): print("hello"))
 
 
 func _process(delta: float) -> void:
@@ -136,7 +135,7 @@ func populate_settings(category: SettingCategory) -> void:
 		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		
 		var reset_button = HighlightButton.new()
-		reset_button.icon = Icons.reset_value
+		reset_button.icon = Icons.create("reset_value")
 		reset_button.tooltip_text = "Reset to default"
 		reset_button.visible = not setting.value == setting._get_default_value()
 		reset_button.pressed.connect(func():
@@ -172,3 +171,16 @@ func emit_changed_all() -> void:
 	for item_key in settings_items:
 		var item: SettingItem = settings_items[item_key]
 		setting_changed.emit(item.identifier, item.value)
+
+
+func _on_button_2_pressed() -> void:
+	var fd := FileDialog.new()
+	fd.use_native_dialog = true
+	fd.access = FileDialog.ACCESS_FILESYSTEM
+	fd.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+	fd.file_selected.connect(_on_fd_done)
+	fd.show()
+
+
+func _on_fd_done(file: String) -> void:
+	FileAccess.open(file, FileAccess.WRITE_READ).store_string(EditorThemeManager.get_theme_as_text())

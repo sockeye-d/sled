@@ -4,9 +4,9 @@
 [ext_resource type="Script" path="res://src/ui/pan_zoom_scroll_container.gd" id="2_1jfnv"]
 [ext_resource type="Texture2D" uid="uid://dxvlpyfcqnv52" path="res://icon.svg" id="2_c1t0a"]
 [ext_resource type="Shader" path="res://src/ui/image_viewer/image_display.gdshader" id="3_qexas"]
-[ext_resource type="Texture2D" uid="uid://vndc80vefksk" path="res://src/assets/icons/filter_bicubic.png" id="3_wnv43"]
-[ext_resource type="Texture2D" uid="uid://b2dmilb7t2cvb" path="res://src/assets/icons/filter_linear.png" id="4_bk72y"]
-[ext_resource type="Texture2D" uid="uid://y65ctiyvoiy6" path="res://src/assets/icons/filter_nearest.png" id="5_bkoi7"]
+[ext_resource type="Texture2D" uid="uid://vndc80vefksk" path="res://src/assets/icons_light/filter_bicubic.png" id="3_wnv43"]
+[ext_resource type="Texture2D" uid="uid://b2dmilb7t2cvb" path="res://src/assets/icons_light/filter_linear.png" id="4_bk72y"]
+[ext_resource type="Texture2D" uid="uid://y65ctiyvoiy6" path="res://src/assets/icons_light/filter_nearest.png" id="5_bkoi7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1bwg3"]
 shader = ExtResource("3_qexas")

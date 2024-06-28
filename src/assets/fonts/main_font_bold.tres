@@ -1,14 +1,13 @@
-[gd_resource type="FontVariation" load_steps=3 format=3 uid="uid://b0slpuo2u08uv"]
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://b0slpuo2u08uv"]
 
 [ext_resource type="FontFile" uid="uid://byixppdafphgl" path="res://src/assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf" id="1_cpby8"]
-[ext_resource type="FontVariation" uid="uid://dtypnuyrn3hpo" path="res://src/assets/fonts/main_font.tres" id="2_ay2a4"]
 
 [resource]
-fallbacks = Array[Font]([ExtResource("2_ay2a4")])
 base_font = ExtResource("1_cpby8")
 variation_opentype = {
-2003265652: 700
+2003265652: 500
 }
+variation_embolden = 0.5
 opentype_features = {
 1684826471: 0,
 1936928817: 0,

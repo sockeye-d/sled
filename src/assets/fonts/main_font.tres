@@ -1,20 +1,9 @@
-[gd_resource type="FontVariation" load_steps=3 format=3 uid="uid://dtypnuyrn3hpo"]
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://dtypnuyrn3hpo"]
 
 [ext_resource type="FontFile" uid="uid://byixppdafphgl" path="res://src/assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf" id="1_vighw"]
-[ext_resource type="FontVariation" uid="uid://dfq21lxtduren" path="res://src/assets/fonts/emoji_font.tres" id="2_sxk1f"]
 
 [resource]
-fallbacks = Array[Font]([ExtResource("2_sxk1f")])
 base_font = ExtResource("1_vighw")
 variation_opentype = {
 2003265652: 500
-}
-variation_transform = Transform2D(1, 0.0025, 0, 1, 0, 0)
-opentype_features = {
-1684826471: 0,
-1936928817: 0,
-1936928818: 1,
-1936928819: 1,
-1936928822: 1,
-1936928823: 1
 }

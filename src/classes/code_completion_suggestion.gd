@@ -20,7 +20,7 @@ func add_to(editor: CodeEdit) -> void:
 	var l := location
 	if l < CodeEdit.LOCATION_PARENT_MASK:
 		l = CodeEdit.LOCATION_PARENT_MASK - l - 1
-	editor.add_code_completion_option(type, text, insert_text, Color.WHITE, icon, null, l)
+	editor.add_code_completion_option(type, text, insert_text, EditorThemeManager.completion_color, icon, null, l)
 
 
 static func add_arr_to(suggestions: Array[CodeCompletionSuggestion], editor: CodeEdit) -> void:

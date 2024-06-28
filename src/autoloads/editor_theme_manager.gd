@@ -1,14 +1,23 @@
+@tool
 extends Node
+
+
+const MONTSERRAT = preload("res://src/assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf")
+var main_font: FontVariation = preload("res://src/assets/fonts/main_font.tres")
+
 
 var theme: Theme:
 	get:
 		return ThemeDB.get_project_theme()
 var last_imported_theme: Dictionary
+var completion_color: Color
+
 
 signal theme_changed(new_theme: String)
 signal scale_changed(new_scale: float)
 signal code_font_size_changed()
 signal main_font_size_changed()
+signal icons_changed()
 
 
 const DEFAULT_THEME: String = "vs code dark"
@@ -57,7 +66,23 @@ func _ready() -> void:
 		main_font_size_changed.emit()
 	)
 	
+	Settings.connect_setting(&"ui_font", func(new_value: int) -> void:
+		var font: String = Settings.get_item(&"ui_font").get_text()
+		if new_value == 0:
+			main_font.base_font = MONTSERRAT
+		else:
+			var sys_font := SystemFont.new()
+			sys_font.font_names = [font]
+			main_font.base_font = sys_font
+	)
+	
+	Settings.connect_setting(&"icon_theme", func(_new_value: int) -> void:
+		set_icon_mode()
+	)
+	
 	Settings.settings_window.secret_signaled.connect(func(): EditorThemeManager.change_theme("vs code dark", true))
+	
+	icons_changed.connect(Icons.singleton.icons_changed.emit)
 
 
 func get_scale() -> float:
@@ -68,19 +93,15 @@ func get_scale() -> float:
 
 
 func set_scale(scale: float) -> void:
-	#theme.default_font_size = 16 * scale as int
+	theme.default_font_size = 16 * scale as int
 	theme.default_base_scale = scale
 	scale_changed.emit(scale)
 
 
-func change_theme_custom(theme_name: String):
-	if theme_name in THEMES.themes:
-		change_theme_from_text(THEMES.themes[theme_name])
-
-
 func change_theme(theme_name: String, random := false):
 	if theme_name in THEMES.themes:
-		change_theme_from_text(THEMES.themes[theme_name], random)
+		var t = THEMES.themes[theme_name]
+		change_theme_from_text(t.text, random)
 
 
 func change_theme_from_path(theme_path: String):
@@ -107,12 +128,11 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	last_imported_theme = colors
 	ThemeImporter.add_code_edit_themes(EditorThemeManager.theme, colors)
 	var t: Theme = theme
-	
 	t.clear_color(&"background_color", &"CodeEdit")
 	t.set_stylebox(&"normal", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
-	
 	t.set_color(&"font_color", &"CodeEdit", colors.text_color)
 	t.set_color(&"word_highlighted_color", &"CodeEdit", Color(colors.word_highlighted_color, colors.word_highlighted_color.a * 0.5))
+	completion_color = colors.completion_font_color
 	
 	t.set_stylebox(&"panel", &"PanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [8, 8, 8, 8], [4]))
 	t.set_stylebox(&"panel", &"UpperPanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [8, 8, 0, 0], [4]))
@@ -152,6 +172,10 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	t.set_stylebox(&"hover", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
 	t.set_stylebox(&"hover_pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
 	t.set_stylebox(&"pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
+	t.set_icon(&"checked", &"CheckBox", Icons.create("checkbox_checked"))
+	t.set_icon(&"checked_disabled", &"CheckBox", Icons.create("checkbox_checked_disabled"))
+	t.set_icon(&"unchecked", &"CheckBox", Icons.create("checkbox_unchecked"))
+	t.set_icon(&"unchecked_disabled", &"CheckBox", Icons.create("checkbox_unchecked_disabled"))
 	
 	t.set_color(&"font_color", &"Label", colors.text_color)
 	
@@ -214,6 +238,9 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	t.set_color(&"font_color", &"TooltipLabel", colors.text_color)
 	RenderingServer.set_default_clear_color(colors.background_color.darkened(0.2))
 	
+	set_icon_mode()
+	
+	icons_changed.emit()
 	await get_tree().process_frame
 	
 	if main_scene:
@@ -222,6 +249,29 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 		root.add_child(settings_window_scene)
 	
 	theme_changed.emit(theme_text)
+
+
+func set_icon_mode() -> void:
+	var icon_color_override: int = Settings.icon_theme
+	if icon_color_override == 0:
+		if not last_imported_theme:
+			await theme_changed
+		Icons.is_light_mode = (last_imported_theme.background_color as Color).srgb_to_linear().get_luminance() > 0.5
+		icons_changed.emit()
+	elif icon_color_override == 1:
+		Icons.is_light_mode = true
+		icons_changed.emit()
+	elif icon_color_override == 2:
+		Icons.is_light_mode = false
+		icons_changed.emit()
+
+
+func get_theme_as_text() -> String:
+	var sb := StringBuilder.new("[color_theme]\n\n")
+	for key: String in last_imported_theme:
+		sb.append_line("%s=\"%s\"" % [key, (last_imported_theme[key] as Color).to_html()])
+	return str(sb)
+
 
 func set_font(font_name: String, ligatures: String = ""):
 	var new_font: FontVariation = FontVariation.new()

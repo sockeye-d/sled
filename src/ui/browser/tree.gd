@@ -23,6 +23,18 @@ enum Columns {
 	BUTTON = 0,
 }
 
+const BUTTON_TOOLTIPS := {
+	Buttons.ADD_FILE: "Add a new file to this folder",
+	Buttons.ADD_FOLDER: "Add a new sub-folder to this folder",
+	Buttons.RENAME_FILE: "Rename this file",
+	Buttons.RENAME_FOLDER: "Rename this folder",
+	Buttons.DELETE_FILE: "Delete this file",
+	Buttons.DELETE_FOLDER: "Delete this folder",
+	Buttons.SHOW_IN_FILE_MANAGER: "Show in file manager",
+	Buttons.REFRESH: "Refresh the view (can also press [code]Ctrl+R[/code]",
+	Buttons.FOLDER_FIND: "Find within the text files of this folder",
+}
+
 
 @onready var add_file_dialog: AddFileDialog = %AddFileDialog
 @onready var add_folder_dialog: AddFolderDialog = %AddFolderDialog
@@ -86,7 +98,7 @@ func populate_tree(path: String, parent: TreeItem = null, first: bool = true) ->
 		parent.disable_folding = true
 	var item := _create_folder_item(path, parent)
 	if first:
-		item.add_button(Columns.BUTTON, Icons.refresh, Buttons.REFRESH)
+		item.add_button(Columns.BUTTON, Icons.create("refresh"), Buttons.REFRESH)
 		item.disable_folding = true
 
 	for dir in DirAccess.get_directories_at(path):
@@ -126,9 +138,27 @@ func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
 	item.set_metadata(Columns.TEXT, path.get_file())
 	item.set_tooltip_text(Columns.TEXT, FileManager.get_short_path(path))
 		
-	item.add_button(Columns.BUTTON, Icons.open_dir, Buttons.SHOW_IN_FILE_MANAGER)
-	item.add_button(Columns.BUTTON, Icons.rename, Buttons.RENAME_FILE)
-	item.add_button(Columns.BUTTON, Icons.delete, Buttons.DELETE_FILE)
+	item.add_button(
+		Columns.BUTTON,
+		Icons.create("open_dir"),
+		Buttons.SHOW_IN_FILE_MANAGER,
+		false,
+		BUTTON_TOOLTIPS[Buttons.SHOW_IN_FILE_MANAGER]
+	)
+	item.add_button(
+		Columns.BUTTON,
+		Icons.create("rename"),
+		Buttons.RENAME_FILE,
+		false,
+		BUTTON_TOOLTIPS[Buttons.RENAME_FILE]
+	)
+	item.add_button(
+		Columns.BUTTON,
+		Icons.create("delete"),
+		Buttons.DELETE_FILE,
+		false,
+		BUTTON_TOOLTIPS[Buttons.DELETE_FILE]
+	)
 	
 	paths.add(item, path)
 
@@ -136,18 +166,54 @@ func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
 
 
 func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
-	var item := _create_item(parent, Icons.folder)
+	var item := _create_item(parent, Icons.create("folder"))
 	
 	item.set_metadata(Columns.TEXT, path.substr(path.rfind("/") + 1))
 	item.set_tooltip_text(Columns.TEXT, path)
 	item.set_tooltip_text(Columns.TEXT, FileManager.get_short_path(path))
 		
-	item.add_button(Columns.BUTTON, Icons.open_dir, Buttons.SHOW_IN_FILE_MANAGER)	
-	item.add_button(Columns.BUTTON, Icons.add_file, Buttons.ADD_FILE)
-	item.add_button(Columns.BUTTON, Icons.add_folder, Buttons.ADD_FOLDER)
-	item.add_button(Columns.BUTTON, Icons.rename, Buttons.RENAME_FOLDER)
-	item.add_button(Columns.BUTTON, Icons.delete, Buttons.DELETE_FOLDER)
-	item.add_button(Columns.BUTTON, Icons.folder_find, Buttons.FOLDER_FIND)
+	item.add_button(
+		Columns.BUTTON,
+		Icons.create("open_dir"),
+		Buttons.SHOW_IN_FILE_MANAGER,
+		false,
+		BUTTON_TOOLTIPS[Buttons.SHOW_IN_FILE_MANAGER]
+	)	
+	item.add_button(
+		Columns.BUTTON,
+		Icons.create("add_file"),
+		Buttons.ADD_FILE,
+		false,
+		BUTTON_TOOLTIPS[Buttons.ADD_FILE]
+	)
+	item.add_button(
+		Columns.BUTTON,
+		Icons.create("add_folder"),
+		Buttons.ADD_FOLDER,
+		false,
+		BUTTON_TOOLTIPS[Buttons.ADD_FOLDER]
+	)
+	item.add_button(
+		Columns.BUTTON,
+		Icons.create("rename"),
+		Buttons.RENAME_FOLDER,
+		false,
+		BUTTON_TOOLTIPS[Buttons.RENAME_FOLDER]
+	)
+	item.add_button(
+		Columns.BUTTON,
+		Icons.create("delete"),
+		Buttons.DELETE_FOLDER,
+		false,
+		BUTTON_TOOLTIPS[Buttons.DELETE_FOLDER]
+	)
+	item.add_button(
+		Columns.BUTTON,
+		Icons.create("folder_find"),
+		Buttons.FOLDER_FIND,
+		false,
+		BUTTON_TOOLTIPS[Buttons.FOLDER_FIND]
+	)
 	
 	item.set_selectable(Columns.TEXT, false)
 	
@@ -165,15 +231,13 @@ func _create_item(parent: TreeItem, icon: Texture2D) -> TreeItem:
 
 func _item_custom_draw(item: TreeItem, rect: Rect2, icon: Texture2D) -> void:
 	var f := get_theme_font(&"font")
-	var f_size := get_theme_font_size(&"font_size")
+	var f_size := get_theme_font_size(&"font_size") if has_theme_font_size(&"font_size") else get_theme_default_font_size()
 	var text: String = item.get_metadata(Columns.TEXT)
 	var ascent := f.get_ascent(f_size)
 	var string_size := f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, f_size)
-	var icon_width := get_theme_constant(&"icon_max_width")
-	if icon_width == 0:
-		icon_width = icon.get_width() * EditorThemeManager.get_scale()
-	else:
-		icon_width = mini(icon_width, icon.get_width() * EditorThemeManager.get_scale())
+	var icon_width: int = icon.get_width() * EditorThemeManager.get_scale()
+	if get_theme_constant(&"icon_max_width") != 0:
+		icon_width = mini(icon_width, get_theme_constant(&"icon_max_width"))
 	var icon_offset := (rect.size.y - icon_width) / 2.0
 	var icon_rect := Rect2(round(rect.position + Vector2.ONE * icon_offset), Vector2(icon_width, icon_width))
 	if icon_rect.size.x + 2.0 * icon_offset > rect.size.x:

@@ -4,9 +4,13 @@ class_name ThemeLibrary extends Resource
 
 @export_dir var theme_path: String:
 	set(value):
+		if not Engine.is_editor_hint():
+			return
 		themes = { }
 		for path in DirAccess.get_files_at(value):
-			themes[path.get_basename().replace("-", " ").to_lower()] = FileAccess.open(ProjectSettings.globalize_path(value.path_join(path)), FileAccess.READ).get_as_text(true)
+			var t := EdTheme.new()
+			t.text = FileAccess.open(ProjectSettings.globalize_path(value.path_join(path)), FileAccess.READ).get_as_text(true)
+			themes[path.get_basename().replace("-", " ").to_lower()] = t
 		themes = themes
 		theme_path = value
 	get:

@@ -166,9 +166,9 @@ static func _create_icons(arr: PackedStringArray) -> Dictionary:
 	for item in arr:
 		var icon: Texture2D
 		if item.begins_with("#"):
-			icon = Icons.keyword_definition
+			icon = Icons.create("keyword_definition")
 		else:
-			icon = Util.default(Icons.sget("keyword_" + item), Icons.keyword)
+			icon = Util.default(Icons.create("keyword_" + item, true), Icons.create("keyword"))
 		dict[item] = icon
 	return dict
 
@@ -607,46 +607,46 @@ class Type:
 		"dmat4x3": _create_matrix("dmat4x3"),
 		"dmat4x4": _create_matrix("dmat4x4"),
 		## Samplers
-		"sampler1D": Type.new("sampler1D", 16, Icons.type_sampler1d),
-		"sampler2D": Type.new("sampler2D", 16, Icons.type_sampler2d),
-		"sampler3D": Type.new("sampler3D", 16, Icons.type_sampler3d),
-		"samplerCube": Type.new("samplerCube", 16, Icons.type_samplerCube),
-		"sampler2DRect": Type.new("sampler2DRect", 16, Icons.type_sampler2d),
-		"sampler1DArray": Type.new("sampler1DArray", 16, Icons.type_sampler1d),
-		"sampler2DArray": Type.new("sampler2DArray", 16, Icons.type_sampler2d),
-		"samplerCubeArray": Type.new("samplerCubeArray", 16, Icons.type_samplerCube),
-		"samplerBuffer": Type.new("samplerBuffer", 16, Icons.type_sampler1d),
-		"sampler2DMS": Type.new("sampler2DMS", 16, Icons.type_sampler2d),
-		"sampler2DMSArray": Type.new("sampler2DMSArray", 16, Icons.type_sampler2d),
-		"isampler1D": Type.new("isampler1D", 16, Icons.type_sampler1d),
-		"isampler2D": Type.new("isampler2D", 16, Icons.type_sampler2d),
-		"isampler3D": Type.new("isampler3D", 16, Icons.type_sampler3d),
-		"isamplerCube": Type.new("isamplerCube", 16, Icons.type_samplerCube),
-		"isampler2DRect": Type.new("isampler2DRect", 16, Icons.type_sampler2d),
-		"isampler1DArray": Type.new("isampler1DArray", 16, Icons.type_sampler1d),
-		"isampler2DArray": Type.new("isampler2DArray", 16, Icons.type_sampler2d),
-		"isamplerCubeArray": Type.new("isamplerCubeArray", 16, Icons.type_samplerCube),
-		"isamplerBuffer": Type.new("isamplerBuffer", 16, Icons.type_sampler1d),
-		"isampler2DMS": Type.new("isampler2DMS", 16, Icons.type_sampler2d),
-		"isampler2DMSArray": Type.new("isampler2DMSArray", 16, Icons.type_sampler2d),
-		"usampler1D": Type.new("usampler1D", 16, Icons.type_sampler1d),
-		"usampler2D": Type.new("usampler2D", 16, Icons.type_sampler2d),
-		"usampler3D": Type.new("usampler3D", 16, Icons.type_sampler3d),
-		"usamplerCube": Type.new("usamplerCube", 16, Icons.type_samplerCube),
-		"usampler2DRect": Type.new("usampler2DRect", 16, Icons.type_sampler2d),
-		"usampler1DArray": Type.new("usampler1DArray", 16, Icons.type_sampler1d),
-		"usampler2DArray": Type.new("usampler2DArray", 16, Icons.type_sampler2d),
-		"usamplerCubeArray": Type.new("usamplerCubeArray", 16, Icons.type_samplerCube),
-		"usamplerBuffer": Type.new("usamplerBuffer", 16, Icons.type_sampler1d),
-		"usampler2DMS": Type.new("usampler2DMS", 16, Icons.type_sampler2d),
-		"usampler2DMSArray": Type.new("usampler2DMSArray", 16, Icons.type_sampler2d),
-		"sampler1DShadow": Type.new("sampler1DShadow", 16, Icons.type_sampler1d),
-		"sampler2DShadow": Type.new("sampler2DShadow", 16, Icons.type_sampler1d),
-		"samplerCubeShadow": Type.new("samplerCubeShadow", 16, Icons.type_samplerCube),
-		"sampler2DRectShadow": Type.new("sampler2DRectShadow", 16, Icons.type_sampler2d),
-		"sampler1DArrayShadow": Type.new("sampler1DArrayShadow", 16, Icons.type_sampler1d),
-		"sampler2DArrayShadow": Type.new("sampler2DArrayShadow", 16, Icons.type_sampler2d),
-		"samplerCubeArrayShadow": Type.new("samplerCubeArrayShadow", 16, Icons.type_samplerCube),
+		"sampler1D": Type.new("sampler1D", 16, Icons.create("type_sampler1d")),
+		"sampler2D": Type.new("sampler2D", 16, Icons.create("type_sampler2d")),
+		"sampler3D": Type.new("sampler3D", 16, Icons.create("type_sampler3d")),
+		"samplerCube": Type.new("samplerCube", 16, Icons.create("type_samplerCube")),
+		"sampler2DRect": Type.new("sampler2DRect", 16, Icons.create("type_sampler2d")),
+		"sampler1DArray": Type.new("sampler1DArray", 16, Icons.create("type_sampler1d")),
+		"sampler2DArray": Type.new("sampler2DArray", 16, Icons.create("type_sampler2d")),
+		"samplerCubeArray": Type.new("samplerCubeArray", 16, Icons.create("type_samplerCube")),
+		"samplerBuffer": Type.new("samplerBuffer", 16, Icons.create("type_sampler1d")),
+		"sampler2DMS": Type.new("sampler2DMS", 16, Icons.create("type_sampler2d")),
+		"sampler2DMSArray": Type.new("sampler2DMSArray", 16, Icons.create("type_sampler2d")),
+		"isampler1D": Type.new("isampler1D", 16, Icons.create("type_sampler1d")),
+		"isampler2D": Type.new("isampler2D", 16, Icons.create("type_sampler2d")),
+		"isampler3D": Type.new("isampler3D", 16, Icons.create("type_sampler3d")),
+		"isamplerCube": Type.new("isamplerCube", 16, Icons.create("type_samplerCube")),
+		"isampler2DRect": Type.new("isampler2DRect", 16, Icons.create("type_sampler2d")),
+		"isampler1DArray": Type.new("isampler1DArray", 16, Icons.create("type_sampler1d")),
+		"isampler2DArray": Type.new("isampler2DArray", 16, Icons.create("type_sampler2d")),
+		"isamplerCubeArray": Type.new("isamplerCubeArray", 16, Icons.create("type_samplerCube")),
+		"isamplerBuffer": Type.new("isamplerBuffer", 16, Icons.create("type_sampler1d")),
+		"isampler2DMS": Type.new("isampler2DMS", 16, Icons.create("type_sampler2d")),
+		"isampler2DMSArray": Type.new("isampler2DMSArray", 16, Icons.create("type_sampler2d")),
+		"usampler1D": Type.new("usampler1D", 16, Icons.create("type_sampler1d")),
+		"usampler2D": Type.new("usampler2D", 16, Icons.create("type_sampler2d")),
+		"usampler3D": Type.new("usampler3D", 16, Icons.create("type_sampler3d")),
+		"usamplerCube": Type.new("usamplerCube", 16, Icons.create("type_samplerCube")),
+		"usampler2DRect": Type.new("usampler2DRect", 16, Icons.create("type_sampler2d")),
+		"usampler1DArray": Type.new("usampler1DArray", 16, Icons.create("type_sampler1d")),
+		"usampler2DArray": Type.new("usampler2DArray", 16, Icons.create("type_sampler2d")),
+		"usamplerCubeArray": Type.new("usamplerCubeArray", 16, Icons.create("type_samplerCube")),
+		"usamplerBuffer": Type.new("usamplerBuffer", 16, Icons.create("type_sampler1d")),
+		"usampler2DMS": Type.new("usampler2DMS", 16, Icons.create("type_sampler2d")),
+		"usampler2DMSArray": Type.new("usampler2DMSArray", 16, Icons.create("type_sampler2d")),
+		"sampler1DShadow": Type.new("sampler1DShadow", 16, Icons.create("type_sampler1d")),
+		"sampler2DShadow": Type.new("sampler2DShadow", 16, Icons.create("type_sampler1d")),
+		"samplerCubeShadow": Type.new("samplerCubeShadow", 16, Icons.create("type_samplerCube")),
+		"sampler2DRectShadow": Type.new("sampler2DRectShadow", 16, Icons.create("type_sampler2d")),
+		"sampler1DArrayShadow": Type.new("sampler1DArrayShadow", 16, Icons.create("type_sampler1d")),
+		"sampler2DArrayShadow": Type.new("sampler2DArrayShadow", 16, Icons.create("type_sampler2d")),
+		"samplerCubeArrayShadow": Type.new("samplerCubeArrayShadow", 16, Icons.create("type_samplerCube")),
 	}
 	
 	static var _prefix_types := {
@@ -1165,11 +1165,11 @@ class Type:
 						type = ("" if base_type == "float" else base_type[0]) + "vec" + str(obj_name.length())
 					return Variable.new(obj_name, type)
 					))
-		return IndexableStruct.new(obj_name, components, base_type, Icons.sget("type_" + obj_name))
+		return IndexableStruct.new(obj_name, components, base_type, Icons.create("type_" + obj_name))
 	
 	static func _create_matrix(obj_name: String, base_type: String = _prefix_map.get(obj_name[0], "float")) -> IndexableStruct:
 		var dim: String = obj_name.right(3) if "x" in obj_name else obj_name.right(1)
-		return IndexableStruct.new(obj_name, [], base_type, Icons.sget("type_" + obj_name))
+		return IndexableStruct.new(obj_name, [], base_type, Icons.create("type_" + obj_name))
 	
 	static func _generate_single_permutation(sets: String, count: int) -> PackedStringArray:
 		if count == 1:
@@ -1214,7 +1214,7 @@ class Definition extends Type:
 	func _init(_name: String, _value: String) -> void:
 		name = _name
 		value = _value
-		icon = Icons.definition
+		icon = Icons.create("definition")
 	
 	func _to_string() -> String:
 		return "%s %s" % [name, value]
@@ -1252,7 +1252,7 @@ class Macro extends Definition:
 		name = _name
 		value = _value
 		arguments = _arguments
-		icon = Icons.macro
+		icon = Icons.create("macro")
 	
 	func _get_type() -> CodeEdit.CodeCompletionKind:
 		return CodeEdit.KIND_CONSTANT
@@ -1289,8 +1289,8 @@ class Function extends Type:
 		type = _type
 		arguments = _arguments
 		for argument in arguments:
-			argument.icon = Icons.param
-		icon = Icons.function
+			argument.icon = Icons.create("param")
+		icon = Icons.create("function")
 	
 	func _to_string() -> String:
 		return "%s %s(%s)" % [
@@ -1334,12 +1334,12 @@ class Function extends Type:
 class Struct extends Type:
 	var properties: Dictionary = { }
 	
-	func _init(_name: String, _properties: Array[Variable], _icon: Texture2D = Icons.struct) -> void:
+	func _init(_name: String, _properties: Array[Variable], _icon: Texture2D = Icons.create("struct")) -> void:
 		name = _name
 		properties = ArrayUtil.create_dictionary(_properties,
 			func(v: Variable):
 				v.depth = 255
-				v.icon = Icons.member
+				v.icon = Icons.create("member")
 				return v.name
 				)
 		icon = _icon
@@ -1377,7 +1377,7 @@ class Struct extends Type:
 class IndexableStruct extends Struct:
 	var element_type: String
 	
-	func _init(_name: String, _properties: Array[Variable], _element_type: String, _icon: Texture2D = Icons.struct) -> void:
+	func _init(_name: String, _properties: Array[Variable], _element_type: String, _icon: Texture2D = Icons.create("struct")) -> void:
 		name = _name
 		properties = ArrayUtil.create_dictionary(_properties, func(v): return v.name)
 		element_type = _element_type
@@ -1417,10 +1417,10 @@ class Variable extends Type:
 	static var _qualifiers_flipped := DictionaryUtil.flip(qualifiers)
 	
 	var _qualifier_icons: Dictionary = {
-		Qualifier.IN: Icons.var_in,
-		Qualifier.OUT: Icons.var_out,
-		Qualifier.UNIFORM: Icons.var_uniform,
-		Qualifier.CONST: Icons.var_const,
+		Qualifier.IN: Icons.create("var_in"),
+		Qualifier.OUT: Icons.create("var_out"),
+		Qualifier.UNIFORM: Icons.create("var_uniform"),
+		Qualifier.CONST: Icons.create("var_const"),
 	}
 	
 	var type: String
@@ -1431,7 +1431,7 @@ class Variable extends Type:
 		name = _name
 		qualifier = _qualifier
 		
-		icon = _qualifier_icons.get(qualifier, Icons.variable)
+		icon = _qualifier_icons.get(qualifier, Icons.create("variable"))
 	
 	func _to_string() -> String:
 		var qualifiers_str: String = Variable.get_qualifier_string(qualifier)

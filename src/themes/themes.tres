@@ -1,12 +1,11 @@
-[gd_resource type="Resource" script_class="ThemeLibrary" load_steps=2 format=3 uid="uid://ba5152uqn2drw"]
+[gd_resource type="Resource" script_class="ThemeLibrary" load_steps=29 format=3 uid="uid://ba5152uqn2drw"]
 
 [ext_resource type="Script" path="res://src/themes/theme_library.gd" id="1_rb6fd"]
+[ext_resource type="Script" path="res://src/themes/ed_theme.gd" id="2_7235v"]
 
-[resource]
-script = ExtResource("1_rb6fd")
-theme_path = "res://src/themes/godot-syntax-themes"
-themes = {
-"apprentice": "[color_theme]
+[sub_resource type="Resource" id="Resource_e0h8t"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 symbol_color=\"bcbcbcff\"
 keyword_color=\"8fafd7ff\"
@@ -54,8 +53,12 @@ search_result_border_color=\"00000000\"
 
 gdscript/function_definition_color=\"ffffafff\"
 gdscript/node_path_color=\"5fafafff\"
-",
-"atom dark": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_bbpb8"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"1d1f21ff\"
 base_type_color=\"99cc99ff\"
@@ -93,8 +96,12 @@ text_color=\"c5c8c6ff\"
 text_selected_color=\"eeeeeeff\"
 user_type_color=\"c6ffedff\"
 word_highlighted_color=\"343434ff\"
-",
-"ayu mirage": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_54cy3"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"1f2430ff\"
 base_type_color=\"5ce6ccff\"
@@ -132,8 +139,12 @@ text_color=\"cbccc6ff\"
 text_selected_color=\"cbccc6ff\"
 user_type_color=\"73d0ffff\"
 word_highlighted_color=\"262f3eff\"
-",
-"catppuccin frappé": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_5klxh"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 symbol_color=\"99d1dbff\"
 keyword_color=\"ca9ee6ff\"
@@ -177,8 +188,12 @@ gdscript/node_path_color=\"81c8beff\"
 gdscript/node_reference_color=\"81c8beff\"
 gdscript/annotation_color=\"ef9f76ff\"
 gdscript/string_name_color=\"c6d0f5ff\"
-",
-"catppuccin latte": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_43um6"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 symbol_color=\"04a5e5ff\"
 keyword_color=\"8839efff\"
@@ -222,8 +237,12 @@ gdscript/node_path_color=\"179299ff\"
 gdscript/node_reference_color=\"179299ff\"
 gdscript/annotation_color=\"fe640bff\"
 gdscript/string_name_color=\"4c4f69ff\"
-",
-"catppuccin macchiato": "[color_theme]
+"
+is_dark = false
+
+[sub_resource type="Resource" id="Resource_ujdrd"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 symbol_color=\"91d7e3ff\"
 keyword_color=\"c6a0f6ff\"
@@ -267,8 +286,12 @@ gdscript/node_path_color=\"8bd5caff\"
 gdscript/node_reference_color=\"8bd5caff\"
 gdscript/annotation_color=\"f5a97fff\"
 gdscript/string_name_color=\"cad3f5ff\"
-",
-"catppuccin mocha": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_r3h7v"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 symbol_color=\"89dcebff\"
 keyword_color=\"cba6f7ff\"
@@ -312,8 +335,12 @@ gdscript/node_path_color=\"94e2d5ff\"
 gdscript/node_reference_color=\"94e2d5ff\"
 gdscript/annotation_color=\"fab387ff\"
 gdscript/string_name_color=\"cdd6f4ff\"
-",
-"darcula": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_cxs7q"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"242424ff\"
 completion_background_color=\"343434ff\"
@@ -347,8 +374,12 @@ search_result_color=\"653618ff\"
 search_result_border_color=\"00000000\"
 gdscript/function_definition_color=\"ffc66dff\"
 gdscript/node_path_color=\"bbb529ff\"
-",
-"dracula": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_sseer"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"282a36ff\"
 completion_background_color=\"2c2a32ff\"
@@ -382,8 +413,12 @@ search_result_color=\"5e6069ff\"
 search_result_border_color=\"00000000\"
 gdscript/function_definition_color=\"50fa7bff\"
 gdscript/node_path_color=\"ffb86cff\"
-",
-"gruvbox dark": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_0wkhb"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"282828ff\"
 completion_background_color=\"3d3d3dff\"
@@ -417,8 +452,12 @@ search_result_color=\"68391bff\"
 search_result_border_color=\"ffffff00\"
 gdscript/function_definition_color=\"b8bb26ff\"
 gdscript/node_path_color=\"d3869bff\"
-",
-"horizon": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_kqmav"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"1C1E26ff\"
 completion_background_color=\"2E303E80\"
@@ -453,8 +492,12 @@ search_result_color=\"6C6F9380\"
 search_result_border_color=\"6C6F9380\"
 gdscript/function_definition_color=\"25B2BCff\"
 gdscript/node_path_color=\"F09383ff\"
-",
-"metro": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_rn8jd"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"25252aff\"
 completion_background_color=\"2c2a32ff\"
@@ -488,8 +531,12 @@ search_result_color=\"0c3f0cff\"
 search_result_border_color=\"197219ff\"
 gdscript/function_definition_color=\"ffc35aff\"
 gdscript/node_path_color=\"ff9292ff\"
-",
-"monokai": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_r2lvt"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"282828ff\"
 completion_background_color=\"3d3d3dff\"
@@ -523,8 +570,12 @@ search_result_color=\"673917ff\"
 search_result_border_color=\"00000000\"
 gdscript/function_definition_color=\"a6e22eff\"
 gdscript/node_path_color=\"fd971fff\"
-",
-"nord": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_kb5yt"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"2e3440ff\"
 base_type_color=\"8fbcbbff\"
@@ -562,8 +613,12 @@ text_color=\"eceff4ff\"
 text_selected_color=\"1a1d28ff\"
 user_type_color=\"8fbcbbff\"
 word_highlighted_color=\"4c566aff\"
-",
-"one dark": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_rg3f1"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"282b34ff\"
 completion_background_color=\"3d3d3dff\"
@@ -597,8 +652,12 @@ search_result_color=\"314365ff\"
 search_result_border_color=\"4982ffff\"
 gdscript/function_definition_color=\"60aeedff\"
 gdscript/node_path_color=\"d19a66ff\"
-",
-"one monokai": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_07p2d"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"282c34ff\"
 completion_background_color=\"21252bff\"
@@ -634,8 +693,12 @@ search_result_color=\"314365ff\"
 search_result_border_color=\"00000000\"
 gdscript/function_definition_color=\"98c379ff\"
 gdscript/node_path_color=\"d19a66ff\"
-",
-"quiet light": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_pvowd"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"f5f5f5ff\"
 completion_background_color=\"e5e5e5ff\"
@@ -669,8 +732,12 @@ search_result_color=\"edc9d8ff\"
 search_result_border_color=\"00000000\"
 gdscript/function_definition_color=\"aa3731ff\"
 gdscript/node_path_color=\"ab6526ff\"
-",
-"solarized dark": "[color_theme]
+"
+is_dark = false
+
+[sub_resource type="Resource" id="Resource_k4hxq"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"002b36ff\"
 completion_background_color=\"3d3d3dff\"
@@ -704,8 +771,12 @@ search_result_color=\"4d3b24ff\"
 search_result_border_color=\"00000000\"
 gdscript/function_definition_color=\"2aa198ff\"
 gdscript/node_path_color=\"d33682ff\"
-",
-"solarized light": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_w8swi"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"fdf6e3ff\"
 completion_background_color=\"ede6d3ff\"
@@ -739,8 +810,12 @@ search_result_color=\"f7c399ff\"
 search_result_border_color=\"00000000\"
 gdscript/function_definition_color=\"268bd2ff\"
 gdscript/node_path_color=\"cb4b16ff\"
-",
-"tokyo night moon": "[color_theme]
+"
+is_dark = false
+
+[sub_resource type="Resource" id="Resource_jsroi"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 symbol_color = \"86e1fc\"
 keyword_color = \"c099ff\"
@@ -779,8 +854,12 @@ gdscript/node_path_color = \"4fd6be\"
 gdscript/node_reference_color = \"41a6b5\"
 gdscript/annotation_color = \"ffc777\"
 gdscript/string_name_color = \"c3e88d\"
-",
-"tokyo night night": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_ucsh5"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 symbol_color = \"7dcfff\"
 keyword_color = \"bb9af7\"
@@ -819,8 +898,12 @@ gdscript/node_path_color = \"1abc9c\"
 gdscript/node_reference_color = \"41a6b5\"
 gdscript/annotation_color = \"e0af68\"
 gdscript/string_name_color = \"9ece6a\"
-",
-"tokyo night storm": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_ei05i"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 symbol_color = \"7dcfff\"
 keyword_color = \"bb9af7\"
@@ -859,8 +942,12 @@ gdscript/node_path_color = \"1abc9c\"
 gdscript/node_reference_color = \"41a6b5\"
 gdscript/annotation_color = \"e0af68\"
 gdscript/string_name_color = \"9ece6a\"
-",
-"vs code dark": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_nomkx"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"1e1e1eff\"
 base_type_color=\"c586c0ff\"
@@ -899,8 +986,12 @@ text_color=\"d4d4d4ff\"
 text_selected_color=\"d4d4d4ff\"
 user_type_color=\"c6ffedff\"
 word_highlighted_color=\"343a40ff\"
-",
-"vs code light": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_nhceh"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"ffffffff\"
 base_type_color=\"af00dbff\"
@@ -939,8 +1030,12 @@ text_color=\"000000ff\"
 text_selected_color=\"000000ff\"
 user_type_color=\"09885aff\"
 word_highlighted_color=\"d9e9feff\"
-",
-"xcode dark": "[color_theme]
+"
+is_dark = false
+
+[sub_resource type="Resource" id="Resource_4rcrl"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"1d2229ff\"
 base_type_color=\"acf2e4ff\"
@@ -984,8 +1079,12 @@ text_color=\"e3e3e3ff\"
 text_selected_color=\"00000000\"
 user_type_color=\"b5efffff\"
 word_highlighted_color=\"ffffff12\"
-",
-"xcode light": "[color_theme]
+"
+is_dark = true
+
+[sub_resource type="Resource" id="Resource_fw4w3"]
+script = ExtResource("2_7235v")
+text = "[color_theme]
 
 background_color=\"ffffffff\"
 base_type_color=\"22575cff\"
@@ -1030,4 +1129,36 @@ text_selected_color=\"00000000\"
 user_type_color=\"02435eff\"
 word_highlighted_color=\"00000012\"
 "
+is_dark = false
+
+[resource]
+script = ExtResource("1_rb6fd")
+theme_path = "res://src/themes/godot-syntax-themes"
+themes = {
+"apprentice": SubResource("Resource_e0h8t"),
+"atom dark": SubResource("Resource_bbpb8"),
+"ayu mirage": SubResource("Resource_54cy3"),
+"catppuccin frappé": SubResource("Resource_5klxh"),
+"catppuccin latte": SubResource("Resource_43um6"),
+"catppuccin macchiato": SubResource("Resource_ujdrd"),
+"catppuccin mocha": SubResource("Resource_r3h7v"),
+"darcula": SubResource("Resource_cxs7q"),
+"dracula": SubResource("Resource_sseer"),
+"gruvbox dark": SubResource("Resource_0wkhb"),
+"horizon": SubResource("Resource_kqmav"),
+"metro": SubResource("Resource_rn8jd"),
+"monokai": SubResource("Resource_r2lvt"),
+"nord": SubResource("Resource_kb5yt"),
+"one dark": SubResource("Resource_rg3f1"),
+"one monokai": SubResource("Resource_07p2d"),
+"quiet light": SubResource("Resource_pvowd"),
+"solarized dark": SubResource("Resource_k4hxq"),
+"solarized light": SubResource("Resource_w8swi"),
+"tokyo night moon": SubResource("Resource_jsroi"),
+"tokyo night night": SubResource("Resource_ucsh5"),
+"tokyo night storm": SubResource("Resource_ei05i"),
+"vs code dark": SubResource("Resource_nomkx"),
+"vs code light": SubResource("Resource_nhceh"),
+"xcode dark": SubResource("Resource_4rcrl"),
+"xcode light": SubResource("Resource_fw4w3")
 }

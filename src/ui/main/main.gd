@@ -75,7 +75,7 @@ func open_file(path: String) -> void:
 			image_viewer.show()
 		return
 	
-	if ext in Settings.text_file_types:
+	if ext in Settings.text_file_types or ext.length() == 0:
 		right_editor.unload_file()
 		editors.show()
 		image_viewer.hide()

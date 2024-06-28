@@ -1,5 +1,0 @@
-res://src/ui/editor/editor.tscn
-res://src/ui/settings_window/setting_categories.tres
-res://src/ui/editor/editor.gd
-res://src/classes/code_completion_suggestion.gd
-res://src/classes/languages/glsl_language.gd

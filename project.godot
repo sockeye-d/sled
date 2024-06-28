@@ -14,9 +14,9 @@ config/name="sled"
 run/main_scene="res://src/ui/main/main.tscn"
 config/features=PackedStringArray("4.3")
 run/low_processor_mode=true
-boot_splash/image="res://src/assets/icons/boot.png"
+boot_splash/image="res://src/assets/icons_dark/boot.png"
 boot_splash/fullsize=false
-config/icon="res://src/assets/icons/icon.png"
+config/icon="res://src/assets/icons_dark/icon.png"
 boot_splash/minimum_display_time=250
 
 [autoload]
@@ -133,3 +133,4 @@ limits/debugger/max_chars_per_second=65536
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+limits/global_shader_variables/buffer_size=4096

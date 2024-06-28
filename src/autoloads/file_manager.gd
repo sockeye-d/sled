@@ -116,26 +116,28 @@ func file_is_sbs(file: String) -> String:
 
 
 func get_icon(extension: String) -> Texture2D:
+	if not Settings.use_unique_file_icons:
+		return Icons.create("file")
 	if extension in Settings.get_arr(&"image_file_types"):
-		return Icons.file_image
+		return Icons.create("file_image")
 	if extension in Settings.get_arr(&"include_file_types"):
-		return Icons.file_include
+		return Icons.create("file_include")
 	if extension in Settings.get_arr(&"fsh_file_types"):
-		return Icons.file_shader_fsh
+		return Icons.create("file_shader_fsh")
 	if extension in Settings.get_arr(&"vsh_file_types"):
-		return Icons.file_shader_vsh
+		return Icons.create("file_shader_vsh")
 	if extension in Settings.get_arr(&"csh_file_types"):
-		return Icons.file_shader_csh
+		return Icons.create("file_shader_csh")
 	if extension in Settings.get_arr(&"gsh_file_types"):
-		return Icons.file_shader_gsh
+		return Icons.create("file_shader_gsh")
 	if extension in Settings.get_arr(&"md_file_types"):
-		return Icons.file_md
+		return Icons.create("file_md")
 	if extension in Settings.get_arr(&"txt_file_types"):
-		return Icons.file_txt
+		return Icons.create("file_txt")
 	if extension in Settings.get_arr(&"properties_file_types"):
-		return Icons.file_properties
+		return Icons.create("file_properties")
 	if extension in Settings.get_arr(&"json_file_types"):
-		return Icons.file_json
+		return Icons.create("file_json")
 	if extension in Settings.get_arr(&"bin_file_types"):
-		return Icons.file_binary
-	return Icons.file
+		return Icons.create("file_binary")
+	return Icons.create("file")

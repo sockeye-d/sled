@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://dfkt6ernbrafa"]
+[gd_scene load_steps=6 format=3 uid="uid://dfkt6ernbrafa"]
 
 [ext_resource type="Script" path="res://src/ui/menu_bar/menu_bar.gd" id="1_j76tb"]
 [ext_resource type="Script" path="res://src/ui/menu_bar/file.gd" id="2_6qdxv"]
 [ext_resource type="Script" path="res://src/ui/menu_bar/open_recent.gd" id="3_errp1"]
 [ext_resource type="Script" path="res://src/ui/menu_bar/view.gd" id="4_7pvbc"]
+[ext_resource type="Script" path="res://src/ui/menu_bar/edit.gd" id="4_bpaeo"]
 
 [node name="MenuBar" type="MenuBar"]
 auto_translate_mode = 1
@@ -29,6 +30,7 @@ auto_translate_mode = 1
 size = Vector2i(121, 133)
 item_count = 1
 item_0/text = "Preferences"
+script = ExtResource("4_bpaeo")
 
 [node name="View" type="PopupMenu" parent="."]
 auto_translate_mode = 1

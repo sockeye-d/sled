@@ -5,7 +5,7 @@ class_name FileSettingItem extends StringSettingItem
 var line_edit: LineEdit
 @export var filters: PackedStringArray
 @export var button_text: String
-@export var button_icon: Texture2D = Icons.open_dir
+@export var button_icon: Texture2D
 
 
 func _create_control() -> Control:
@@ -15,7 +15,7 @@ func _create_control() -> Control:
 	line_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var button = Button.new()
 	button.text = button_text
-	button.icon = button_icon
+	button.icon = Util.default(button_icon, Icons.create("open_dir"))
 	
 	if value:
 		line_edit.text = value

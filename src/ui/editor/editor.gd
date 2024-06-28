@@ -88,17 +88,6 @@ func _ready() -> void:
 	_set_all_settings()
 
 
-func _notification(what: int) -> void:
-	match what:
-		NOTIFICATION_WM_CLOSE_REQUEST:
-			unload_file()
-			analyzer_mut.lock()
-			analysis_data = { "file_path": "", "text": "", "base_path": "", "exit_loop": true }
-			analyzer_mut.unlock()
-			analyzer_invalidate_sem.post()
-			analysis_thread.wait_to_finish()
-
-
 func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -> void:
 	if file_handle and path == file_handle.get_path_absolute():
 		return
@@ -138,9 +127,11 @@ func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -
 	
 	path_button.text = path.get_file()
 	
-	if Settings.syntax_highlighting_enabled and path.get_extension() in Settings.get_arr(&"syntax_highlighted_files"):
-		if code_editor.syntax_highlighter != null:
-			code_editor.syntax_highlighter = highlighter
+	if (
+		Settings.syntax_highlighting_enabled
+		and path.get_extension() in Settings.get_arr(&"syntax_highlighted_files")
+		):
+		code_editor.syntax_highlighter = highlighter
 	else:
 		code_editor.syntax_highlighter = null
 	
@@ -286,7 +277,7 @@ func _get_completion_suggestions() -> void:
 	if not is_exclusive[0]:
 		CodeCompletionSuggestion.add_arr_to(GLSLLanguage.FileContents.built_in_contents.as_suggestions(0), code_editor)
 		for keyword in GLSLLanguage.keywords:
-			code_editor.add_code_completion_option(CodeEdit.KIND_PLAIN_TEXT, keyword, keyword.lstrip("#"), Color.WHITE, GLSLLanguage.keywords[keyword])
+			code_editor.add_code_completion_option(CodeEdit.KIND_PLAIN_TEXT, keyword, keyword, EditorThemeManager.completion_color, GLSLLanguage.keywords[keyword])
 
 
 func refresh_file_contents():
@@ -304,18 +295,6 @@ func refresh_file_contents():
 
 func _on_save_button_pressed() -> void:
 	save()
-
-
-func _on_code_editor_symbol_validate(symbol: String) -> void:
-	# TODO: implement go to def?
-	return
-	print(symbol)
-	code_editor.set_symbol_lookup_word_as_valid(true)
-
-
-func _on_code_editor_symbol_lookup(symbol: String, line: int, column: int) -> void:
-	return
-	print(symbol)
 
 
 func _on_find_box_pattern_changed(pattern: String, use_regex: bool, case_insensitive: bool, select_occurence: bool = true) -> void:
@@ -372,11 +351,11 @@ func _on_find_box_go_to_previous_requested() -> void:
 	_select_range()
 
 
-func _select_range(range: Vector2i = found_ranges[current_range_index] if current_range_index < found_ranges.size() else Vector2i(-1, -1), add_new_caret: bool = false) -> void:
-	if range == Vector2i(-1, -1):
+func _select_range(selection_range: Vector2i = found_ranges[current_range_index] if current_range_index < found_ranges.size() else Vector2i(-1, -1), add_new_caret: bool = false) -> void:
+	if selection_range == Vector2i(-1, -1):
 		return
-	var col_line_0: Vector2i = StringUtil.get_line_col(code_editor.text, range[0])
-	var col_line_1: Vector2i = StringUtil.get_line_col(code_editor.text, range[1])
+	var col_line_0: Vector2i = StringUtil.get_line_col(code_editor.text, selection_range[0])
+	var col_line_1: Vector2i = StringUtil.get_line_col(code_editor.text, selection_range[1])
 	if add_new_caret:
 		var caret_i: int = code_editor.add_caret(col_line_0.y, col_line_0.x)
 		code_editor.select(col_line_0.y, col_line_0.x, col_line_1.y, col_line_1.x, caret_i)
@@ -389,8 +368,11 @@ func _on_code_editor_caret_changed() -> void:
 	caret_pos_label.text = "%s, %s" % [code_editor.get_caret_line(), code_editor.get_caret_column()]
 
 
-func _convert_range(range: Vector2i) -> Array[Vector2i]:
-	return [StringUtil.get_line_col(code_editor.text, range[0]), StringUtil.get_line_col(code_editor.text, range[1])]
+func _convert_range(selection_range: Vector2i) -> Array[Vector2i]:
+	return [
+		StringUtil.get_line_col(code_editor.text, selection_range[0]),
+		StringUtil.get_line_col(code_editor.text, selection_range[1]),
+	]
 
 
 func _on_find_box_select_all_occurrences_requested() -> void:
@@ -408,7 +390,6 @@ func _on_find_box_select_all_occurrences_requested() -> void:
 
 func _on_code_editor_find_requested() -> void:
 	find_box.show_with_focus()
-	
 
 
 func _on_find_box_replace_requested(with_what: String) -> void:

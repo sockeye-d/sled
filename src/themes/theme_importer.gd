@@ -51,7 +51,8 @@ static func get_theme_dict(file: String, random: bool = false) -> Dictionary:
 			var key_value: PackedStringArray = line.replace(" ", "") .split("=")
 			if not key_value.size() == 2:
 				continue
-			var value = Color(randf(), randf(), randf()) if random else Color(key_value[1].strip_edges().trim_prefix('"').trim_suffix('"'))
+			# no secrets here :)
+			var value = Color.from_ok_hsl(randf(), randf(), randf()) if random else Color(key_value[1].strip_edges().trim_prefix('"').trim_suffix('"'))
 			theme_dict[key_value[0]] = value
 	
 	last_imported_theme_dict = theme_dict

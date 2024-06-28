@@ -2,119 +2,51 @@
 class_name Icons extends Object
 
 
-static var _instance: Icons
+signal icons_changed
 
 
-static var rename: Texture2D = preload("res://src/assets/icons/rename.png")
-static var add_folder: Texture2D = preload("res://src/assets/icons/add_folder.png")
-static var add_file: Texture2D = preload("res://src/assets/icons/add_file.png")
-static var delete: Texture2D = preload("res://src/assets/icons/delete.png")
-static var reset_value: Texture2D = preload("res://src/assets/icons/reset_value.png")
-static var open_folder: Texture2D = preload("res://src/assets/icons/open_folder.png")
-static var open_file: Texture2D = preload("res://src/assets/icons/open_file.png")
-static var open_dir: Texture2D = preload("res://src/assets/icons/open_dir.png")
-static var refresh = preload("res://src/assets/icons/refresh.png")
-static var folder_find = preload("res://src/assets/icons/folder_find.png")
+static var is_light_mode: bool = true
+static var loaded_icons: Dictionary = { }
+static var singleton: Icons:
+	get:
+		if singleton == null:
+			singleton = Icons.new()
+		return singleton
+	set(value):
+		singleton = value
 
-static var file = preload("res://src/assets/icons/file.png")
-static var folder = preload("res://src/assets/icons/folder.png")
-static var file_binary = preload("res://src/assets/icons/file_binary.png")
-static var file_image = preload("res://src/assets/icons/file_image.png")
-static var file_include = preload("res://src/assets/icons/file_include.png")
-static var file_json = preload("res://src/assets/icons/file_json.png")
-static var file_md = preload("res://src/assets/icons/file_md.png")
-static var file_properties = preload("res://src/assets/icons/file_properties.png")
-static var file_shader_csh = preload("res://src/assets/icons/file_shader_csh.png")
-static var file_shader_fsh = preload("res://src/assets/icons/file_shader_fsh.png")
-static var file_shader_gsh = preload("res://src/assets/icons/file_shader_gsh.png")
-static var file_shader_vsh = preload("res://src/assets/icons/file_shader_vsh.png")
-static var file_txt = preload("res://src/assets/icons/file_txt.png")
 
-static var param: Texture2D = preload("res://src/assets/icons/code/param.png")
-static var function: Texture2D = preload("res://src/assets/icons/code/function.png")
-static var member: Texture2D = preload("res://src/assets/icons/code/member.png")
-static var struct: Texture2D = preload("res://src/assets/icons/code/struct.png")
-static var type_bool: Texture2D = preload("res://src/assets/icons/code/type_bool.png")
-static var type_bvec2: Texture2D = preload("res://src/assets/icons/code/type_bvec2.png")
-static var type_bvec3: Texture2D = preload("res://src/assets/icons/code/type_bvec3.png")
-static var type_bvec4: Texture2D = preload("res://src/assets/icons/code/type_bvec4.png")
-static var type_double: Texture2D = preload("res://src/assets/icons/code/type_double.png")
-static var type_dvec2: Texture2D = preload("res://src/assets/icons/code/type_dvec2.png")
-static var type_dvec3: Texture2D = preload("res://src/assets/icons/code/type_dvec3.png")
-static var type_dvec4: Texture2D = preload("res://src/assets/icons/code/type_dvec4.png")
-static var type_float: Texture2D = preload("res://src/assets/icons/code/type_float.png")
-static var type_int: Texture2D = preload("res://src/assets/icons/code/type_int.png")
-static var type_ivec2: Texture2D = preload("res://src/assets/icons/code/type_ivec2.png")
-static var type_ivec3: Texture2D = preload("res://src/assets/icons/code/type_ivec3.png")
-static var type_ivec4: Texture2D = preload("res://src/assets/icons/code/type_ivec4.png")
-static var type_dmat2: Texture2D = preload("res://src/assets/icons/code/type_dmat2x2.png")
-static var type_dmat2x2: Texture2D = preload("res://src/assets/icons/code/type_dmat2x2.png")
-static var type_dmat2x3: Texture2D = preload("res://src/assets/icons/code/type_dmat2x3.png")
-static var type_dmat2x4: Texture2D = preload("res://src/assets/icons/code/type_dmat2x4.png")
-static var type_dmat3x2: Texture2D = preload("res://src/assets/icons/code/type_dmat3x2.png")
-static var type_dmat3: Texture2D = preload("res://src/assets/icons/code/type_dmat3x3.png")
-static var type_dmat3x3: Texture2D = preload("res://src/assets/icons/code/type_dmat3x3.png")
-static var type_dmat3x4: Texture2D = preload("res://src/assets/icons/code/type_dmat3x4.png")
-static var type_dmat4x2: Texture2D = preload("res://src/assets/icons/code/type_dmat4x2.png")
-static var type_dmat4x3: Texture2D = preload("res://src/assets/icons/code/type_dmat4x3.png")
-static var type_dmat4: Texture2D = preload("res://src/assets/icons/code/type_dmat4x4.png")
-static var type_dmat4x4: Texture2D = preload("res://src/assets/icons/code/type_dmat4x4.png")
-static var type_mat2: Texture2D = preload("res://src/assets/icons/code/type_mat2x2.png")
-static var type_mat2x2: Texture2D = preload("res://src/assets/icons/code/type_mat2x2.png")
-static var type_mat2x3: Texture2D = preload("res://src/assets/icons/code/type_mat2x3.png")
-static var type_mat2x4: Texture2D = preload("res://src/assets/icons/code/type_mat2x4.png")
-static var type_mat3x2: Texture2D = preload("res://src/assets/icons/code/type_mat3x2.png")
-static var type_mat3: Texture2D = preload("res://src/assets/icons/code/type_mat3x3.png")
-static var type_mat3x3: Texture2D = preload("res://src/assets/icons/code/type_mat3x3.png")
-static var type_mat3x4: Texture2D = preload("res://src/assets/icons/code/type_mat3x4.png")
-static var type_mat4x2: Texture2D = preload("res://src/assets/icons/code/type_mat4x2.png")
-static var type_mat4x3: Texture2D = preload("res://src/assets/icons/code/type_mat4x3.png")
-static var type_mat4: Texture2D = preload("res://src/assets/icons/code/type_mat4x4.png")
-static var type_mat4x4: Texture2D = preload("res://src/assets/icons/code/type_mat4x4.png")
-static var type_sampler1d: Texture2D = preload("res://src/assets/icons/code/type_sampler1D.png")
-static var type_sampler2d: Texture2D = preload("res://src/assets/icons/code/type_sampler2D.png")
-static var type_sampler3d: Texture2D = preload("res://src/assets/icons/code/type_sampler3D.png")
-static var type_samplerCube: Texture2D = preload("res://src/assets/icons/code/type_samplerCube.png")
-static var type_uint: Texture2D = preload("res://src/assets/icons/code/type_uint.png")
-static var type_uvec2: Texture2D = preload("res://src/assets/icons/code/type_uvec2.png")
-static var type_uvec3: Texture2D = preload("res://src/assets/icons/code/type_uvec3.png")
-static var type_uvec4: Texture2D = preload("res://src/assets/icons/code/type_uvec4.png")
-static var type_vec2: Texture2D = preload("res://src/assets/icons/code/type_vec2.png")
-static var type_vec3: Texture2D = preload("res://src/assets/icons/code/type_vec3.png")
-static var type_vec4: Texture2D = preload("res://src/assets/icons/code/type_vec4.png")
-static var variable: Texture2D = preload("res://src/assets/icons/code/var.png")
-static var var_in = preload("res://src/assets/icons/code/var_in.png")
-static var var_out = preload("res://src/assets/icons/code/var_out.png")
-static var var_uniform = preload("res://src/assets/icons/code/var_uniform.png")
-static var var_const = preload("res://src/assets/icons/code/var_const.png")
-static var definition = preload("res://src/assets/icons/code/definition.png")
-static var macro = preload("res://src/assets/icons/code/macro.png")
+static func create(icon: String, return_null_on_failure: bool = false) -> IconTexture2D:
+	var tex := IconTexture2D.new()
+	tex.icon = icon
+	if return_null_on_failure and not tex.found_icon:
+		return null
+	return tex
 
-static var keyword = preload("res://src/assets/icons/code/keyword.png")
-static var keyword_break = preload("res://src/assets/icons/code/keyword_break.png")
-static var keyword_case = preload("res://src/assets/icons/code/keyword_case.png")
-static var keyword_const = preload("res://src/assets/icons/code/keyword_const.png")
-static var keyword_continue = preload("res://src/assets/icons/code/keyword_continue.png")
-static var keyword_default = preload("res://src/assets/icons/code/keyword_default.png")
-static var keyword_default_2 = preload("res://src/assets/icons/code/keyword_default_2.png")
-static var keyword_definition = preload("res://src/assets/icons/code/keyword_definition.png")
-static var keyword_do = preload("res://src/assets/icons/code/keyword_do.png")
-static var keyword_else = preload("res://src/assets/icons/code/keyword_else.png")
-static var keyword_flat = preload("res://src/assets/icons/code/keyword_flat.png")
-static var keyword_for = preload("res://src/assets/icons/code/keyword_for.png")
-static var keyword_if = preload("res://src/assets/icons/code/keyword_if.png")
-static var keyword_in = preload("res://src/assets/icons/code/keyword_in.png")
-static var keyword_layout = preload("res://src/assets/icons/code/keyword_layout.png")
-static var keyword_noperspective = preload("res://src/assets/icons/code/keyword_noperspective.png")
-static var keyword_out = preload("res://src/assets/icons/code/keyword_out.png")
-static var keyword_return = preload("res://src/assets/icons/code/keyword_return.png")
-static var keyword_smooth = preload("res://src/assets/icons/code/keyword_smooth.png")
-static var keyword_struct = preload("res://src/assets/icons/code/keyword_struct.png")
-static var keyword_switch = preload("res://src/assets/icons/code/keyword_switch.png")
-static var keyword_uniform = preload("res://src/assets/icons/code/keyword_uniform.png")
-static var keyword_while = preload("res://src/assets/icons/code/keyword_while.png")
 
-static func sget(property: StringName) -> Variant:
-	if not _instance:
-		_instance = Icons.new()
-	return _instance.get(property)
+static func find(icon: String) -> Texture2D:
+	if not icon:
+		return null
+	icon = icon.replace("3d", "3D").replace("2d", "2D").replace("1d", "1D")
+	var key := _get_icon_key(icon)
+	var mode_str := _get_mode_str()
+	if key in loaded_icons:
+		return loaded_icons[key]
+	var tex = null
+	if ResourceLoader.exists("res://src/assets/icons_%s/%s.png" % [mode_str, icon]):
+		tex = load("res://src/assets/icons_%s/%s.png" % [mode_str, icon])
+	elif ResourceLoader.exists("res://src/assets/icons_%s/code/%s.png" % [mode_str, icon]):
+		tex = load("res://src/assets/icons_%s/code/%s.png" % [mode_str, icon])
+	elif ResourceLoader.exists("res://src/assets/icons_%s/code/type_%s.png" % [mode_str, icon]):
+		tex = load("res://src/assets/icons_%s/code/type_%s.png" % [mode_str, icon])
+	if tex != null:
+		loaded_icons[key] = tex
+	return tex
+
+
+static func _get_icon_key(icon: String) -> String:
+	return _get_mode_str() + "_" + icon
+
+
+static func _get_mode_str() -> String:
+	return "light" if is_light_mode else "dark"

@@ -30,7 +30,7 @@ var is_valid_path: bool
 	set(value):
 		placeholder_text = value
 		line_edit.placeholder_text = value
-@export var button_icon: Texture2D = Icons.open_dir:
+@export var button_icon: Texture2D = Icons.create("open_dir"):
 	get:
 		return button_icon
 	set(value):

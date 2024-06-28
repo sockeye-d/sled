@@ -1,14 +1,13 @@
-[gd_resource type="FontVariation" load_steps=3 format=3 uid="uid://cc1sng2mq38hx"]
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://cc1sng2mq38hx"]
 
 [ext_resource type="FontFile" uid="uid://bxer3c6oc70xt" path="res://src/assets/fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf" id="1_b0y0y"]
-[ext_resource type="FontVariation" uid="uid://dtypnuyrn3hpo" path="res://src/assets/fonts/main_font.tres" id="2_dv1uc"]
 
 [resource]
-fallbacks = Array[Font]([ExtResource("2_dv1uc")])
 base_font = ExtResource("1_b0y0y")
 variation_opentype = {
 2003265652: 500
 }
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
 opentype_features = {
 1684826471: 0,
 1936928817: 0,
