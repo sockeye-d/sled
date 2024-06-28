@@ -46,3 +46,10 @@ static func create_dictionary(array: Array, selector: Callable) -> Dictionary:
 	for element in array:
 		d[selector.call(element)] = element
 	return d
+
+## Creates a set out of an array so that contains checks are faster
+static func create_set(array: Array) -> Dictionary:
+	var d := { }
+	for e in array:
+		d[e] = null
+	return d

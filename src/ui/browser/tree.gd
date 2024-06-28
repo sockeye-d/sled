@@ -100,10 +100,14 @@ func populate_tree(path: String, parent: TreeItem = null, first: bool = true) ->
 	if first:
 		item.add_button(Columns.BUTTON, Icons.create("refresh"), Buttons.REFRESH)
 		item.disable_folding = true
-
-	for dir in DirAccess.get_directories_at(path):
+	
+	var da := DirAccess.open(path)
+	da.include_hidden = Settings.show_hidden_files
+	
+	for dir in da.get_directories():
 		populate_tree(path.path_join(dir), item, false)
-	for file in DirAccess.get_files_at(path):
+	
+	for file in da.get_files():
 		_create_file_item(path.path_join(file), item)
 	return item
 
@@ -133,7 +137,11 @@ func set_all_collapsed(state: bool, root := get_root()) -> void:
 
 
 func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
-	var item := _create_item(parent, FileManager.get_icon(path.get_extension()))
+	var item := _create_item(
+		parent,
+		FileManager.get_icon(path.get_extension().to_lower()),
+		FileAccess.get_hidden_attribute(path),
+	)
 	
 	item.set_metadata(Columns.TEXT, path.get_file())
 	item.set_tooltip_text(Columns.TEXT, FileManager.get_short_path(path))
@@ -166,7 +174,11 @@ func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
 
 
 func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
-	var item := _create_item(parent, Icons.create("folder"))
+	var item :=_create_item(
+		parent,
+		Icons.create("folder"),
+		FileAccess.get_hidden_attribute(path),
+	)
 	
 	item.set_metadata(Columns.TEXT, path.substr(path.rfind("/") + 1))
 	item.set_tooltip_text(Columns.TEXT, path)
@@ -222,14 +234,14 @@ func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
 	return item
 
 
-func _create_item(parent: TreeItem, icon: Texture2D) -> TreeItem:
+func _create_item(parent: TreeItem, icon: Texture2D, is_hidden: bool) -> TreeItem:
 	var item := create_item(parent)
 	item.set_cell_mode(Columns.TEXT, TreeItem.CELL_MODE_CUSTOM)
-	item.set_custom_draw_callback(Columns.TEXT, func(item: TreeItem, rect: Rect2) -> void: _item_custom_draw(item, rect, icon))
+	item.set_custom_draw_callback(Columns.TEXT, func(item: TreeItem, rect: Rect2) -> void: _item_custom_draw(item, rect, icon, is_hidden))
 	return item
 
 
-func _item_custom_draw(item: TreeItem, rect: Rect2, icon: Texture2D) -> void:
+func _item_custom_draw(item: TreeItem, rect: Rect2, icon: Texture2D, is_hidden: bool) -> void:
 	var f := get_theme_font(&"font")
 	var f_size := get_theme_font_size(&"font_size") if has_theme_font_size(&"font_size") else get_theme_default_font_size()
 	var text: String = item.get_metadata(Columns.TEXT)
@@ -242,7 +254,9 @@ func _item_custom_draw(item: TreeItem, rect: Rect2, icon: Texture2D) -> void:
 	var icon_rect := Rect2(round(rect.position + Vector2.ONE * icon_offset), Vector2(icon_width, icon_width))
 	if icon_rect.size.x + 2.0 * icon_offset > rect.size.x:
 		return
-	draw_texture_rect(icon,	icon_rect, false)
+	var icon_mod: float = Settings.hidden_file_icon_brightness if is_hidden else 1.0
+	var text_mod: float = Settings.hidden_file_text_brightness if is_hidden else 1.0
+	draw_texture_rect(icon,	icon_rect, false, Color(Color.WHITE, icon_mod))
 	draw_string(
 		f,
 		Vector2(
@@ -253,7 +267,7 @@ func _item_custom_draw(item: TreeItem, rect: Rect2, icon: Texture2D) -> void:
 		HORIZONTAL_ALIGNMENT_LEFT,
 		maxi(rect.size.x - icon_width - icon_offset * 2.0, 1),
 		f_size,
-		get_theme_color(&"font_color"),
+		get_theme_color(&"font_color") * Color(Color.WHITE, text_mod),
 		TextServer.JUSTIFICATION_CONSTRAIN_ELLIPSIS,
 	)
 
@@ -353,7 +367,7 @@ func _add_file_from_path(filename: String, add_include_guard: bool) -> void:
 		var format := {
 			"filename": filename.get_file().get_basename(),
 			"filename_upper": filename.get_file().get_basename().to_pascal_case().to_upper(),
-			"extension": filename.get_extension(),
+			"extension": filename.get_extension().to_lower(),
 			"extension_upper": filename.get_extension().to_pascal_case().to_upper(),
 		}
 		var guard_str: String = Settings.include_guard_string.format(format)

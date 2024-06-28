@@ -43,6 +43,7 @@ func _ready() -> void:
 	await SceneTreeUtil.process_frame
 	await SceneTreeUtil.process_frame
 	emit_changed_all()
+	category_container.get_child(0).pressed.emit()
 
 
 func _process(delta: float) -> void:

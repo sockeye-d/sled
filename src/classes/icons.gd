@@ -2,6 +2,7 @@
 class_name Icons extends Object
 
 
+@warning_ignore("unused_signal")
 signal icons_changed
 
 
@@ -16,8 +17,8 @@ static var singleton: Icons:
 	set(value):
 		singleton = value
 
+
 static func create(icon: String, return_null_on_failure: bool = false) -> IconTexture2D:
-	print("Loaded an icon yippee")
 	if icon in icon_textures:
 		return icon_textures[icon]
 	var tex := IconTexture2D.new()

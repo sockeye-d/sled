@@ -1,13 +1,15 @@
-[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://bjg37i54gafvn"]
+[gd_resource type="FontVariation" load_steps=3 format=3 uid="uid://bjg37i54gafvn"]
 
 [ext_resource type="FontFile" uid="uid://bxer3c6oc70xt" path="res://src/assets/fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf" id="1_cpr6p"]
+[ext_resource type="FontVariation" uid="uid://dfq21lxtduren" path="res://src/assets/fonts/emoji_font.tres" id="2_xuen7"]
 
 [resource]
+fallbacks = Array[Font]([ExtResource("2_xuen7")])
 base_font = ExtResource("1_cpr6p")
 variation_opentype = {
 2003265652: 500
 }
-variation_embolden = 0.5
+variation_embolden = 1.0
 variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
 opentype_features = {
 1684826471: 0,

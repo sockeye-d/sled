@@ -34,11 +34,8 @@ signal _continue(action_taken: ConfirmationAction)
 
 var file_handle: FileAccess
 var last_saved_text: String
-var file_path: String:
-	get:
-		if file_handle:
-			return file_handle.get_path_absolute()
-		return ""
+var file_path: String
+var file_gets_completion: bool
 var old_text: String
 var base_path: String
 var file_contents: GLSLLanguage.FileContents:
@@ -89,7 +86,7 @@ func _ready() -> void:
 
 
 func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -> void:
-	if file_handle and path == file_handle.get_path_absolute():
+	if file_handle and path == file_path:
 		return
 	if file_handle and not code_editor.text == last_saved_text:
 		confirmation_dialog.popup_centered()
@@ -108,6 +105,7 @@ func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -
 	if file_handle == null:
 		NotificationManager.notify("%s failed to open" % path.get_file(), NotificationManager.TYPE_ERROR)
 		#file_handle = old_file_handle
+		file_path = ""
 		unload_file.call_deferred()
 		return
 	
@@ -120,6 +118,10 @@ func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -
 	last_saved_text = code_editor.text
 	old_text = code_editor.text
 	
+	file_path = path
+	
+	file_gets_completion = path.get_extension().to_lower() in Settings.get_arr(&"completing_file_types")
+	
 	if selection_from > 0:
 		var a := StringUtil.get_line_col(code_editor.text, selection_from)
 		var b := StringUtil.get_line_col(code_editor.text, selection_to)
@@ -129,11 +131,13 @@ func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -
 	
 	if (
 		Settings.syntax_highlighting_enabled
-		and path.get_extension() in Settings.get_arr(&"syntax_highlighted_files")
+		and path.get_extension().to_lower() in Settings.get_arr(&"syntax_highlighted_files")
 		):
 		code_editor.syntax_highlighter = highlighter
 	else:
 		code_editor.syntax_highlighter = null
+	
+	file_handle.close()
 	
 	refresh_file_contents()
 
@@ -151,14 +155,14 @@ func unload_file() -> void:
 func save(path: String = file_path) -> void:
 	file_handle = FileAccess.open(path, FileAccess.WRITE)
 	if not file_handle:
-		NotificationManager.notify("Failed to save at path %s" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_ERROR)
+		NotificationManager.notify_err(FileAccess.get_open_error(), "Failed to save %s (reason: %s)" % [path.get_file(), "%s"], true)
 		return
 	file_handle.seek(0)
 	file_handle.store_string(code_editor.text)
 	file_handle.flush()
 	last_saved_text = code_editor.text
 
-	NotificationManager.notify("Saved %s" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_NORMAL)
+	NotificationManager.notify("Saved %s" % file_path.get_file(), NotificationManager.TYPE_NORMAL)
 	path_button.remove_theme_font_override(&"font")
 	path_button.text = file_handle.get_path_absolute().get_file()
 	
@@ -224,13 +228,15 @@ func _on_confirmation_dialog_custom_action(action: StringName) -> void:
 
 
 func _on_code_editor_text_changed() -> void:
-	refresh_file_contents()
+	if file_gets_completion:
+		refresh_file_contents()
 	
-	if Settings.auto_code_completion:
+	if Settings.auto_code_completion and file_gets_completion:
 		if old_text.length() < code_editor.text.length():
 			if Settings.code_completion_delay < 0.0001:
 				_on_code_editor_code_completion_requested()
 			else:
+				code_completion_timer.stop()
 				code_completion_timer.start(Settings.code_completion_delay)
 		else:
 			if not code_completion_timer.is_stopped():
@@ -238,10 +244,10 @@ func _on_code_editor_text_changed() -> void:
 	
 	if code_editor.text == last_saved_text:
 		path_button.remove_theme_font_override(&"font")
-		path_button.text = file_handle.get_path_absolute().get_file()
+		path_button.text = file_path.get_file()
 	else:
 		path_button.add_theme_font_override(&"font", MAIN_FONT_ITALICS)
-		path_button.text = file_handle.get_path_absolute().get_file() + " (unsaved)"
+		path_button.text = file_path.get_file() + " (unsaved)"
 	
 	old_text = code_editor.text
 	

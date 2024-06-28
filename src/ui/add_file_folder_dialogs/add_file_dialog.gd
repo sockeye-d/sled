@@ -27,7 +27,7 @@ func reset_and_show() -> void:
 
 
 func _on_file_name_line_edit_text_changed(new_text: String) -> void:
-	var is_inc: bool = new_text.get_extension() in Settings.include_file_types.split(",")
+	var is_inc: bool = new_text.get_extension().to_lower() in Settings.get_arr(&"include_file_types")
 	var is_sbs: bool = true if FileManager.file_is_sbs(new_text) else false
 	add_include_guard_check_box.button_pressed = is_inc
 	create_matching_file_check_box.disabled = not is_sbs

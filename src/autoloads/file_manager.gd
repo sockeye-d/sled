@@ -105,7 +105,7 @@ func clear_recent() -> void:
 ## Given a file path, returns the matching extension or an empty string if none
 ## exists
 func file_is_sbs(file: String) -> String:
-	var ext := file.get_extension()
+	var ext := file.get_extension().to_lower()
 	for sbs_opening_ext: String in Settings.sbs_opening_file_exts.split(","):
 		var split := sbs_opening_ext.split(":")
 		if ext == split[0]:

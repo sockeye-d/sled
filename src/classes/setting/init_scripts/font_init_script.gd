@@ -3,6 +3,7 @@ extends SettingInitScript
 
 func on_init(item: SettingItem) -> void:
 	item.options.clear()
+	item.options.append("Custom")
 	item.options.append("Monospace")
 	var fonts: Array[String]
 	fonts.assign(OS.get_system_fonts())
@@ -14,5 +15,5 @@ func on_init(item: SettingItem) -> void:
 		item.options.append(fonts[font_index])
 	
 	if not cascadia_code_index == -1:
-		item.default_value = cascadia_code_index + 1
+		item.default_value = cascadia_code_index + 2
 		#item.value = item.default_value

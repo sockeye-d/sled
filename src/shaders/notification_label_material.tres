@@ -4,5 +4,5 @@
 
 [resource]
 shader = ExtResource("1_d1gde")
-shader_parameter/start = 0.4
-shader_parameter/end = 0.6
+shader_parameter/start = 0.05
+shader_parameter/end = 0.2

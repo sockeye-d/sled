@@ -1450,7 +1450,7 @@ class Variable extends Type:
 			",",
 			0,
 			true
-		)
+		).strip_edges()
 		var split_index: int = def_scope_removed.find(",")
 		if split_index == -1:
 			split_index = StringUtil.rfind_any(def_scope_removed, StringUtil.WHITESPACE, -1)

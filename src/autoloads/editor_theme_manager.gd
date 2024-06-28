@@ -11,6 +11,7 @@ var theme: Theme:
 		return ThemeDB.get_project_theme()
 var last_imported_theme: Dictionary
 var completion_color: Color
+var current_code_font: Font
 
 
 signal theme_changed(new_theme: String)
@@ -30,17 +31,37 @@ const LIGATURE_SHORTHANDS: Dictionary = {
 
 
 func _ready() -> void:
-	Settings.connect_setting(&"ligatures", func(_new_value):
-		var f = Settings.get_item(&"font").get_text()
-		EditorThemeManager.set_font(f, Settings.ligatures)
+	Settings.connect_setting(&"ligatures", func(_new_value: String): set_ligatures())
+	
+	Settings.connect_setting(&"font", func(_new_value: int) -> void:
+		if _new_value == 0:
+			set_font_from_path(Settings.custom_font_path, Settings.ligatures)
+		else:
+			var f = Settings.get_item(&"font").get_text()
+			EditorThemeManager.set_font(f, Settings.ligatures)
 	)
 	
-	Settings.connect_setting(&"font", func(_new_value) -> void:
-		var f = Settings.get_item(&"font").get_text()
-		EditorThemeManager.set_font(f, Settings.ligatures)
+	Settings.connect_setting(&"ui_font", func(new_value: int) -> void:
+		var font: String = Settings.get_item(&"ui_font").get_text()
+		if new_value == 0:
+			main_font.base_font = MONTSERRAT
+		else:
+			var sys_font := SystemFont.new()
+			sys_font.font_names = [font]
+			main_font.base_font = sys_font
 	)
 	
 	Settings.connect_setting(&"theme", func(_new_value) -> void:
+		var new_theme: String = Settings.get_item(&"theme").get_text()
+		if new_theme.to_lower() == "custom":
+			await SceneTreeUtil.process_frame
+			EditorThemeManager.change_theme_from_path.call_deferred(Settings.custom_theme_path)
+			return
+		if new_theme:
+			EditorThemeManager.change_theme(new_theme)
+	)
+	
+	Settings.connect_setting(&"theme_contrast", func(_new_value) -> void:
 		var new_theme: String = Settings.get_item(&"theme").get_text()
 		if new_theme.to_lower() == "custom":
 			await SceneTreeUtil.process_frame
@@ -64,16 +85,6 @@ func _ready() -> void:
 	Settings.connect_setting(&"main_font_size", func(new_value: float) -> void:
 		theme.default_font_size = new_value
 		main_font_size_changed.emit()
-	)
-	
-	Settings.connect_setting(&"ui_font", func(new_value: int) -> void:
-		var font: String = Settings.get_item(&"ui_font").get_text()
-		if new_value == 0:
-			main_font.base_font = MONTSERRAT
-		else:
-			var sys_font := SystemFont.new()
-			sys_font.font_names = [font]
-			main_font.base_font = sys_font
 	)
 	
 	Settings.connect_setting(&"icon_theme", func(_new_value: int) -> void:
@@ -128,6 +139,7 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	last_imported_theme = colors
 	ThemeImporter.add_code_edit_themes(EditorThemeManager.theme, colors)
 	var t: Theme = theme
+	var contrast: float = Settings.theme_contrast * 5.0
 	t.clear_color(&"background_color", &"CodeEdit")
 	t.set_stylebox(&"normal", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
 	t.set_color(&"font_color", &"CodeEdit", colors.text_color)
@@ -147,31 +159,31 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	t.set_color(&"font_hover_color", &"Button", colors.text_color)
 	t.set_color(&"font_hover_pressed_color", &"Button", colors.text_color)
 	t.set_color(&"font_pressed_color", &"Button", colors.text_color)
-	t.set_stylebox(&"disabled", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
-	t.set_stylebox(&"normal", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
-	t.set_stylebox(&"hover", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
-	t.set_stylebox(&"pressed", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
+	t.set_stylebox(&"disabled", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.25), [4], [4]))
+	t.set_stylebox(&"normal", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
+	t.set_stylebox(&"hover", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [4], [4]))
+	t.set_stylebox(&"pressed", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.1), [4], [4]))
 	
 	t.set_color(&"font_color", &"MenuBar", colors.text_color)
 	t.set_color(&"font_focus_color", &"MenuBar", colors.text_color)
-	t.set_color(&"font_hover_color", &"MenuBar", colors.text_color.darkened(0.05))
-	t.set_color(&"font_hover_pressed_color", &"MenuBar", colors.text_color.darkened(0.15))
-	t.set_color(&"font_pressed_color", &"MenuBar", colors.text_color.darkened(0.1))
-	t.set_stylebox(&"disabled", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
+	t.set_color(&"font_hover_color", &"MenuBar", colors.text_color.darkened(contrast * 0.05))
+	t.set_color(&"font_hover_pressed_color", &"MenuBar", colors.text_color.darkened(contrast * 0.15))
+	t.set_color(&"font_pressed_color", &"MenuBar", colors.text_color.darkened(contrast * 0.1))
+	t.set_stylebox(&"disabled", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.25), [4], [4]))
 	t.set_stylebox(&"normal", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color, [4], [4]))
 	t.set_stylebox(&"hover", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.lightened(0.05), [4], [4]))
 	t.set_stylebox(&"pressed", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.lightened(0.075), [4], [4]))
 	
 	t.set_color(&"font_color", &"CheckBox", colors.text_color)
 	t.set_color(&"font_focus_color", &"CheckBox", colors.text_color)
-	t.set_color(&"font_hover_color", &"CheckBox", colors.text_color.darkened(0.05))
-	t.set_color(&"font_hover_pressed_color", &"CheckBox", colors.text_color.darkened(0.15))
-	t.set_color(&"font_pressed_color", &"CheckBox", colors.text_color.darkened(0.1))
-	t.set_stylebox(&"disabled", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
-	t.set_stylebox(&"normal", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
-	t.set_stylebox(&"hover", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
-	t.set_stylebox(&"hover_pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
-	t.set_stylebox(&"pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
+	t.set_color(&"font_hover_color", &"CheckBox", colors.text_color.darkened(contrast * 0.05))
+	t.set_color(&"font_hover_pressed_color", &"CheckBox", colors.text_color.darkened(contrast * 0.15))
+	t.set_color(&"font_pressed_color", &"CheckBox", colors.text_color.darkened(contrast * 0.1))
+	t.set_stylebox(&"disabled", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.25), [4], [4]))
+	t.set_stylebox(&"normal", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
+	t.set_stylebox(&"hover", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [4], [4]))
+	t.set_stylebox(&"hover_pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [4], [4]))
+	t.set_stylebox(&"pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
 	t.set_icon(&"checked", &"CheckBox", Icons.create("checkbox_checked"))
 	t.set_icon(&"checked_disabled", &"CheckBox", Icons.create("checkbox_checked_disabled"))
 	t.set_icon(&"unchecked", &"CheckBox", Icons.create("checkbox_unchecked"))
@@ -181,29 +193,29 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	
 	t.set_color(&"font_color", &"LineEdit", colors.text_color)
 	t.set_stylebox(&"normal", &"LineEdit",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
 	t.set_stylebox(&"read_only", &"LineEdit",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(0.25), [4], [4]))
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.25), [4], [4]))
 	
 	t.set_stylebox(&"panel", &"SliderCombo",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
 	
 	t.set_stylebox(&"slider", &"HSlider",
 		StyleBoxUtil.new_flat(colors.background_color, [4], [0, 2]))
 	t.set_stylebox(&"grabber_area", &"HSlider",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(0.08), [4], [0, 2]))
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.08), [4], [0, 2]))
 	t.set_stylebox(&"grabber_area_highlight", &"HSlider",
 		StyleBoxUtil.new_flat(colors.background_color.lightened(0.1), [4], [4]))
 	
 	t.set_stylebox(&"slider", &"VSlider",
 		StyleBoxUtil.new_flat(colors.background_color, [4], [0, 2]))
 	t.set_stylebox(&"grabber_area", &"VSlider",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(0.08), [4], [2, 0]))
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.08), [4], [2, 0]))
 	t.set_stylebox(&"grabber_area_highlight", &"VSlider",
 		StyleBoxUtil.new_flat(colors.background_color.lightened(0.1), [4], [4]))
 	
 	t.set_stylebox(&"invalid", &"FileLineEdit",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4], [2], Color(0.8, 0.3, 0.2)))
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.1), [4], [4], [2], Color(0.8, 0.3, 0.2)))
 	
 	t.set_color(&"font_color", &"OptionButton", colors.text_color)
 	t.set_color(&"font_focus_color", &"OptionButton", colors.text_color)
@@ -211,23 +223,23 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	t.set_color(&"font_hover_pressed_color", &"OptionButton", colors.text_color.lightened(0.15))
 	t.set_color(&"font_pressed_color", &"OptionButton", colors.text_color.lightened(0.1))
 	t.set_stylebox(&"normal", &"OptionButton",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(0.2), [4], [4]))
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
 	t.set_stylebox(&"hover", &"OptionButton",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(0.15), [4], [4]))
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [4], [4]))
 	t.set_stylebox(&"pressed", &"OptionButton",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.1), [4], [4]))
 	
 	t.set_stylebox(&"panel", &"AcceptDialog",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(0.0), [0], [4]))
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.0), [0], [4]))
 	
 	t.set_color(&"font_color", &"PopupMenu", colors.text_color)
-	t.set_color(&"font_disabled_color", &"PopupMenu", colors.text_color.darkened(0.2))
+	t.set_color(&"font_disabled_color", &"PopupMenu", colors.text_color.darkened(contrast * 0.2))
 	t.set_color(&"font_hover_color", &"PopupMenu", colors.text_color.lightened(0.05))
 	t.set_color(&"font_accelerator_color", &"PopupMenu", Color(colors.text_color, 0.5))
 	t.set_stylebox(&"panel", &"PopupMenu",
-		StyleBoxUtil.new_flat(colors.background_color, [4], [4], [2], colors.background_color.darkened(0.2)))
+		StyleBoxUtil.new_flat(colors.background_color, [4], [4], [2], colors.background_color.darkened(contrast * 0.2)))
 	t.set_stylebox(&"hover", &"PopupMenu",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(0.1), [4], [4]))
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.1), [4], [4]))
 	t.set_color(&"font_color", &"PopupMenu", colors.text_color)
 	t.set_color(&"font_hover_color", &"PopupMenu", colors.text_color)
 	
@@ -236,7 +248,7 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 		colors.background_color.lightened(0.2)))
 	
 	t.set_color(&"font_color", &"TooltipLabel", colors.text_color)
-	RenderingServer.set_default_clear_color(colors.background_color.darkened(0.2))
+	RenderingServer.set_default_clear_color(colors.background_color.darkened(contrast * 0.2))
 	
 	set_icon_mode()
 	
@@ -273,12 +285,63 @@ func get_theme_as_text() -> String:
 	return str(sb)
 
 
+func update_font() -> void:
+	if Settings.font == 0:
+		set_font_from_path(Settings.custom_font_path, Settings.ligatures)
+	else:
+		var f = Settings.get_item(&"font").get_text()
+		EditorThemeManager.set_font(f, Settings.ligatures)
+
+
 func set_font(font_name: String, ligatures: String = ""):
 	var new_font: FontVariation = FontVariation.new()
 	new_font.base_font = create_system_font(font_name, "Monospace")
 	
 	var features: Dictionary = convert_tags_to_names(new_font.get_supported_feature_list())
 	new_font.opentype_features = _convert_ligatures(features, ligatures)
+	
+	current_code_font = new_font
+	set_ligatures()
+	
+	theme.set_font(&"font", &"CodeEdit", new_font)
+	theme.set_font(&"mono_font", &"RichTextLabel", new_font)
+
+
+func set_ligatures(font = current_code_font, ligatures: String = Settings.ligatures) -> void:
+	var features := convert_tags_to_names(font.get_supported_feature_list())
+	features = _convert_ligatures(features, ligatures)
+	
+	if font is FontFile:
+		font.opentype_feature_overrides = features
+	elif font is FontVariation:
+		font.opentype_features = features
+
+
+func set_font_from_path(font_path: String, ligatures: String = "") -> void:
+	if not FileAccess.file_exists(font_path):
+		NotificationManager.notify("Failed to find font " + font_path.get_file(), NotificationManager.TYPE_ERROR)
+		set_font("Monospace")
+		return
+	var new_font := FontFile.new()
+	var err: Error
+	if font_path.get_extension().to_lower() in ["fnt", "font"]:
+		err = new_font.load_bitmap_font(font_path)
+	else:
+		err = new_font.load_dynamic_font(font_path)
+	
+	NotificationManager.notify_if_err(
+		err,
+		"Loaded " + font_path.get_file(),
+		"Failed to load %s (%s)" % [font_path.get_file(), "%s"],
+		true
+	)
+	
+	if err:
+		set_font("Monospace")
+		return
+	
+	current_code_font = new_font
+	set_ligatures()
 	
 	theme.set_font(&"font", &"CodeEdit", new_font)
 	theme.set_font(&"mono_font", &"RichTextLabel", new_font)
