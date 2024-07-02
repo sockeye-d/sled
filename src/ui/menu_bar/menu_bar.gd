@@ -1,4 +1,27 @@
-extends AutoMenuBar
+class_name MainMenuBar extends AutoMenuBar
+
+
+var editor_0_can_open: bool:
+	get:
+		return editor_0_can_open
+	set(value):
+		editor_0_can_open = value
+		view.set_item_disabled(1, editor_0_can_open)
+var editor_1_can_open: bool:
+	get:
+		return editor_1_can_open
+	set(value):
+		editor_1_can_open = value
+		view.set_item_disabled(2, editor_1_can_open)
+var search_can_open: bool:
+	get:
+		return search_can_open
+	set(value):
+		search_can_open = value
+		view.set_item_disabled(3, search_can_open)
+
+
+@onready var view: PopupMenu = %View
 
 
 func _item_pressed(menu_name: String, index: int, menu: PopupMenu) -> void:
@@ -22,6 +45,7 @@ func _item_pressed(menu_name: String, index: int, menu: PopupMenu) -> void:
 				FileManager.change_path(FileManager.last_opened_paths[index])
 		"View":
 			menu.set_item_checked(index, not menu.is_item_checked(index))
+			var checked_sum := view.get_sum
 			match index:
 				0, 1:
 					if not (menu.is_item_checked(0) or menu.is_item_checked(0)):
@@ -30,3 +54,5 @@ func _item_pressed(menu_name: String, index: int, menu: PopupMenu) -> void:
 					EditorManager.change_editor_visibility(index, menu.is_item_checked(index))
 				2:
 					EditorManager.change_browser_visibility(menu.is_item_checked(index))
+				3:
+					EditorManager.change_search_visibility(menu.is_item_checked(index))

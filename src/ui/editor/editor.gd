@@ -87,6 +87,11 @@ func _ready() -> void:
 
 func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -> void:
 	if file_handle and path == file_path:
+		if selection_from > 0:
+			var a := StringUtil.get_line_col(code_editor.text, selection_from)
+			var b := StringUtil.get_line_col(code_editor.text, selection_to)
+			code_editor.select(a.y, a.x, b.y, b.x)
+			code_editor.center_viewport_to_caret.call_deferred()
 		return
 	if file_handle and not code_editor.text == last_saved_text:
 		confirmation_dialog.popup_centered()
@@ -103,13 +108,13 @@ func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -
 	file_handle = FileAccess.open(path, FileAccess.READ)
 
 	if file_handle == null:
-		NotificationManager.notify("%s failed to open" % path.get_file(), NotificationManager.TYPE_ERROR)
+		NotificationManager.notify("'%s' failed to open" % path.get_file(), NotificationManager.TYPE_ERROR)
 		#file_handle = old_file_handle
 		file_path = ""
 		unload_file.call_deferred()
 		return
 	
-	NotificationManager.notify("Opened %s" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_NORMAL)
+	NotificationManager.notify("Opened '%s'" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_NORMAL)
 	if old_file_handle:
 		old_file_handle.close()
 	code_editor.editable = true
@@ -117,6 +122,8 @@ func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -
 	code_editor.clear_undo_history()
 	last_saved_text = code_editor.text
 	old_text = code_editor.text
+	found_ranges = []
+	find_box.hide()
 	
 	file_path = path
 	
@@ -126,6 +133,7 @@ func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -
 		var a := StringUtil.get_line_col(code_editor.text, selection_from)
 		var b := StringUtil.get_line_col(code_editor.text, selection_to)
 		code_editor.select(a.y, a.x, b.y, b.x)
+		code_editor.center_viewport_to_caret.call_deferred()
 	
 	path_button.text = path.get_file()
 	
@@ -148,21 +156,21 @@ func unload_file() -> void:
 	hide()
 	EditorManager.view_menu_state_change_requested.emit(get_index(), false)
 	if file_handle:
-		NotificationManager.notify("Closed %s" % file_path.get_file(), NotificationManager.TYPE_NORMAL)
+		NotificationManager.notify("Closed '%s'" % file_path.get_file(), NotificationManager.TYPE_NORMAL)
 		file_handle = null
 
 
 func save(path: String = file_path) -> void:
 	file_handle = FileAccess.open(path, FileAccess.WRITE)
 	if not file_handle:
-		NotificationManager.notify_err(FileAccess.get_open_error(), "Failed to save %s (reason: %s)" % [path.get_file(), "%s"], true)
+		NotificationManager.notify_err(FileAccess.get_open_error(), "Failed to save '%s' (reason: %s)" % [path.get_file(), "%s"], true)
 		return
 	file_handle.seek(0)
 	file_handle.store_string(code_editor.text)
 	file_handle.flush()
 	last_saved_text = code_editor.text
 
-	NotificationManager.notify("Saved %s" % file_path.get_file(), NotificationManager.TYPE_NORMAL)
+	NotificationManager.notify("Saved '%s'" % file_path.get_file(), NotificationManager.TYPE_NORMAL)
 	path_button.remove_theme_font_override(&"font")
 	path_button.text = file_handle.get_path_absolute().get_file()
 	
@@ -314,16 +322,12 @@ func _on_find_box_pattern_changed(pattern: String, use_regex: bool, case_insensi
 			text = code_editor.text
 		regex = RegExUtil.create(pattern)
 		if not regex:
-			find_box.set_invalid_pattern(true)
-			NotificationManager.notify("Pattern '%s' failed to compile" % pattern, NotificationManager.TYPE_ERROR)
 			found_ranges = []
 		else:
-			find_box.set_invalid_pattern(false)
 			# have to use assign because it treats Array and Array[Vector2i] as
 			# separate types :(
 			found_ranges.assign(regex.search_all(text).map(_match_to_range))
 	else:
-		find_box.set_invalid_pattern(false)
 		if case_insensitive:
 			found_ranges = StringUtil.findn_all_occurrences(code_editor.text, pattern)
 		else:
@@ -333,6 +337,7 @@ func _on_find_box_pattern_changed(pattern: String, use_regex: bool, case_insensi
 		current_range_index = _find_closest_range(Util.get_caret_index(code_editor), found_ranges)
 		if select_occurence:
 			_select_range(found_ranges[current_range_index])
+	code_editor.highlight_ranges = found_ranges
 
 
 func _match_to_range(m: RegExMatch) -> Vector2i:
@@ -360,18 +365,32 @@ func _on_find_box_go_to_previous_requested() -> void:
 func _select_range(selection_range: Vector2i = found_ranges[current_range_index] if current_range_index < found_ranges.size() else Vector2i(-1, -1), add_new_caret: bool = false) -> void:
 	if selection_range == Vector2i(-1, -1):
 		return
+	var col_offset := 0
+	if code_editor.text[selection_range[1]] == "\n":
+		selection_range[1] -= 1
+		col_offset = 1
 	var col_line_0: Vector2i = StringUtil.get_line_col(code_editor.text, selection_range[0])
 	var col_line_1: Vector2i = StringUtil.get_line_col(code_editor.text, selection_range[1])
 	if add_new_caret:
 		var caret_i: int = code_editor.add_caret(col_line_0.y, col_line_0.x)
-		code_editor.select(col_line_0.y, col_line_0.x, col_line_1.y, col_line_1.x, caret_i)
+		code_editor.select(col_line_0.y, col_line_0.x, col_line_1.y, col_line_1.x + col_offset, caret_i)
 	else:
-		code_editor.select(col_line_0.y, col_line_0.x, col_line_1.y, col_line_1.x, 0)
+		code_editor.select(col_line_0.y, col_line_0.x, col_line_1.y, col_line_1.x + col_offset, 0)
 	code_editor.center_viewport_to_caret(code_editor.get_caret_count() - 1)
 
 
 func _on_code_editor_caret_changed() -> void:
-	caret_pos_label.text = "%s, %s" % [code_editor.get_caret_line(), code_editor.get_caret_column()]
+	if code_editor.get_caret_count() == 1:
+		caret_pos_label.text = "%s, %s" % [code_editor.get_caret_line(), code_editor.get_caret_column()]
+	else:
+		caret_pos_label.text = ", ".join(
+			Array(code_editor.get_sorted_carets()).map(func(caret: int) -> String:
+				return "(%s, %s)" % [
+					code_editor.get_caret_line(caret),
+					code_editor.get_caret_column(caret),
+				],
+			),
+		)
 
 
 func _convert_range(selection_range: Vector2i) -> Array[Vector2i]:
@@ -389,8 +408,6 @@ func _on_find_box_select_all_occurrences_requested() -> void:
 			var range_1 := _convert_range(range)
 			var caret := code_editor.add_caret(0, 0)
 			code_editor.select(range_1[0].y, range_1[0].x, range_1[1].y, range_1[1].x, caret)
-		##if found_ranges.size() > 1:
-			##code_editor.remove_caret(0)
 		code_editor.grab_focus()
 
 
@@ -434,4 +451,5 @@ func _on_find_box_replace_all_occurrences_requested(with_what: String) -> void:
 
 
 func _on_find_box_hidden() -> void:
+	code_editor.highlight_ranges = []
 	code_editor.grab_focus()

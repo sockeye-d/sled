@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="SettingCategoryContainer" load_steps=74 format=3 uid="uid://x0tla7gkryo3"]
+[gd_resource type="Resource" script_class="SettingCategoryContainer" load_steps=71 format=3 uid="uid://x0tla7gkryo3"]
 
 [ext_resource type="Script" path="res://src/classes/setting_category_container.gd" id="1_jilef"]
 [ext_resource type="Script" path="res://src/classes/setting/setting_category.gd" id="2_n7kei"]
@@ -9,11 +9,20 @@
 [ext_resource type="Script" path="res://src/classes/setting/file_setting_item.gd" id="6_wk4j2"]
 [ext_resource type="Script" path="res://src/classes/setting/string_setting_item.gd" id="7_2htcu"]
 [ext_resource type="Script" path="res://src/classes/setting/init_scripts/font_init_script.gd" id="8_jbpf4"]
-[ext_resource type="Script" path="res://src/classes/icon.gd" id="8_kts63"]
 [ext_resource type="Script" path="res://src/classes/setting/slider_setting_item.gd" id="8_w2up1"]
 [ext_resource type="Script" path="res://src/classes/setting/checkbox_setting_item.gd" id="9_6ym6o"]
 [ext_resource type="Script" path="res://src/classes/setting/init_scripts/gui_scale_init_script.gd" id="11_d30ah"]
 [ext_resource type="Script" path="res://src/classes/setting/init_scripts/ui_font_init_script.gd" id="12_01ukf"]
+
+[sub_resource type="Resource" id="Resource_t67iy"]
+resource_name = "custom_theme_path (FileSettingItem)"
+script = ExtResource("6_wk4j2")
+filters = PackedStringArray("*.tet;Text editor themes", "*.*;All files")
+default_value = ""
+value = null
+name = "Load custom theme"
+identifier = &"custom_theme_path"
+tooltip = "Import a path to load a theme. Supports the themes in the godotengine/godot-syntax-themes repository"
 
 [sub_resource type="Resource" id="Resource_3kvck"]
 resource_name = "theme (OptionsSettingItem)"
@@ -27,17 +36,6 @@ identifier = &"theme"
 tooltip = "The code editor theme.
 Import your own using the \"Load custom theme\" setting"
 init_script = ExtResource("5_hot02")
-
-[sub_resource type="Resource" id="Resource_t67iy"]
-resource_name = "custom_theme_path (FileSettingItem)"
-script = ExtResource("6_wk4j2")
-filters = PackedStringArray()
-button_text = ""
-default_value = ""
-value = null
-name = "Load custom theme"
-identifier = &"custom_theme_path"
-tooltip = "Import a path to load a theme. Supports the themes in the godotengine/godot-syntax-themes repository"
 
 [sub_resource type="Resource" id="Resource_7hj6r"]
 resource_name = "theme_contrast (SliderSettingItem)"
@@ -78,27 +76,10 @@ identifier = &"font"
 tooltip = ""
 init_script = ExtResource("8_jbpf4")
 
-[sub_resource type="Image" id="Image_ulum0"]
-data = {
-"data": PackedByteArray(255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 141, 17, 17, 17, 251, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 254, 17, 17, 17, 171, 17, 17, 17, 1, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 15, 17, 17, 17, 243, 17, 17, 17, 18, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 9, 17, 17, 17, 224, 17, 17, 17, 43, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 35, 17, 17, 17, 222, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 197, 17, 17, 17, 78, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 52, 17, 17, 17, 205, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 86, 17, 17, 17, 237, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 254, 17, 17, 17, 106, 17, 17, 17, 245, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 252, 17, 17, 17, 157, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 22, 17, 17, 17, 235, 17, 17, 17, 219, 17, 17, 17, 57, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 14, 17, 17, 17, 224, 17, 17, 17, 52, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 44, 17, 17, 17, 214, 17, 17, 17, 211, 17, 17, 17, 47, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 109, 17, 17, 17, 236, 17, 17, 17, 205, 17, 17, 17, 205, 17, 17, 17, 205, 17, 17, 17, 205, 17, 17, 17, 205, 17, 17, 17, 205, 17, 17, 17, 202, 17, 17, 17, 66, 17, 17, 17, 192, 17, 17, 17, 188, 17, 17, 17, 70, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 28, 17, 17, 17, 51, 17, 17, 17, 51, 17, 17, 17, 51, 17, 17, 17, 51, 17, 17, 17, 51, 17, 17, 17, 51, 17, 17, 17, 236, 17, 17, 17, 103, 17, 17, 17, 171, 17, 17, 17, 165, 17, 17, 17, 93, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 205, 17, 17, 17, 139, 17, 17, 17, 150, 17, 17, 17, 141, 17, 17, 17, 117, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 176, 17, 17, 17, 170, 17, 17, 17, 129, 17, 17, 17, 118, 17, 17, 17, 140, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 147, 17, 17, 17, 196, 17, 17, 17, 107, 17, 17, 17, 95, 17, 17, 17, 163, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 118, 17, 17, 17, 218, 17, 17, 17, 86, 17, 17, 17, 71, 17, 17, 17, 187, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 89, 17, 17, 17, 234, 17, 17, 17, 65, 17, 17, 17, 48, 17, 17, 17, 210, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 60, 17, 17, 17, 246, 17, 17, 17, 43, 17, 17, 17, 25, 17, 17, 17, 233, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 17, 17, 17, 30, 17, 17, 17, 253, 17, 17, 17, 22, 17, 17, 17, 4, 17, 17, 17, 254, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 255, 17, 17, 17, 248, 17, 17, 17, 3),
-"format": "RGBA8",
-"height": 16,
-"mipmaps": false,
-"width": 16
-}
-
-[sub_resource type="ImageTexture" id="ImageTexture_sduck"]
-resource_name = "open_dir (Icon)"
-image = SubResource("Image_ulum0")
-script = ExtResource("8_kts63")
-icon = "open_dir"
-
 [sub_resource type="Resource" id="Resource_bei2d"]
 resource_name = "custom_font_path (FileSettingItem)"
 script = ExtResource("6_wk4j2")
 filters = PackedStringArray("*.ttf,*.ttc,*.otf,*.otc,*.woff,*.woff2,*.pfb,*.pfm;Dynamic fonts", "*.fnt,*.font;Bitmap fonts")
-button_text = ""
-button_icon = SubResource("ImageTexture_sduck")
 default_value = ""
 value = ""
 name = "Custom font path"
@@ -185,7 +166,7 @@ Might have to refresh for it to take effect."
 [sub_resource type="Resource" id="Resource_moc02"]
 script = ExtResource("2_n7kei")
 name = "Theme"
-settings = Array[ExtResource("3_n71xn")]([SubResource("Resource_3kvck"), SubResource("Resource_t67iy"), SubResource("Resource_7hj6r"), SubResource("Resource_22ue8"), SubResource("Resource_fbn8t"), SubResource("Resource_bei2d"), SubResource("Resource_42da8"), SubResource("Resource_i2e23"), SubResource("Resource_jjevf"), SubResource("Resource_5ipca"), SubResource("Resource_42ujs"), SubResource("Resource_t8dtq")])
+settings = Array[ExtResource("3_n71xn")]([SubResource("Resource_t67iy"), SubResource("Resource_3kvck"), SubResource("Resource_7hj6r"), SubResource("Resource_22ue8"), SubResource("Resource_fbn8t"), SubResource("Resource_bei2d"), SubResource("Resource_42da8"), SubResource("Resource_i2e23"), SubResource("Resource_jjevf"), SubResource("Resource_5ipca"), SubResource("Resource_42ujs"), SubResource("Resource_t8dtq")])
 
 [sub_resource type="Resource" id="Resource_j8c3w"]
 resource_name = "code_completion_divider (DividerSettingItem)"

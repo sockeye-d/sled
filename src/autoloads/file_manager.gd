@@ -32,6 +32,10 @@ func get_short_path(absolute_path: String) -> String:
 	return absolute_path.trim_prefix(current_path).trim_prefix("/")
 
 
+func get_abs_path(short_path: String) -> String:
+	return current_path.path_join(short_path)
+
+
 func request_open_file(path: String):
 	file_open_requested.emit(path)
 

@@ -9,7 +9,7 @@ base_font = ExtResource("1_b0y0y")
 variation_opentype = {
 2003265652: 500
 }
-variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+variation_transform = Transform2D(1, 0.1, 0, 1, 0, 0)
 opentype_features = {
 1684826471: 0,
 1936928817: 0,

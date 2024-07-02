@@ -125,6 +125,7 @@ func change_theme_from_path(theme_path: String):
 
 
 func change_theme_from_text(theme_text: String, random: bool = false) -> void:
+	var sw := Stopwatch.new()
 	var root := get_tree().root
 	var main_scene := get_node_or_null(^"/root/Main")
 	var settings_window_scene := get_node_or_null(^"/root/SettingsWindow")
@@ -141,7 +142,7 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	var t: Theme = theme
 	var contrast: float = Settings.theme_contrast * 5.0
 	t.clear_color(&"background_color", &"CodeEdit")
-	t.set_stylebox(&"normal", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
+	t.set_stylebox(&"normal", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 0, 0], [4]))
 	t.set_color(&"font_color", &"CodeEdit", colors.text_color)
 	t.set_color(&"word_highlighted_color", &"CodeEdit", Color(colors.word_highlighted_color, colors.word_highlighted_color.a * 0.5))
 	completion_color = colors.completion_font_color
@@ -196,6 +197,9 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
 	t.set_stylebox(&"read_only", &"LineEdit",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.25), [4], [4]))
+	
+	t.set_stylebox(&"invalid", &"RegExLineEdit",
+		StyleBoxUtil.new_flat(Color(colors.background_color).darkened(contrast * 0.2).lerp(Color(0.8, 0.3, 0.2), 0.2), [4], [4], [2], Color(0.8, 0.3, 0.2)))
 	
 	t.set_stylebox(&"panel", &"SliderCombo",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
@@ -259,7 +263,7 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 		root.add_child(main_scene)
 	if settings_window_scene:
 		root.add_child(settings_window_scene)
-	
+	sw.stop()
 	theme_changed.emit(theme_text)
 
 

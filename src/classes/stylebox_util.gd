@@ -24,6 +24,8 @@ static func new_flat(bg_color: Color, radii: PackedInt32Array = [0], margins: Pa
 	
 	sb.bg_color = bg_color
 	
+	sb.draw_center = true
+	
 	return sb
 
 

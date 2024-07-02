@@ -10,10 +10,56 @@ signal find_requested()
 var zoom: float = 1.0
 
 
+var highlight_ranges: Array[Vector2i]:
+	get:
+		return highlight_ranges
+	set(value):
+		highlight_ranges = value
+		_generate_highlight_cache()
+var _old_ranges_hash: int
+var _highlight_cache: Dictionary
+
+
 func _ready() -> void:
 	_set_zoom()
 	EditorThemeManager.scale_changed.connect(func(_new_scale: float) -> void: _set_zoom())
 	EditorThemeManager.code_font_size_changed.connect(func() -> void: _set_zoom())
+
+
+func _draw() -> void:
+	var highlight := get_theme_color(&"word_highlighted_color")
+	for r in highlight_ranges:
+		var col_line: Vector2i = _highlight_cache[r]
+		var test_pos := get_pos_at_line_column(col_line.y, col_line.x)
+		if test_pos.x < 0 or test_pos.y < 0:
+			continue
+		var rects: Array[Rect2] = []
+		for i in range(r[0] + 1, r[1] + 1):
+			var create_new_rect: bool = false
+			col_line.x += 1
+			if text[i - 1] == "\n":
+				col_line.x = 0
+				col_line.y += 1
+				create_new_rect = true
+			var rect := Rect2(get_rect_at_line_column(col_line.y, col_line.x))
+			if rect.position.x < 0 or rect.position.y < 0:
+				continue
+			rect = Rect2(rect.position, rect.size)
+			if not rects or create_new_rect:
+				rects.append(rect)
+				continue
+			rects[-1] = rects[-1].merge(rect)
+		for rect in rects:
+			draw_rect(rect, highlight)
+
+
+func _generate_highlight_cache() -> void:
+	var new_hash := hash(highlight_ranges)
+	if _old_ranges_hash == new_hash:
+		return
+	for r in highlight_ranges:
+		_highlight_cache[r] = StringUtil.get_line_col(text, r[0])
+	_old_ranges_hash = new_hash
 
 
 func _gui_input(event: InputEvent) -> void:

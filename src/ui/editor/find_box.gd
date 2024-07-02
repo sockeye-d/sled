@@ -15,7 +15,7 @@ signal go_to_next_requested()
 signal replace_requested(with_what: String)
 
 
-@onready var pattern_line_edit: LineEdit = %PatternLineEdit
+@onready var pattern_line_edit: RegExLineEdit = %PatternLineEdit
 @onready var replacement_line_edit: LineEdit = %ReplacementLineEdit
 @onready var select_all_occurrences_button: Button = %SelectAllOccurrencesButton
 @onready var replace_all_occurrences_button: Button = %ReplaceAllOccurrencesButton
@@ -61,6 +61,9 @@ func _ready() -> void:
 	
 	pattern_line_edit.text_changed.connect(_emit_changed)
 	regex_toggle.toggled.connect(_emit_changed)
+	regex_toggle.toggled.connect(func(is_regex: bool) -> void:
+		pattern_line_edit.pattern_type = RegExLineEdit.PatternType.REGEX if is_regex else RegExLineEdit.PatternType.SIMPLE
+	)
 	case_insensitive_toggle.toggled.connect(_emit_changed)
 	
 	select_all_occurrences_button.pressed.connect(func():
@@ -108,13 +111,6 @@ func set_match_count(count: int) -> void:
 	else:
 		match_count_label.add_theme_color_override(&"font_color", EditorThemeManager.theme.get_color(&"font_color", &"Label").lerp(Color.RED, 0.3))
 	match_count_label.text = str(count)
-
-
-func set_invalid_pattern(is_invalid: bool) -> void:
-	if is_invalid:
-		pattern_line_edit.add_theme_color_override(&"font_color", EditorThemeManager.theme.get_color(&"font_color", &"LineEdit").lerp(Color.RED, 0.3))
-	else:
-		pattern_line_edit.remove_theme_color_override(&"font_color")
 
 
 func show_with_focus() -> void:
