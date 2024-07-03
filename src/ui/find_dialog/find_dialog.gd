@@ -20,7 +20,7 @@ func open(path: String) -> void:
 	file_line_edit.update_validity()
 	_set_validity()
 	regex_line_edit.grab_focus.call_deferred()
-	show()
+	popup_centered(get_child(0).get_combined_minimum_size())
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -33,7 +33,7 @@ func _cancel() -> void:
 	hide()
 
 
-func _set_validity() -> void:
+func _set_validity() -> bool:
 	var is_valid: bool = true
 	if not regex_line_edit.is_valid_pattern:
 		is_valid = false
@@ -42,6 +42,7 @@ func _set_validity() -> void:
 	if not file_line_edit.is_valid_path:
 		is_valid = false
 	get_ok_button().disabled = not is_valid
+	return is_valid
 
 
 func _on_use_filter_check_box_toggled(toggled_on: bool) -> void:
@@ -55,7 +56,7 @@ func _on_finished() -> void:
 		EditorManager.regex_search_requested.emit(
 			FileManager.get_abs_path(file_line_edit.text),
 			regex_line_edit.compiled_regex,
-			filter_line_edit.text,
+			filter_line_edit.text if use_filter_check_box.button_pressed else "",
 			casen_check_box.button_pressed,
 			recursive_check_box.button_pressed,
 		)
@@ -63,10 +64,12 @@ func _on_finished() -> void:
 		EditorManager.simple_search_requested.emit(
 			FileManager.get_abs_path(file_line_edit.text),
 			regex_line_edit.text,
-			filter_line_edit.text,
+			filter_line_edit.text if use_filter_check_box.button_pressed else "",
 			casen_check_box.button_pressed,
 			recursive_check_box.button_pressed,
 		)
+	if visible:
+		hide()
 
 
 func _on_use_reg_ex_check_box_toggled(toggled_on: bool) -> void:
@@ -87,3 +90,9 @@ func _on_file_line_edit_is_valid_path_changed() -> void:
 
 func _on_reg_ex_line_edit_text_changed(new_text: String) -> void:
 	_set_validity()
+
+
+func _on_reg_ex_line_edit_text_submitted(new_text: String) -> void:
+	var is_valid := _set_validity()
+	if is_valid:
+		_on_finished()

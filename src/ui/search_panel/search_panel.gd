@@ -5,7 +5,13 @@ signal search_done(results: Array[SearchResult])
 
 
 var items: Dictionary
+var mut: Mutex = Mutex.new()
+var search_thread: Thread = Thread.new()
+var search_data: Dictionary
+var sem: Semaphore = Semaphore.new()
 
+@onready var label: Label = %Label
+@onready var throbber: ColorRect = %Throbber
 
 func _ready() -> void:
 	EditorManager.simple_search_requested.connect(_on_search_requested)
@@ -23,8 +29,9 @@ func display_results(results: Array[SearchResult]) -> void:
 		if not result.file_path in items:
 			items[result.file_path] = _create_header_item(result.file_path)
 		_create_result_item(items[result.file_path], result)
-	EditorManager.change_search_visibility(true)
-	EditorManager.search_results_enabled.emit()
+	
+	throbber.hide()
+	label.visible = results.size() == 0
 
 
 func _create_header_item(file_path: String) -> TreeItem:
@@ -73,11 +80,11 @@ func _item_custom_draw(item: TreeItem, rect: Rect2) -> void:
 	).x
 	var h_rect := Rect2(
 		rect.position.x + h_offset - 2.0,
-		rect.position.y,
+		rect.position.y + 2.0,
 		h_width + 4.0,
-		rect.size.y,
+		rect.size.y - 4.0,
 	)
-	draw_rect(h_rect, Color.WHITE, false)
+	draw_rect(h_rect, get_theme_color(&"font_color"), false)
 	draw_string(
 		f,
 		Vector2(
@@ -94,14 +101,71 @@ func _item_custom_draw(item: TreeItem, rect: Rect2) -> void:
 
 
 func _on_search_requested(folder_path: String, query, file_filter: String, casen: bool, recurse: bool) -> void:
+	#var files := _filter_files(folder_path, file_filter, recurse)
+	#var results: Array[SearchResult] = []
+	#for file in files:
+		#var file_text := File.get_text(file)
+		#var matches := _get_matches(file_text, query, casen)
+		#results.append_array(matches.map(func(r: Vector2i): return SearchResult.create_result(file, file_text, r)))
+	#search_done.emit(results)
+	if not search_thread.is_alive():
+		search_thread.start(_search_on_thread)
+	
+	EditorManager.change_search_visibility(true)
+	EditorManager.search_results_enabled.emit()
+	
+	clear()
+	label.show()
+	throbber.show()
+	(throbber.material as ShaderMaterial).set_shader_parameter(&"color", get_theme_color(&"loader_color", &"SearchPanel"))
+	
+	mut.lock()
+	search_data = {
+		"folder_path": folder_path,
+		"query": query,
+		"file_filter": file_filter,
+		"casen": casen,
+		"recurse": recurse,
+		"exit_loop": false,
+	}
+	mut.unlock()
+	
+	sem.post()
+
+
+func _search_on_thread() -> void:
+	while true:
+		sem.wait()
+		
+		mut.lock()
+		var data_copy := search_data.duplicate()
+		mut.unlock()
+		
+		if data_copy.exit_loop:
+			break
+		
+		var search_results := _get_search_results(data_copy)
+		
+		call_deferred_thread_group(&"display_results", search_results)
+
+
+func _get_search_results(data: Dictionary) -> Array[SearchResult]:
+	var folder_path: String = data.folder_path
+	# either a RegEx or String
+	var query: Variant = data.query
+	var file_filter: String = data.file_filter
+	var casen: bool = data.casen
+	var recurse: bool = data.recurse
+	
 	var files := _filter_files(folder_path, file_filter, recurse)
 	var results: Array[SearchResult] = []
 	for file in files:
 		var file_text := File.get_text(file)
 		var matches := _get_matches(file_text, query, casen)
 		results.append_array(matches.map(func(r: Vector2i): return SearchResult.create_result(file, file_text, r)))
-	search_done.emit(results)
-		
+	
+	return results
+
 
 func _get_matches(text: String, query, casen: bool) -> Array[Vector2i]:
 	if query is String:
@@ -121,16 +185,18 @@ func _get_matches(text: String, query, casen: bool) -> Array[Vector2i]:
 	return []
 
 
-func _filter_files(folder: String, filter: String, recursive: bool) -> PackedStringArray:
+func _filter_files(folder: String, filter: String, recursive: bool, allowed_extensions := Settings.get_arr(&"text_file_types")) -> PackedStringArray:
 	var arr := PackedStringArray()
 	for filename in DirAccess.get_files_at(folder):
 		var file = folder.path_join(filename)
-		if filter == "" or FileManager.get_short_path(file).match(filter) and file.get_extension() in Settings.get_arr(&"text_file_types"):
+		if not file.get_extension() in allowed_extensions:
+			continue
+		if filter == "" or FileManager.get_short_path(file).match(filter):
 			arr.append(file)
 	if recursive:
 		for dirname in DirAccess.get_directories_at(folder):
 			var dir = folder.path_join(dirname)
-			arr.append_array(_filter_files(dir, filter, recursive))
+			arr.append_array(_filter_files(dir, filter, recursive, allowed_extensions))
 	return arr
 
 
@@ -156,14 +222,14 @@ class SearchResult extends RefCounted:
 		var line_begin := text.rfind("\n", index_range[0]) + 1
 		var line_end := text.find("\n", index_range[1])
 		if line_end == -1:
-			line_end = text.length() - 1
+			line_end = text.length()
 		return SearchResult.new(
 			file_path,
 			index_range[0],
 			index_range[1],
 			StringUtil.substr_pos(text, line_begin, line_end),
-			 index_range[0] - line_begin,
-			 index_range[1] - line_begin,
+			index_range[0] - line_begin,
+			index_range[1] - line_begin,
 		)
 
 

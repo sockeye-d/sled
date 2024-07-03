@@ -28,7 +28,7 @@ const TOOLTIPS := {
 	BtnType.SHOW_IN_FILE_MANAGER: "Show in file manager",
 	BtnType.REFRESH: "Refresh the view (can also press [code]Ctrl+R[/code]",
 	BtnType.FOLDER_FIND: "Find within the text files of this folder",
-	BtnType.COPY_PATH: "Copy the path to the clipboard",
+	BtnType.COPY_PATH: "Copy the path to the clipboard. Hold control to copy the relative path, or shift to copy the filename",
 }
 
 
@@ -259,7 +259,12 @@ func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_ind
 		BtnType.FOLDER_FIND:
 			find_dialog.open(paths.get_value(item))
 		BtnType.COPY_PATH:
-			DisplayServer.clipboard_set(paths.get_value(item))
+			if Input.is_key_pressed(KEY_CTRL):
+				DisplayServer.clipboard_set(FileManager.get_short_path(paths.get_value(item)))
+			elif Input.is_key_pressed(KEY_SHIFT):
+				DisplayServer.clipboard_set(paths.get_value(item).get_file())
+			else:
+				DisplayServer.clipboard_set(paths.get_value(item))
 
 
 func _delete_item(item: TreeItem) -> void:

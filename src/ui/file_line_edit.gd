@@ -85,6 +85,7 @@ func _show() -> void:
 	file_dialog.current_path = base_path.path_join(text)
 	file_dialog.access = access
 	file_dialog.filters = file_filters
+	file_dialog.file_mode = mode
 	file_dialog.show()
 
 

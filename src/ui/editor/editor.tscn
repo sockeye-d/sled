@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://cfbphdd74su8c"]
+[gd_scene load_steps=31 format=3 uid="uid://cfbphdd74su8c"]
 
 [ext_resource type="Script" path="res://src/ui/editor/editor.gd" id="1_rsqc6"]
 [ext_resource type="Script" path="res://src/ui/upper_panel_container.gd" id="2_11iii"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://src/ui/editor/find_box.gd" id="4_5ubg7"]
 [ext_resource type="Script" path="res://src/classes/icon.gd" id="5_ssonm"]
 [ext_resource type="Script" path="res://src/ui/regex_line_edit.gd" id="5_xo3e6"]
+[ext_resource type="Script" path="res://src/ui/lower_panel_container.gd" id="7_a2tj5"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fdh43"]
 
@@ -384,7 +385,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/focus = SubResource("StyleBoxEmpty_kv086")
-text = "path"
+text = "No file loaded"
 flat = true
 alignment = 2
 text_overrun_behavior = 3
@@ -395,7 +396,7 @@ auto_translate_mode = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "hello there"
+editable = false
 scroll_smooth = true
 caret_blink = true
 syntax_highlighter = SubResource("CodeHighlighter_i4v8i")
@@ -500,6 +501,8 @@ icon = SubResource("ImageTexture_c26cc")
 
 [node name="InfoBox" type="PanelContainer" parent="."]
 layout_mode = 2
+theme_type_variation = &"LowerPanelContainer"
+script = ExtResource("7_a2tj5")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="InfoBox"]
 layout_mode = 2

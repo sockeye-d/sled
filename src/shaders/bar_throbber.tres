@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://rxkr8oua7nab"]
+
+[ext_resource type="Shader" path="res://src/shaders/bar_throbber.gdshader" id="1_3j5ps"]
+
+[resource]
+shader = ExtResource("1_3j5ps")
+shader_parameter/lumpiness = 0.75
+shader_parameter/lump_speed = 0.5
+shader_parameter/speed = 15.0
+shader_parameter/wavelength = 9.939
+shader_parameter/color = Color(0, 0.46571, 1, 1)
+shader_parameter/edge_0 = -0.965
+shader_parameter/edge_1 = 1.662

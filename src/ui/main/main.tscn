@@ -105,6 +105,11 @@ layout_mode = 2
 [node name="KeepVisibleComponent" type="Node" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer/Editors/TextEditors"]
 script = ExtResource("8_u3jv8")
 
+[node name="ImageViewer" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer/Editors" instance=ExtResource("8_b55ab")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
 [node name="SearchPanel" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer/Editors" instance=ExtResource("8_jng44")]
 unique_name_in_owner = true
 visible = false
@@ -112,11 +117,6 @@ layout_mode = 2
 
 [node name="KeepVisibleComponent" type="Node" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer/Editors"]
 script = ExtResource("8_u3jv8")
-
-[node name="ImageViewer" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer" instance=ExtResource("8_b55ab")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
 
 [node name="Spacer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
 clip_contents = true

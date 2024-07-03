@@ -21,7 +21,7 @@ var search_can_open: bool:
 		view.set_item_disabled(3, search_can_open)
 
 
-@onready var view: PopupMenu = %View
+@onready var view: ViewPopupMenu = %View
 
 
 func _item_pressed(menu_name: String, index: int, menu: PopupMenu) -> void:
@@ -45,14 +45,20 @@ func _item_pressed(menu_name: String, index: int, menu: PopupMenu) -> void:
 				FileManager.change_path(FileManager.last_opened_paths[index])
 		"View":
 			menu.set_item_checked(index, not menu.is_item_checked(index))
-			var checked_sum := view.get_sum
 			match index:
 				0, 1:
-					if not (menu.is_item_checked(0) or menu.is_item_checked(0)):
-						menu.set_item_checked(1 - index, not menu.is_item_checked(index))
-						EditorManager.change_editor_visibility(1 - index, not menu.is_item_checked(index))
+					#if not (menu.is_item_checked(0) or menu.is_item_checked(0)):
+						#menu.set_item_checked(1 - index, not menu.is_item_checked(index))
+						#EditorManager.change_editor_visibility(1 - index, not menu.is_item_checked(index))
 					EditorManager.change_editor_visibility(index, menu.is_item_checked(index))
 				2:
 					EditorManager.change_browser_visibility(menu.is_item_checked(index))
 				3:
 					EditorManager.change_search_visibility(menu.is_item_checked(index))
+			var checked_sum := view.get_sum()
+			if checked_sum == 0 or (checked_sum == 1 and menu.is_item_checked(2)):
+				EditorManager.change_browser_visibility(true)
+				menu.set_item_checked(2, true)
+				menu.set_item_disabled(2, true)
+			else:
+				menu.set_item_disabled(2, false)

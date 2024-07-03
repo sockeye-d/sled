@@ -40,21 +40,16 @@ hide_on_checkable_item_selection = false
 item_count = 4
 item_0/text = "Left editor visibility"
 item_0/checkable = 1
-item_0/checked = true
-item_0/disabled = true
 item_1/text = "Right editor visibility"
 item_1/checkable = 1
-item_1/checked = true
 item_1/id = 1
-item_1/disabled = true
 item_2/text = "Browser visibility"
 item_2/checkable = 1
 item_2/checked = true
 item_2/id = 2
-item_2/disabled = true
 item_3/text = "Search results visibility"
+item_3/checkable = 1
 item_3/id = 3
-item_3/disabled = true
 script = ExtResource("4_7pvbc")
 
 [node name="FileDialog" type="FileDialog" parent="."]

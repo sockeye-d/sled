@@ -58,6 +58,7 @@ version_hint=""
 
 [gui]
 
+timers/tooltip_delay_sec=0.3
 theme/custom="res://src/main.theme"
 
 [input]

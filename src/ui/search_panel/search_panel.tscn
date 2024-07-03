@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://kfuvy0jjrr55"]
+[gd_scene load_steps=3 format=3 uid="uid://kfuvy0jjrr55"]
 
 [ext_resource type="Script" path="res://src/ui/search_panel/search_panel.gd" id="1_5cw5u"]
+[ext_resource type="Material" uid="uid://rxkr8oua7nab" path="res://src/shaders/bar_throbber.tres" id="2_nvlol"]
 
 [node name="SearchPanel" type="Tree"]
 anchors_preset = 15
@@ -8,6 +9,32 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+allow_reselect = true
 script = ExtResource("1_5cw5u")
+
+[node name="Label" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -10.5
+offset_right = 20.0
+offset_bottom = 10.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "No search results (yet!)"
+
+[node name="Throbber" type="ColorRect" parent="."]
+unique_name_in_owner = true
+material = ExtResource("2_nvlol")
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
 
 [connection signal="item_selected" from="." to="." method="_on_item_selected"]

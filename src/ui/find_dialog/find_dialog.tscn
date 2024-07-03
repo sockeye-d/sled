@@ -83,7 +83,7 @@ icon = "filter_files"
 [node name="FindDialog" type="ConfirmationDialog"]
 disable_3d = true
 initial_position = 1
-size = Vector2i(360, 183)
+size = Vector2i(2192, 641)
 visible = true
 script = ExtResource("1_i5lue")
 
@@ -91,8 +91,8 @@ script = ExtResource("1_i5lue")
 unique_name_in_owner = true
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 352.0
-offset_bottom = 136.0
+offset_right = 2184.0
+offset_bottom = 594.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
 layout_mode = 2
@@ -169,6 +169,7 @@ pattern_type = 2
 [connection signal="finished" from="." to="." method="_on_finished"]
 [connection signal="is_valid_path_changed" from="PanelContainer/VBoxContainer/FileLineEdit" to="." method="_on_file_line_edit_is_valid_path_changed"]
 [connection signal="text_changed" from="PanelContainer/VBoxContainer/RegExLineEdit" to="." method="_on_reg_ex_line_edit_text_changed"]
+[connection signal="text_submitted" from="PanelContainer/VBoxContainer/RegExLineEdit" to="." method="_on_reg_ex_line_edit_text_submitted"]
 [connection signal="toggled" from="PanelContainer/VBoxContainer/HBoxContainer/CenterContainer/UseRegExCheckBox" to="." method="_on_use_reg_ex_check_box_toggled"]
 [connection signal="toggled" from="PanelContainer/VBoxContainer/HBoxContainer/CenterContainer3/CasenCheckBox" to="." method="_on_casen_check_box_toggled"]
 [connection signal="toggled" from="PanelContainer/VBoxContainer/HBoxContainer/CenterContainer4/RecursiveCheckBox" to="." method="_on_casen_check_box_toggled"]

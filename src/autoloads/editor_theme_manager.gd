@@ -125,7 +125,6 @@ func change_theme_from_path(theme_path: String):
 
 
 func change_theme_from_text(theme_text: String, random: bool = false) -> void:
-	var sw := Stopwatch.new()
 	var root := get_tree().root
 	var main_scene := get_node_or_null(^"/root/Main")
 	var settings_window_scene := get_node_or_null(^"/root/SettingsWindow")
@@ -148,8 +147,10 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	completion_color = colors.completion_font_color
 	
 	t.set_stylebox(&"panel", &"PanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [8, 8, 8, 8], [4]))
-	t.set_stylebox(&"panel", &"UpperPanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [8, 8, 0, 0], [4]))
-	t.set_stylebox(&"panel", &"LowerPanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
+	t.set_stylebox(&"panel", &"UpperPanelContainer", StyleBoxUtil.new_flat(colors.background_color, [8, 8, 0, 0], [4]))
+	t.set_stylebox(&"panel", &"LowerPanelContainer", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
+	
+	t.set_color(&"loader_color", &"SearchPanel", Color(colors.selection_color, 1.0))
 	
 	t.set_stylebox(&"panel", &"Tree", StyleBoxUtil.new_flat(colors.background_color, [8], [4]))
 	
@@ -172,8 +173,8 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	t.set_color(&"font_pressed_color", &"MenuBar", colors.text_color.darkened(contrast * 0.1))
 	t.set_stylebox(&"disabled", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.25), [4], [4]))
 	t.set_stylebox(&"normal", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color, [4], [4]))
-	t.set_stylebox(&"hover", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.lightened(0.05), [4], [4]))
-	t.set_stylebox(&"pressed", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.lightened(0.075), [4], [4]))
+	t.set_stylebox(&"hover", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.05), [4], [4]))
+	t.set_stylebox(&"pressed", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.075), [4], [4]))
 	
 	t.set_color(&"font_color", &"CheckBox", colors.text_color)
 	t.set_color(&"font_focus_color", &"CheckBox", colors.text_color)
@@ -193,6 +194,11 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	t.set_color(&"font_color", &"Label", colors.text_color)
 	
 	t.set_color(&"font_color", &"LineEdit", colors.text_color)
+	t.set_color(&"font_selected_color", &"LineEdit", colors.text_color)
+	t.set_color(&"font_uneditable_color", &"LineEdit", Color(colors.text_color, 0.5))
+	t.set_color(&"caret_color", &"LineEdit", colors.caret_color)
+	t.set_color(&"selection_color", &"LineEdit", colors.selection_color)
+	t.set_color(&"placeholder_color", &"LineEdit", colors.background_color.darkened(contrast * 0.25))
 	t.set_stylebox(&"normal", &"LineEdit",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
 	t.set_stylebox(&"read_only", &"LineEdit",
@@ -204,28 +210,36 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	t.set_stylebox(&"panel", &"SliderCombo",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
 	
-	t.set_stylebox(&"slider", &"HSlider",
+	t.set_stylebox(&"grabber", &"HSlider",
 		StyleBoxUtil.new_flat(colors.background_color, [4], [0, 2]))
-	t.set_stylebox(&"grabber_area", &"HSlider",
+	t.set_stylebox(&"grabber_highlight", &"HSlider",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.05), [4], [0, 2]))
+	t.set_stylebox(&"grabber_pressed", &"HSlider",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.08), [4], [0, 2]))
-	t.set_stylebox(&"grabber_area_highlight", &"HSlider",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(0.1), [4], [4]))
+	t.set_stylebox(&"scroll", &"HSlider",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [0, 2]))
+	t.set_stylebox(&"scroll_focus", &"HSlider",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [4], [0, 2]))
 	
-	t.set_stylebox(&"slider", &"VSlider",
-		StyleBoxUtil.new_flat(colors.background_color, [4], [0, 2]))
-	t.set_stylebox(&"grabber_area", &"VSlider",
+	t.set_stylebox(&"grabber", &"VSlider",
+		StyleBoxUtil.new_flat(colors.background_color, [4], [2, 0]))
+	t.set_stylebox(&"grabber_highlight", &"VSlider",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.05), [4], [2, 0]))
+	t.set_stylebox(&"grabber_pressed", &"VSlider",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.08), [4], [2, 0]))
-	t.set_stylebox(&"grabber_area_highlight", &"VSlider",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(0.1), [4], [4]))
+	t.set_stylebox(&"scroll", &"VSlider",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [2, 0]))
+	t.set_stylebox(&"scroll_focus", &"VSlider",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [4], [2, 0]))
 	
 	t.set_stylebox(&"invalid", &"FileLineEdit",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.1), [4], [4], [2], Color(0.8, 0.3, 0.2)))
 	
 	t.set_color(&"font_color", &"OptionButton", colors.text_color)
 	t.set_color(&"font_focus_color", &"OptionButton", colors.text_color)
-	t.set_color(&"font_hover_color", &"OptionButton", colors.text_color.lightened(0.05))
-	t.set_color(&"font_hover_pressed_color", &"OptionButton", colors.text_color.lightened(0.15))
-	t.set_color(&"font_pressed_color", &"OptionButton", colors.text_color.lightened(0.1))
+	t.set_color(&"font_hover_color", &"OptionButton", colors.text_color.lightened(contrast * 0.05))
+	t.set_color(&"font_hover_pressed_color", &"OptionButton", colors.text_color.lightened(contrast * 0.15))
+	t.set_color(&"font_pressed_color", &"OptionButton", colors.text_color.lightened(contrast * 0.1))
 	t.set_stylebox(&"normal", &"OptionButton",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
 	t.set_stylebox(&"hover", &"OptionButton",
@@ -238,7 +252,7 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	
 	t.set_color(&"font_color", &"PopupMenu", colors.text_color)
 	t.set_color(&"font_disabled_color", &"PopupMenu", colors.text_color.darkened(contrast * 0.2))
-	t.set_color(&"font_hover_color", &"PopupMenu", colors.text_color.lightened(0.05))
+	t.set_color(&"font_hover_color", &"PopupMenu", colors.text_color.lightened(contrast * 0.05))
 	t.set_color(&"font_accelerator_color", &"PopupMenu", Color(colors.text_color, 0.5))
 	t.set_stylebox(&"panel", &"PopupMenu",
 		StyleBoxUtil.new_flat(colors.background_color, [4], [4], [2], colors.background_color.darkened(contrast * 0.2)))
@@ -249,7 +263,7 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	
 	t.set_stylebox(&"panel", &"TooltipPanel",
 		StyleBoxUtil.new_flat(colors.background_color, [4], [8, 4], [2],
-		colors.background_color.lightened(0.2)))
+		colors.background_color.lightened(contrast * 0.2)))
 	
 	t.set_color(&"font_color", &"TooltipLabel", colors.text_color)
 	RenderingServer.set_default_clear_color(colors.background_color.darkened(contrast * 0.2))
@@ -263,7 +277,6 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 		root.add_child(main_scene)
 	if settings_window_scene:
 		root.add_child(settings_window_scene)
-	sw.stop()
 	theme_changed.emit(theme_text)
 
 

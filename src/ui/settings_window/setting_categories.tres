@@ -439,7 +439,7 @@ tooltip = "A list of files to open in two editors instead of one. Normally the f
 [sub_resource type="Resource" id="Resource_5ettb"]
 resource_name = "text_file_types (StringSettingItem)"
 script = ExtResource("7_2htcu")
-default_value = "inc,fsh,vsh,csh,gsh,mcmeta,properties,txt,md,glsl,json.gitignore"
+default_value = "inc,fsh,vsh,csh,gsh,mcmeta,properties,txt,md,glsl,json,gitignore,lang"
 value = null
 name = "Text files"
 identifier = &"text_file_types"
