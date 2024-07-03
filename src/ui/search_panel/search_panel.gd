@@ -31,7 +31,11 @@ func display_results(results: Array[SearchResult]) -> void:
 		_create_result_item(items[result.file_path], result)
 	
 	throbber.hide()
-	label.visible = results.size() == 0
+	if not results:
+		label.text = "No results found 😭"
+		label.show()
+	else:
+		label.hide()
 
 
 func _create_header_item(file_path: String) -> TreeItem:
@@ -115,6 +119,7 @@ func _on_search_requested(folder_path: String, query, file_filter: String, casen
 	EditorManager.search_results_enabled.emit()
 	
 	clear()
+	label.text = "Searching"
 	label.show()
 	throbber.show()
 	(throbber.material as ShaderMaterial).set_shader_parameter(&"color", get_theme_color(&"loader_color", &"SearchPanel"))

@@ -52,6 +52,8 @@ func _on_use_filter_check_box_toggled(toggled_on: bool) -> void:
 
 
 func _on_finished() -> void:
+	if visible:
+		hide()
 	if use_regex_check_box.button_pressed:
 		EditorManager.regex_search_requested.emit(
 			FileManager.get_abs_path(file_line_edit.text),
@@ -68,8 +70,6 @@ func _on_finished() -> void:
 			casen_check_box.button_pressed,
 			recursive_check_box.button_pressed,
 		)
-	if visible:
-		hide()
 
 
 func _on_use_reg_ex_check_box_toggled(toggled_on: bool) -> void:

@@ -26,10 +26,11 @@ offset_right = 20.0
 offset_bottom = 10.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "No search results (yet!)"
+text = "Search within a folder by clicking the button in the browser"
 
 [node name="Throbber" type="ColorRect" parent="."]
 unique_name_in_owner = true
+visible = false
 material = ExtResource("2_nvlol")
 custom_minimum_size = Vector2(0, 15)
 layout_mode = 1
