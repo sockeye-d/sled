@@ -1,34 +1,30 @@
-[gd_scene load_steps=3 format=3 uid="uid://kfuvy0jjrr55"]
+[gd_scene load_steps=6 format=3 uid="uid://kfuvy0jjrr55"]
 
 [ext_resource type="Script" path="res://src/ui/search_panel/search_panel.gd" id="1_5cw5u"]
+[ext_resource type="Script" path="res://src/ui/search_panel/results_tree.gd" id="2_e3bil"]
 [ext_resource type="Material" uid="uid://rxkr8oua7nab" path="res://src/shaders/bar_throbber.tres" id="2_nvlol"]
+[ext_resource type="Script" path="res://src/ui/lower_panel_container.gd" id="3_a18pm"]
 
-[node name="SearchPanel" type="Tree"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l04xs"]
+
+[node name="SearchPanel" type="PanelContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-allow_reselect = true
 script = ExtResource("1_5cw5u")
 
-[node name="Label" type="Label" parent="."]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -10.5
-offset_right = 20.0
-offset_bottom = 10.5
-grow_horizontal = 2
-grow_vertical = 2
-text = "Search within a folder by clicking the button in the browser"
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
 
-[node name="Throbber" type="ColorRect" parent="."]
+[node name="ResultsTree" type="Tree" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("2_e3bil")
+
+[node name="Throbber" type="ColorRect" parent="VBoxContainer/ResultsTree"]
 unique_name_in_owner = true
 visible = false
 material = ExtResource("2_nvlol")
@@ -38,4 +34,56 @@ anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
 
-[connection signal="item_selected" from="." to="." method="_on_item_selected"]
+[node name="Label" type="Label" parent="VBoxContainer/ResultsTree"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -241.0
+offset_top = -10.5
+offset_right = 241.0
+offset_bottom = 10.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Search within a folder by clicking the button in the browser"
+
+[node name="StatsContainer" type="PanelContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"LowerPanelContainer"
+script = ExtResource("3_a18pm")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/StatsContainer"]
+layout_mode = 2
+
+[node name="SearchFilterLineEdit" type="LineEdit" parent="VBoxContainer/StatsContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Filter results by file path"
+
+[node name="VSeparator2" type="VSeparator" parent="VBoxContainer/StatsContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_l04xs")
+
+[node name="CountLabel" type="Label" parent="VBoxContainer/StatsContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0 results"
+horizontal_alignment = 1
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/StatsContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_l04xs")
+
+[node name="StatsLabel" type="Label" parent="VBoxContainer/StatsContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "idk something else here"
+horizontal_alignment = 1
+
+[connection signal="item_selected" from="VBoxContainer/ResultsTree" to="." method="_on_item_selected"]
+[connection signal="text_changed" from="VBoxContainer/StatsContainer/HBoxContainer/SearchFilterLineEdit" to="." method="_on_search_filter_line_edit_text_changed"]

@@ -1,17 +1,28 @@
-class_name SearchPanel extends Tree
+class_name SearchPanel extends PanelContainer
+
+
+enum Task {
+	FIND,
+	FILTER,
+	EXIT,
+}
 
 
 signal search_done(results: Array[SearchResult])
 
 
-var items: Dictionary
-var mut: Mutex = Mutex.new()
-var search_thread: Thread = Thread.new()
+var current_results: SearchResults
 var search_data: Dictionary
-var sem: Semaphore = Semaphore.new()
+@onready var mut: Mutex = Mutex.new()
+@onready var search_thread: Thread = Thread.new()
+@onready var sem: Semaphore = Semaphore.new()
 
 @onready var label: Label = %Label
 @onready var throbber: ColorRect = %Throbber
+@onready var stats_container: LowerPanelContainer = %StatsContainer
+@onready var count_label: Label = %CountLabel
+@onready var stats_label: Label = %StatsLabel
+@onready var results_tree: ResultsTree = %ResultsTree
 
 func _ready() -> void:
 	EditorManager.simple_search_requested.connect(_on_search_requested)
@@ -20,12 +31,36 @@ func _ready() -> void:
 	search_done.connect(display_results)
 
 
-func display_results(results: Array[SearchResult]) -> void:
-	items.clear()
-	clear()
-	hide_root = true
-	create_item()
-	for result in results:
+func _exit_tree() -> void:
+	if search_thread.is_alive():
+		mut.lock()
+		search_data = {
+			"task": Task.EXIT,
+		}
+		mut.unlock()
+		sem.post()
+		search_thread.wait_to_finish()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_THEME_CHANGED:
+		(func():
+			throbber.material.set_shader_parameter(
+				&"color",
+				get_theme_color(&"loader_color", &"SearchPanel"),
+			)
+		).call_deferred()
+
+
+func display_results(results: SearchResults = current_results, is_new: bool = false) -> void:
+	if is_new:
+		current_results = results
+	var items := { }
+	stats_container.show()
+	results_tree.clear()
+	results_tree.hide_root = true
+	results_tree.create_item()
+	for result in results.results:
 		if not result.file_path in items:
 			items[result.file_path] = _create_header_item(result.file_path)
 		_create_result_item(items[result.file_path], result)
@@ -36,10 +71,17 @@ func display_results(results: Array[SearchResult]) -> void:
 		label.show()
 	else:
 		label.hide()
+	
+	stats_label.text = "%s files searched in %.3fs" % [
+		results.files_searched,
+		results.get_elapsed_time(Stopwatch.TimeUnit.SECONDS),
+	]
+	
+	count_label.text = "%s results" % results.results.size()
 
 
 func _create_header_item(file_path: String) -> TreeItem:
-	var item := create_item(get_root())
+	var item := results_tree.create_item(results_tree.get_root())
 	item.set_text(0, FileManager.get_short_path(file_path))
 	item.disable_folding = false
 	item.set_selectable(0, false)
@@ -48,90 +90,38 @@ func _create_header_item(file_path: String) -> TreeItem:
 
 
 func _create_result_item(parent: TreeItem, result: SearchResult) -> TreeItem:
-	var item := create_item(parent)
+	var item := results_tree.create_item(parent)
 	
 	item.set_metadata(0, result)
 	item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
-	item.set_custom_draw_callback(0, _item_custom_draw)
+	item.set_custom_draw_callback(0, results_tree._item_custom_draw)
 	item.disable_folding = false
 	item.set_selectable(0, true)
 	
 	return item
 
 
-func _item_custom_draw(item: TreeItem, rect: Rect2) -> void:
-	rect = rect.abs()
-	var f := get_theme_font(&"font", &"CodeEdit")
-	var f_size := get_theme_font_size(&"font_size")
-	var search_result: SearchResult = item.get_metadata(0)
-	var text: String = search_result.relevant_line
-	var ascent := f.get_ascent(f_size)
-	var h_offset := f.get_string_size(
-		text.substr(0, search_result.line_start_index),
-		HORIZONTAL_ALIGNMENT_LEFT,
-		-1,
-		f_size
-	).x
-	var h_width := f.get_string_size(
-		StringUtil.substr_pos(
-			text,
-			search_result.line_start_index,
-			search_result.line_end_index
-		),
-		HORIZONTAL_ALIGNMENT_LEFT,
-		-1,
-		f_size
-	).x
-	var h_rect := Rect2(
-		rect.position.x + h_offset - 2.0,
-		rect.position.y + 2.0,
-		h_width + 4.0,
-		rect.size.y - 4.0,
-	)
-	draw_rect(h_rect, get_theme_color(&"font_color"), false)
-	draw_string(
-		f,
-		Vector2(
-			rect.position.x,
-			rect.get_center().y + ascent / 2.0,
-		),
-		search_result.relevant_line,
-		HORIZONTAL_ALIGNMENT_LEFT,
-		maxi(rect.size.x, 1),
-		f_size,
-		get_theme_color(&"font_color"),
-		TextServer.JUSTIFICATION_CONSTRAIN_ELLIPSIS,
-	)
-
-
 func _on_search_requested(folder_path: String, query, file_filter: String, casen: bool, recurse: bool) -> void:
-	#var files := _filter_files(folder_path, file_filter, recurse)
-	#var results: Array[SearchResult] = []
-	#for file in files:
-		#var file_text := File.get_text(file)
-		#var matches := _get_matches(file_text, query, casen)
-		#results.append_array(matches.map(func(r: Vector2i): return SearchResult.create_result(file, file_text, r)))
-	#search_done.emit(results)
 	if not search_thread.is_alive():
 		search_thread.start(_search_on_thread)
 	
 	EditorManager.change_search_visibility(true)
 	EditorManager.search_results_enabled.emit()
 	
-	clear()
+	stats_container.hide()
+	results_tree.clear()
 	label.text = "Searching"
 	label.show()
 	throbber.show()
-	(throbber.material as ShaderMaterial).set_shader_parameter(&"color", get_theme_color(&"loader_color", &"SearchPanel"))
 	
 	mut.lock()
 	search_data = {
+		"task": Task.FIND,
 		"folder_path": folder_path,
 		"query": query,
 		"file_filter": file_filter,
 		"casen": casen,
 		"recurse": recurse,
-		"exit_loop": false,
 	}
 	mut.unlock()
 	
@@ -146,15 +136,25 @@ func _search_on_thread() -> void:
 		var data_copy := search_data.duplicate()
 		mut.unlock()
 		
-		if data_copy.exit_loop:
+		if data_copy.task == Task.EXIT:
 			break
 		
-		var search_results := _get_search_results(data_copy)
-		
-		call_deferred_thread_group(&"display_results", search_results)
+		if data_copy.task == Task.FIND:
+			var search_results := _get_search_results(data_copy)
+			call_deferred_thread_group(&"display_results", search_results, true)
+		elif data_copy.task == Task.FILTER:
+			var filtered_results: SearchResults = data_copy.old_results.copy_empty()
+			var q: String = data_copy.query
+			filtered_results.results.assign(
+				data_copy.old_results.results.filter(
+					func(e: SearchResult) -> bool:
+						return StringUtil.fuzzy_equals(FileManager.get_short_path(e.file_path), q), # comma???
+				)
+			)
+			call_deferred_thread_group(&"display_results", filtered_results, false)
 
 
-func _get_search_results(data: Dictionary) -> Array[SearchResult]:
+func _get_search_results(data: Dictionary) -> SearchResults:
 	var folder_path: String = data.folder_path
 	# either a RegEx or String
 	var query: Variant = data.query
@@ -162,12 +162,15 @@ func _get_search_results(data: Dictionary) -> Array[SearchResult]:
 	var casen: bool = data.casen
 	var recurse: bool = data.recurse
 	
+	var results := SearchResults.new()
+	results.ticks_usec_start = Time.get_ticks_usec()
 	var files := _filter_files(folder_path, file_filter, recurse)
-	var results: Array[SearchResult] = []
+	results.files_searched = files.size()
 	for file in files:
 		var file_text := File.get_text(file)
 		var matches := _get_matches(file_text, query, casen)
-		results.append_array(matches.map(func(r: Vector2i): return SearchResult.create_result(file, file_text, r)))
+		results.results.append_array(matches.map(func(r: Vector2i): return SearchResult.create_result(file, file_text, r)))
+	results.ticks_usec_end = Time.get_ticks_usec()
 	
 	return results
 
@@ -205,6 +208,30 @@ func _filter_files(folder: String, filter: String, recursive: bool, allowed_exte
 	return arr
 
 
+func _on_item_selected() -> void:
+	var selected := results_tree.get_selected()
+	var search_result: SearchResult = selected.get_metadata(0)
+	EditorManager.open_file_requested.emit(search_result.file_path, search_result.start_index, search_result.end_index)
+
+
+func _on_search_filter_line_edit_text_changed(new_text: String) -> void:
+	if new_text == "":
+		display_results()
+		return
+	
+	throbber.show()
+	
+	mut.lock()
+	search_data = {
+		"task": Task.FILTER,
+		"old_results": current_results,
+		"query": new_text,
+	}
+	mut.unlock()
+	
+	sem.post()
+
+
 class SearchResult extends RefCounted:
 	var file_path: String
 	var start_index: int
@@ -238,7 +265,19 @@ class SearchResult extends RefCounted:
 		)
 
 
-func _on_item_selected() -> void:
-	var selected := get_selected()
-	var search_result: SearchResult = selected.get_metadata(0)
-	EditorManager.open_file_requested.emit(search_result.file_path, search_result.start_index, search_result.end_index)
+class SearchResults extends RefCounted:
+	var results: Array[SearchResult]
+	var files_searched: int
+	var ticks_usec_start: int
+	var ticks_usec_end: int
+	
+	
+	func get_elapsed_time(unit: Stopwatch.TimeUnit = Stopwatch.TimeUnit.SECONDS) -> float:
+		return float(ticks_usec_end - ticks_usec_start) / unit
+	
+	func copy_empty() -> SearchResults:
+		var new := SearchResults.new()
+		new.files_searched = self.files_searched
+		new.ticks_usec_start = self.ticks_usec_start
+		new.ticks_usec_end = self.ticks_usec_end
+		return new

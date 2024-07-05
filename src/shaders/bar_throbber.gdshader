@@ -8,15 +8,13 @@ uniform vec3 color: source_color;
 uniform float edge_0;
 uniform float edge_1;
 
+float parabola(float x) { return x - x * x; }
+float parabola2(vec2 x) { return parabola(x.x) * parabola(x.y); }
+
 void fragment() {
 	COLOR.rgb = color;
 	float x = TIME * speed;
 	x += exp(lumpiness * sin(x * lump_speed));
 	// threw together a bunch of stuff but it looks pretty good
-	COLOR.a = exp2(5.0 * smoothstep(edge_0 * 2.0 - 1.0, edge_1 * 2.0 - 1.0, sin(UV.x * wavelength + x)) * (1.0 - UV.y) * (UV.x) * (1.0 - UV.x))-1.0;
+	COLOR.a = exp2(10.0 * smoothstep(edge_0, edge_1, sin(UV.x * wavelength + x)*0.5+0.5) * parabola2(UV)) - 1.0;
 }
-
-//void light() {
-	// Called for every pixel for every light affecting the CanvasItem.
-	// Uncomment to replace the default light processing function with this one.
-//}

@@ -28,8 +28,8 @@ func _ready() -> void:
 					new_label.finished.connect(func():
 						new_label.custom_minimum_size.x = new_label.get_content_width()
 						new_label.custom_minimum_size.y = new_label.get_content_height()
-						p.max_size.x = new_label.get_combined_minimum_size().x + 20.0
-						p.min_size.x = new_label.get_combined_minimum_size().x + 20.0
+						p.max_size.x = new_label.get_combined_minimum_size().x as int + 20 * EditorThemeManager.get_scale()
+						p.min_size.x = new_label.get_combined_minimum_size().x as int + 20 * EditorThemeManager.get_scale()
 						new_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 						var rr = ReferenceRect.new()
 						rr.editor_only = false

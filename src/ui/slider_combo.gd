@@ -61,7 +61,6 @@ var slider: Slider
 var outer_container: PanelContainer
 var margin_container: MarginContainer
 var container: VBoxContainer
-var _old_slider_visible: bool
 
 var dragging_state: DraggingStates = DraggingStates.NONE
 var drag_mouse_pos: Vector2

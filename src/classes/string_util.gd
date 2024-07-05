@@ -427,3 +427,12 @@ static func findn_all_occurrences(string: String, what: String) -> Array[Vector2
 
 static func replace_extension(string: String, new_ext: String) -> String:
 	return string.get_basename() + "." + new_ext
+
+
+static func fuzzy_equals(string: String, query: String) -> bool:
+	var i := 0
+	for q_char in query:
+		i = string.find(q_char, i + 1)
+		if i == -1:
+			return false
+	return true

@@ -47,7 +47,7 @@ func _set_validity() -> bool:
 
 func _on_use_filter_check_box_toggled(toggled_on: bool) -> void:
 	filter_line_edit.visible = toggled_on
-	size.y = panel_container.get_combined_minimum_size().y
+	size.y = int(panel_container.get_combined_minimum_size().y)
 	_set_validity()
 
 

@@ -105,7 +105,6 @@ func populate_tree(path: String, parent: TreeItem = null, first: bool = true) ->
 	var item := _create_folder_item(path, parent)
 	if first:
 		item.add_button(0, Icons.create("refresh"), BtnType.REFRESH)
-		item.disable_folding = true
 	
 	var da := DirAccess.open(path)
 	da.include_hidden = Settings.show_hidden_files
@@ -195,7 +194,7 @@ func _add_btn(item: TreeItem, type: BtnType) -> void:
 func _create_item(parent: TreeItem, icon: Texture2D, is_hidden: bool) -> TreeItem:
 	var item := create_item(parent)
 	item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
-	item.set_custom_draw_callback(0, func(item: TreeItem, rect: Rect2) -> void: _item_custom_draw(item, rect, icon, is_hidden))
+	item.set_custom_draw_callback(0, func(draw_item: TreeItem, rect: Rect2) -> void: _item_custom_draw(draw_item, rect, icon, is_hidden))
 	return item
 
 
@@ -207,7 +206,7 @@ func _item_custom_draw(item: TreeItem, rect: Rect2, icon: Texture2D, is_hidden: 
 	var text: String = item.get_metadata(0)
 	var ascent := f.get_ascent(f_size)
 	var string_size := f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, f_size)
-	var icon_width: int = icon.get_width() * EditorThemeManager.get_scale()
+	var icon_width: int = icon.get_width()
 	if get_theme_constant(&"icon_max_width") != 0:
 		icon_width = mini(icon_width, get_theme_constant(&"icon_max_width"))
 	var icon_offset := (rect.size.y - icon_width) / 2.0

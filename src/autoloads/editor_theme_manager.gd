@@ -91,9 +91,13 @@ func _ready() -> void:
 		set_icon_mode()
 	)
 	
+	Settings.connect_setting(&"gui_scale", func(new_value: float):
+		EditorThemeManager.set_scale.call_deferred(new_value)
+	)
+	
 	Settings.settings_window.secret_signaled.connect(func(): EditorThemeManager.change_theme("vs code dark", true))
 	
-	icons_changed.connect(Icons.singleton.icons_changed.emit)
+	#icons_changed.connect(Icons.singleton.icons_changed.emit)
 
 
 func get_scale() -> float:
@@ -106,13 +110,14 @@ func get_scale() -> float:
 func set_scale(scale: float) -> void:
 	theme.default_font_size = 16 * scale as int
 	theme.default_base_scale = scale
+	change_theme_from_text()
 	scale_changed.emit(scale)
 
 
 func change_theme(theme_name: String, random := false):
 	if theme_name in THEMES.themes:
 		var t = THEMES.themes[theme_name]
-		change_theme_from_text(t.text, random)
+		change_theme_from_text(false, t.text, random)
 
 
 func change_theme_from_path(theme_path: String):
@@ -121,24 +126,25 @@ func change_theme_from_path(theme_path: String):
 	if file == "":
 		return
 	
-	change_theme_from_text(file)
+	change_theme_from_text(false, file)
 
 
-func change_theme_from_text(theme_text: String, random: bool = false) -> void:
+func change_theme_from_text(use_cache: bool = true, theme_text: String = "", random: bool = false) -> void:
 	var root := get_tree().root
 	var main_scene := get_node_or_null(^"/root/Main")
-	var settings_window_scene := get_node_or_null(^"/root/SettingsWindow")
 	if main_scene:
 		root.remove_child(main_scene)
-	if settings_window_scene:
-		root.remove_child(settings_window_scene)
 	
 	await get_tree().process_frame
-	
-	var colors := ThemeImporter.get_theme_dict(theme_text, random)
-	last_imported_theme = colors
+	var colors: Dictionary
+	if use_cache:
+		colors = last_imported_theme
+	else:
+		colors = ThemeImporter.get_theme_dict(theme_text, random)
+		last_imported_theme = colors
 	ThemeImporter.add_code_edit_themes(EditorThemeManager.theme, colors)
 	var t: Theme = theme
+	StyleBoxUtil.scale = get_scale()
 	var contrast: float = Settings.theme_contrast * 5.0
 	t.clear_color(&"background_color", &"CodeEdit")
 	t.set_stylebox(&"normal", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 0, 0], [4]))
@@ -210,27 +216,27 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	t.set_stylebox(&"panel", &"SliderCombo",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
 	
-	t.set_stylebox(&"grabber", &"HSlider",
-		StyleBoxUtil.new_flat(colors.background_color, [4], [0, 2]))
-	t.set_stylebox(&"grabber_highlight", &"HSlider",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.05), [4], [0, 2]))
-	t.set_stylebox(&"grabber_pressed", &"HSlider",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.08), [4], [0, 2]))
-	t.set_stylebox(&"scroll", &"HSlider",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [0, 2]))
-	t.set_stylebox(&"scroll_focus", &"HSlider",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [4], [0, 2]))
+	t.set_stylebox(&"grabber", &"HScrollBar",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.3), [16], [2, 0]))
+	t.set_stylebox(&"grabber_highlight", &"HScrollBar",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.4), [16]))
+	t.set_stylebox(&"grabber_pressed", &"HScrollBar",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.5), [16]))
+	t.set_stylebox(&"scroll", &"HScrollBar",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [16], [0, 2]))
+	t.set_stylebox(&"scroll_focus", &"HScrollBar",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [16], [0, 2]))
 	
-	t.set_stylebox(&"grabber", &"VSlider",
-		StyleBoxUtil.new_flat(colors.background_color, [4], [2, 0]))
-	t.set_stylebox(&"grabber_highlight", &"VSlider",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.05), [4], [2, 0]))
-	t.set_stylebox(&"grabber_pressed", &"VSlider",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.08), [4], [2, 0]))
-	t.set_stylebox(&"scroll", &"VSlider",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [2, 0]))
-	t.set_stylebox(&"scroll_focus", &"VSlider",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [4], [2, 0]))
+	t.set_stylebox(&"grabber", &"VScrollBar",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.3), [16], [2, 0]))
+	t.set_stylebox(&"grabber_highlight", &"VScrollBar",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.4), [16]))
+	t.set_stylebox(&"grabber_pressed", &"VScrollBar",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.5), [16]))
+	t.set_stylebox(&"scroll", &"VScrollBar",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [16], [2, 0]))
+	t.set_stylebox(&"scroll_focus", &"VScrollBar",
+		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [16], [2, 0]))
 	
 	t.set_stylebox(&"invalid", &"FileLineEdit",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.1), [4], [4], [2], Color(0.8, 0.3, 0.2)))
@@ -271,12 +277,11 @@ func change_theme_from_text(theme_text: String, random: bool = false) -> void:
 	set_icon_mode()
 	
 	icons_changed.emit()
+	Icons.singleton.icons_changed.emit()
 	await get_tree().process_frame
 	
 	if main_scene:
 		root.add_child(main_scene)
-	if settings_window_scene:
-		root.add_child(settings_window_scene)
 	theme_changed.emit(theme_text)
 
 

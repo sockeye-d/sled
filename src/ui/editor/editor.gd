@@ -85,6 +85,18 @@ func _ready() -> void:
 	_set_all_settings()
 
 
+func _exit_tree() -> void:
+	if analysis_thread.is_alive():
+		analyzer_mut.lock()
+		analysis_data = {
+			"exit_loop": true,
+		}
+		analyzer_mut.unlock()
+		analyzer_invalidate_sem.post()
+		
+		analysis_thread.wait_to_finish()
+
+
 func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -> void:
 	if file_handle and path == file_path:
 		if selection_from > 0:
@@ -295,6 +307,9 @@ func _get_completion_suggestions() -> void:
 
 
 func refresh_file_contents():
+	if not analysis_thread.is_alive():
+		analysis_thread.start(analyze_file_on_thread)
+	
 	analyzer_mut.lock()
 	analysis_data = {
 		"file_path": file_path,
@@ -404,8 +419,8 @@ func _on_find_box_select_all_occurrences_requested() -> void:
 	if found_ranges:
 		var range_0 := _convert_range(found_ranges[0])
 		code_editor.select(range_0[0].y, range_0[0].x, range_0[1].y, range_0[1].x)
-		for range in found_ranges.slice(1):
-			var range_1 := _convert_range(range)
+		for found_range in found_ranges.slice(1):
+			var range_1 := _convert_range(found_range)
 			var caret := code_editor.add_caret(0, 0)
 			code_editor.select(range_1[0].y, range_1[0].x, range_1[1].y, range_1[1].x, caret)
 		code_editor.grab_focus()

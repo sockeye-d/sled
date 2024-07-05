@@ -24,8 +24,8 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	get_tree().root.add_child.call_deferred(settings_window)
 	settings_window.setting_changed.connect(func(_identifier: String, _new_value): save_settings())
+	$/root/Main.add_child(settings_window)
 	
 	if not could_load_settings:
 		await get_tree().process_frame

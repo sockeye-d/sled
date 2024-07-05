@@ -1485,9 +1485,9 @@ class Variable extends Type:
 	
 	static func get_qualifier_string(qualifiers: Qualifier) -> String:
 		var sb: StringBuilder = StringBuilder.new()
-		for qualifier in _qualifiers_flipped:
-			if qualifier & qualifiers:
-				sb.append(_qualifiers_flipped[qualifier])
+		for var_qualifier in _qualifiers_flipped:
+			if var_qualifier & qualifiers:
+				sb.append(_qualifiers_flipped[var_qualifier])
 		return str(sb)
 	
 	func _get_type() -> CodeEdit.CodeCompletionKind:
