@@ -436,3 +436,15 @@ static func fuzzy_equals(string: String, query: String) -> bool:
 		if i == -1:
 			return false
 	return true
+
+
+static func fuzzy_dist(string: String, query: String) -> float:
+	var i := 0
+	var dist: float = 0.0
+	for q_char in query:
+		var new_i = string.find(q_char, i + 1)
+		if new_i == -1:
+			return NAN
+		dist += new_i - i
+		i = new_i
+	return dist / string.length()

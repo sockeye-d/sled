@@ -6,6 +6,7 @@ class_name Icons extends Object
 signal icons_changed
 
 
+static var icons_path: String = "res://src/assets/icons_dark/"
 static var is_light_mode: bool = true
 static var loaded_icons: Dictionary = { }
 static var icon_textures: Dictionary = { }
@@ -16,6 +17,12 @@ static var singleton: Icons:
 		return singleton
 	set(value):
 		singleton = value
+
+
+static func _static_init() -> void:
+	singleton.icons_changed.connect(func():
+		icons_path = "res://src/assets/icons_%s/" % _get_mode_str()
+	)
 
 
 static func create(icon: String, return_null_on_failure: bool = false) -> IconTexture2D:
@@ -29,22 +36,22 @@ static func create(icon: String, return_null_on_failure: bool = false) -> IconTe
 	return tex
 
 
-static func find(icon: String) -> Texture2D:
+static func find(icon: String) -> String:
+	if icons_path == "":
+		icons_path = "res://src/assets/icons_dark/"
 	if not icon:
-		return null
+		return ""
 	icon = icon.replace("3d", "3D").replace("2d", "2D").replace("1d", "1D")
 	var key := _get_icon_key(icon)
-	var mode_str := _get_mode_str()
 	if key in loaded_icons:
 		return loaded_icons[key]
-	var tex = null
-	if ResourceLoader.exists("res://src/assets/icons_%s/%s.png" % [mode_str, icon]):
-		tex = load("res://src/assets/icons_%s/%s.png" % [mode_str, icon])
-	elif ResourceLoader.exists("res://src/assets/icons_%s/code/%s.png" % [mode_str, icon]):
-		tex = load("res://src/assets/icons_%s/code/%s.png" % [mode_str, icon])
-	elif ResourceLoader.exists("res://src/assets/icons_%s/code/type_%s.png" % [mode_str, icon]):
-		tex = load("res://src/assets/icons_%s/code/type_%s.png" % [mode_str, icon])
-	if tex != null:
+	var rep: PackedStringArray = [_get_mode_str(), icon]
+	var tex: String
+	if FileAccess.file_exists(icons_path + ("%s.svg" % icon)):
+		tex = FileAccess.get_file_as_string(icons_path + ("%s.svg" % icon))
+	elif FileAccess.file_exists(icons_path + ("type_%s.svg" % icon)):
+		tex = FileAccess.get_file_as_string(icons_path + ("type_%s.svg" % icon))
+	if tex:
 		loaded_icons[key] = tex
 	return tex
 

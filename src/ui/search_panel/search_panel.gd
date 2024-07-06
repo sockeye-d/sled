@@ -144,13 +144,27 @@ func _search_on_thread() -> void:
 			call_deferred_thread_group(&"display_results", search_results, true)
 		elif data_copy.task == Task.FILTER:
 			var filtered_results: SearchResults = data_copy.old_results.copy_empty()
+			# Dictionary[SearchResult, float (weight)]
+			var weights: Dictionary
 			var q: String = data_copy.query
-			filtered_results.results.assign(
-				data_copy.old_results.results.filter(
-					func(e: SearchResult) -> bool:
-						return StringUtil.fuzzy_equals(FileManager.get_short_path(e.file_path), q), # comma???
-				)
+			var old: SearchResults = data_copy.old_results
+			ArrayUtil.foreach(old.results,
+				func(result: SearchResult) -> void:
+					weights[result] = StringUtil.fuzzy_dist(result.file_path, q)
 			)
+			
+			var old_filtered: Array[SearchResult] = old.results.filter(
+				func(result: SearchResult) -> bool:
+					return not is_nan(weights[result])
+			)
+			
+			old_filtered.sort_custom(
+				func(a: SearchResult, b: SearchResult) -> bool:
+					return weights[a] < weights[b]
+			)
+			
+			
+			filtered_results.results.assign(old_filtered)
 			call_deferred_thread_group(&"display_results", filtered_results, false)
 
 

@@ -7,10 +7,11 @@ class_name IconTexture2D extends ImageTexture
 		return icon
 	set(value):
 		icon = value
-		resource_name = "%s (Icon)" % icon
+		resource_name = "%s (IconTexture2D)" % icon
 		_set_image()
 var has_set_image: bool = false
 var found_icon: bool = false
+var last_imported_scale: float = -1.0
 
 
 func _init() -> void:
@@ -19,19 +20,16 @@ func _init() -> void:
 
 
 func _set_image():
-	var img := Icons.find(icon)
-	if img:
-		var new_img: Image = img.duplicate().get_image()
-		new_img.resize(
-			int(img.get_width() * _get_scale()),
-			int(img.get_height() * _get_scale()),
-			Image.Interpolation.INTERPOLATE_CUBIC,
-		)
+	var svg_str := Icons.find(icon)
+	if svg_str:
+		var svg: Image = Image.new()
+		var current_scale := _get_scale()
+		svg.load_svg_from_string(svg_str, current_scale)
 		found_icon = true
-		if has_set_image:
-			update(new_img)
+		if has_set_image and is_equal_approx(last_imported_scale, current_scale):
+			update(svg)
 		else:
-			set_image(new_img)
+			set_image(svg)
 	else:
 		found_icon = false
 

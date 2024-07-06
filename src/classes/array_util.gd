@@ -23,6 +23,11 @@ static func join_line(array: PackedStringArray) -> String:
 	return "\n".join(array)
 
 
+static func foreach(array: Array, fn: Callable) -> void:
+	for e in array:
+		fn.call(e)
+
+
 static func map_in_place_s(array: PackedStringArray, fn: Callable) -> void:
 	for i in array.size():
 		array[i] = fn.call(array[i])
