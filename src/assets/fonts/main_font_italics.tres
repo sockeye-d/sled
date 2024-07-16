@@ -1,11 +1,11 @@
 [gd_resource type="FontVariation" load_steps=3 format=3 uid="uid://cc1sng2mq38hx"]
 
-[ext_resource type="FontFile" uid="uid://bxer3c6oc70xt" path="res://src/assets/fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf" id="1_b0y0y"]
+[ext_resource type="FontFile" uid="uid://c0hs8sooi5en2" path="res://src/assets/fonts/Red_Hat_Text/RedHatText-Italic-VariableFont_wght.ttf" id="1_dyiw4"]
 [ext_resource type="FontVariation" uid="uid://dfq21lxtduren" path="res://src/assets/fonts/emoji_font.tres" id="2_pbuxr"]
 
 [resource]
 fallbacks = Array[Font]([ExtResource("2_pbuxr")])
-base_font = ExtResource("1_b0y0y")
+base_font = ExtResource("1_dyiw4")
 variation_opentype = {
 2003265652: 500
 }

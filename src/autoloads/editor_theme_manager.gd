@@ -18,7 +18,6 @@ signal theme_changed(new_theme: String)
 signal scale_changed(new_scale: float)
 signal code_font_size_changed()
 signal main_font_size_changed()
-signal icons_changed()
 
 
 const DEFAULT_THEME: String = "vs code dark"
@@ -156,7 +155,8 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_stylebox(&"panel", &"UpperPanelContainer", StyleBoxUtil.new_flat(colors.background_color, [8, 8, 0, 0], [4]))
 	t.set_stylebox(&"panel", &"LowerPanelContainer", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
 	
-	t.set_color(&"loader_color", &"SearchPanel", Color(colors.selection_color, 1.0))
+	t.set_color(&"color", &"Throbber", Color(colors.selection_color, 1.0))
+	t.set_constant(&"thickness", &"Throbber", get_scale() * 15.0)
 	
 	t.set_stylebox(&"panel", &"Tree", StyleBoxUtil.new_flat(colors.background_color, [8], [4]))
 	
@@ -216,6 +216,20 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_stylebox(&"panel", &"SliderCombo",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
 	
+	t.set_stylebox(&"grabber_area", &"HSlider",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.4), [16]))
+	t.set_stylebox(&"grabber_area_highlight", &"HSlider",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.6), [16]))
+	t.set_stylebox(&"slider", &"HSlider",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.2), [16], [0, 2]))
+	
+	t.set_stylebox(&"grabber_area", &"VSlider",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.4), [16]))
+	t.set_stylebox(&"grabber_area_highlight", &"VSlider",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.6), [16]))
+	t.set_stylebox(&"slider", &"VSlider",
+		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.2), [16], [2, 0]))
+	
 	t.set_stylebox(&"grabber", &"HScrollBar",
 		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.3), [16], [2, 0]))
 	t.set_stylebox(&"grabber_highlight", &"HScrollBar",
@@ -226,7 +240,6 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [16], [0, 2]))
 	t.set_stylebox(&"scroll_focus", &"HScrollBar",
 		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [16], [0, 2]))
-	
 	t.set_stylebox(&"grabber", &"VScrollBar",
 		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.3), [16], [2, 0]))
 	t.set_stylebox(&"grabber_highlight", &"VScrollBar",
@@ -276,8 +289,6 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	
 	set_icon_mode()
 	
-	icons_changed.emit()
-	Icons.singleton.icons_changed.emit()
 	await get_tree().process_frame
 	
 	if main_scene:
@@ -291,13 +302,13 @@ func set_icon_mode() -> void:
 		if not last_imported_theme:
 			await theme_changed
 		Icons.is_light_mode = (last_imported_theme.background_color as Color).srgb_to_linear().get_luminance() > 0.5
-		icons_changed.emit()
+		Icons.singleton.icons_changed.emit()
 	elif icon_color_override == 1:
 		Icons.is_light_mode = true
-		icons_changed.emit()
+		Icons.singleton.icons_changed.emit()
 	elif icon_color_override == 2:
 		Icons.is_light_mode = false
-		icons_changed.emit()
+		Icons.singleton.icons_changed.emit()
 
 
 func get_theme_as_text() -> String:

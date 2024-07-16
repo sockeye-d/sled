@@ -7,7 +7,7 @@ signal file_selected(path: String)
 @onready var search_box: LineEdit = %SearchBox
 @onready var item_list: ItemList = %ItemList
 @onready var preview_container: PanelContainer = %PreviewContainer
-@onready var preview: CodeEdit = %Preview
+@onready var preview: PreviewCodeEdit = %Preview
 
 
 var base_path: String
@@ -97,7 +97,7 @@ func _on_item_list_item_selected(index: int) -> void:
 	var is_text: bool = item_list.get_item_text(index).get_extension().to_lower() in Settings.text_file_types
 	preview_container.visible = is_text
 	if is_text:
-		preview.text = FileAccess.get_file_as_string(base_path.path_join(item_list.get_item_text(index)))
+		preview.load_file(base_path.path_join(item_list.get_item_text(index)))
 	item_list.ensure_current_is_visible.call_deferred()
 
 

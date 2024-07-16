@@ -69,10 +69,15 @@ func _init() -> void:
 	scroll_bar.visibility_changed.connect((func(node): node.hide()).bind(scroll_bar))
 
 
+func _ready() -> void:
+	set_column_custom_minimum_width(0, 100)
+	set_column_clip_content(0, false)
+
+
 func _get_drag_data(at_position: Vector2) -> Variant:
 	if Settings.browser_drag_drop_mode == 0 or not get_selected():
 		return
-	var data := paths.get_value(get_selected()) as String
+	var data := FileManager.get_short_path(paths.get_value(get_selected()))
 	
 	if data.begins_with(FileManager.absolute_base_path) and Settings.browser_drag_drop_mode == 2:
 		data = data.trim_prefix(FileManager.absolute_base_path)
@@ -90,9 +95,22 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	return data
 
 
+func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
+	return false
+
+
 func _gui_input(event: InputEvent) -> void:
 	if event.is_action_pressed("refresh", false):
 		repopulate_tree()
+	if event.is_action_pressed(&"find", false):
+		var selected := get_selected()
+		if selected:
+			if selected.disable_folding:
+				_on_button_clicked(selected.get_parent(), 0, BtnType.FOLDER_FIND, 0)
+			else:
+				_on_button_clicked(selected, 0, BtnType.FOLDER_FIND, 0)
+		else:
+			_on_button_clicked(null, 0, BtnType.FOLDER_FIND, 0)
 
 
 func populate_tree(path: String, parent: TreeItem = null, first: bool = true) -> TreeItem:
@@ -150,11 +168,14 @@ func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
 	
 	item.set_metadata(0, path.get_file())
 	item.set_tooltip_text(0, FileManager.get_short_path(path))
+	item.set_text(0, path.get_file())
 	
 	_add_btn(item, BtnType.SHOW_IN_FILE_MANAGER)
 	_add_btn(item, BtnType.COPY_PATH)
 	_add_btn(item, BtnType.RENAME_FILE)
 	_add_btn(item, BtnType.DELETE_FILE)
+	
+	item.disable_folding = true
 	
 	paths.add(item, path)
 	
@@ -168,9 +189,9 @@ func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
 		FileAccess.get_hidden_attribute(path),
 	)
 	
-	item.set_metadata(0, path.substr(path.rfind("/") + 1))
-	item.set_tooltip_text(0, path)
+	item.set_metadata(0, path.get_file())
 	item.set_tooltip_text(0, FileManager.get_short_path(path))
+	item.set_text(0, path.get_file())
 		
 	_add_btn(item, BtnType.ADD_FILE)
 	_add_btn(item, BtnType.ADD_FOLDER)
@@ -179,8 +200,6 @@ func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
 	_add_btn(item, BtnType.COPY_PATH)
 	_add_btn(item, BtnType.RENAME_FOLDER)
 	_add_btn(item, BtnType.DELETE_FOLDER)
-	
-	item.set_selectable(0, false)
 	
 	paths.add(item, path)
 	
@@ -228,7 +247,7 @@ func _item_custom_draw(item: TreeItem, rect: Rect2, icon: Texture2D, is_hidden: 
 		HORIZONTAL_ALIGNMENT_LEFT,
 		maxi(rect.size.x - icon_width - icon_offset * 2.0, 1),
 		f_size,
-		get_theme_color(&"font_color") * Color(Color.WHITE, text_mod),
+		EditorThemeManager.theme.get_color(&"font_color", &"Tree") * Color(Color.WHITE, text_mod),
 		TextServer.JUSTIFICATION_CONSTRAIN_ELLIPSIS,
 	)
 
@@ -256,7 +275,10 @@ func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_ind
 		BtnType.REFRESH:
 			repopulate_tree()
 		BtnType.FOLDER_FIND:
-			find_dialog.open(paths.get_value(item))
+			if item:
+				find_dialog.open(paths.get_value(item))
+			else:
+				find_dialog.open()
 		BtnType.COPY_PATH:
 			if Input.is_key_pressed(KEY_CTRL):
 				DisplayServer.clipboard_set(FileManager.get_short_path(paths.get_value(item)))
@@ -364,16 +386,8 @@ func _on_item_collapsed(item: TreeItem) -> void:
 
 
 func _on_item_activated() -> void:
-	file_opened.emit(paths.get_value(get_selected()))
-
-
-func _on_item_selected() -> void:
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		while true:
-			var input: InputEvent = await gui_input
-			if input is InputEventMouseButton:
-				if not input.pressed:
-					break
-		if not has_focus():
-			return
-	file_opened.emit(paths.get_value(get_selected()))
+	if get_selected():
+		if not get_selected().disable_folding:
+			get_selected().collapsed = not get_selected().collapsed
+		elif paths.has_value(get_selected()):
+			file_opened.emit(paths.get_value(get_selected()))

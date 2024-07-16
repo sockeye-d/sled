@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://b6b12wwijch8d"]
+
+[ext_resource type="Shader" path="res://src/shaders/image_display.gdshader" id="1_aa44i"]
+
+[resource]
+shader = ExtResource("1_aa44i")
+shader_parameter/filter = 0
+shader_parameter/channel = 0

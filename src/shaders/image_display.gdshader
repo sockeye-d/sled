@@ -15,9 +15,9 @@ float mip_level(vec2 uv, vec2 tex_size) {
 }
 
 vec4 texture_nearest(sampler2D t, vec2 uv, int lod) {
-	vec2 size = vec2(textureSize(t, lod));
-	uv = floor(uv * size) / size;
-	return textureLod(t, uv, float(lod));
+	ivec2 size = textureSize(t, lod);
+	ivec2 coords = ivec2(uv * vec2(size));
+	return texelFetch(t, coords, 0);
 }
 
 vec4 texture_nearest_lod(sampler2D t, vec2 uv, float lod) {
@@ -76,17 +76,16 @@ vec4 texture_bicubic_lod(sampler2D sampler, vec2 texCoords, float lod) {
 }
 
 void fragment() {
-	float lod = mip_level(UV, vec2(textureSize(TEXTURE, 0)));
 	vec4 t;
 	switch(filter) {
 		case 0:
-			t = texture_nearest_lod(TEXTURE, UV, lod);
+			t = texture_nearest(TEXTURE, UV, 0);
 			break;
 		case 1:
-			t = texture_linear(TEXTURE, UV, lod);
+			t = texture_linear(TEXTURE, UV, 0.0);
 			break;
 		case 2:
-			t = texture_bicubic_lod(TEXTURE, UV, lod);
+			t = texture_bicubic(TEXTURE, UV, 0);
 			break;
 	}
 

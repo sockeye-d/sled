@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://b45p8nijrvd3v"]
 
 [ext_resource type="Script" path="res://src/ui/browser/browser.gd" id="1_pepdc"]
-[ext_resource type="Script" path="res://src/ui/browser/tree.gd" id="2_3wiph"]
+[ext_resource type="Script" path="res://src/ui/browser/browser_tree.gd" id="2_3wiph"]
 [ext_resource type="PackedScene" uid="uid://c1y3wecbymbg5" path="res://src/ui/add_file_folder_dialogs/add_file_dialog.tscn" id="3_evlqf"]
 [ext_resource type="PackedScene" uid="uid://blrmwwygqy4wt" path="res://src/ui/add_file_folder_dialogs/add_folder_dialog.tscn" id="4_3wydx"]
 [ext_resource type="PackedScene" uid="uid://uyiydlj6idmu" path="res://src/ui/find_dialog/find_dialog.tscn" id="5_myltl"]
@@ -20,6 +20,9 @@ script = ExtResource("1_pepdc")
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 0)
+theme_override_colors/font_selected_color = Color(0, 0, 0, 0)
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 0)
 theme_override_styles/panel = SubResource("StyleBoxEmpty_hk8o6")
 allow_reselect = true
 script = ExtResource("2_3wiph")
@@ -40,8 +43,8 @@ visible = false
 
 [connection signal="button_clicked" from="BrowserTree" to="BrowserTree" method="_on_button_clicked"]
 [connection signal="empty_clicked" from="BrowserTree" to="BrowserTree" method="_on_empty_clicked"]
+[connection signal="item_activated" from="BrowserTree" to="BrowserTree" method="_on_item_activated"]
 [connection signal="item_collapsed" from="BrowserTree" to="BrowserTree" method="_on_item_collapsed"]
 [connection signal="item_mouse_selected" from="BrowserTree" to="BrowserTree" method="_on_item_mouse_selected"]
-[connection signal="item_selected" from="BrowserTree" to="BrowserTree" method="_on_item_selected"]
 [connection signal="confirmed_data" from="BrowserTree/AddFileDialog" to="BrowserTree" method="_on_add_file_dialog_confirmed_data"]
 [connection signal="confirmed_data" from="BrowserTree/AddFolderDialog" to="BrowserTree" method="_on_add_folder_dialog_confirmed_data"]

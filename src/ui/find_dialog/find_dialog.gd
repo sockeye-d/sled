@@ -14,7 +14,7 @@ signal finished
 @onready var panel_container: PanelContainer = %PanelContainer
 
 
-func open(path: String) -> void:
+func open(path: String = "") -> void:
 	file_line_edit.base_path = FileManager.current_path
 	file_line_edit.text = FileManager.get_short_path(path)
 	file_line_edit.update_validity()

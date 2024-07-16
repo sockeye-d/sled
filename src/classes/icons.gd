@@ -2,11 +2,10 @@
 class_name Icons extends Object
 
 
-@warning_ignore("unused_signal")
 signal icons_changed
 
 
-static var icons_path: String = "res://src/assets/icons_dark/"
+static var icons_path: String = "res://src/assets/icons_light/"
 static var is_light_mode: bool = true
 static var loaded_icons: Dictionary = { }
 static var icon_textures: Dictionary = { }
@@ -17,6 +16,7 @@ static var singleton: Icons:
 		return singleton
 	set(value):
 		singleton = value
+static var mat_regex := RegEx.create_from_string(r"mat(\d+)\b")
 
 
 static func _static_init() -> void:
@@ -37,19 +37,22 @@ static func create(icon: String, return_null_on_failure: bool = false) -> IconTe
 
 
 static func find(icon: String) -> String:
-	if icons_path == "":
-		icons_path = "res://src/assets/icons_dark/"
 	if not icon:
 		return ""
-	icon = icon.replace("3d", "3D").replace("2d", "2D").replace("1d", "1D")
+	icon = (icon
+		.replace("3d", "3D")
+		.replace("2d", "2D")
+		.replace("1d", "1D")
+	)
+	icon = mat_regex.sub(icon, "$0x$1")
 	var key := _get_icon_key(icon)
+	var l := loaded_icons
 	if key in loaded_icons:
 		return loaded_icons[key]
-	var rep: PackedStringArray = [_get_mode_str(), icon]
 	var tex: String
-	if FileAccess.file_exists(icons_path + ("%s.svg" % icon)):
+	if ResourceLoader.exists(icons_path + ("%s.svg" % icon)):
 		tex = FileAccess.get_file_as_string(icons_path + ("%s.svg" % icon))
-	elif FileAccess.file_exists(icons_path + ("type_%s.svg" % icon)):
+	elif ResourceLoader.exists(icons_path + ("type_%s.svg" % icon)):
 		tex = FileAccess.get_file_as_string(icons_path + ("type_%s.svg" % icon))
 	if tex:
 		loaded_icons[key] = tex

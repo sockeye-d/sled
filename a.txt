@@ -1,4 +1,0 @@
-list=Array[Dictionary]([{
-"base": &"Object",
-"class": &"ArrayUtil",
-"icon": "",

@@ -34,7 +34,8 @@ func convert_icons(from_path: String, to_path: String, base_path: String = from_
 		var dst_path := to_path.path_join(src_path.trim_prefix(base_path))
 		var dst_dir := dst_path.get_base_dir()
 		
-		var new_svg := replace_colors(FileAccess.get_file_as_string(src_path))
+		var old_svg := FileAccess.get_file_as_string(src_path)
+		var new_svg := replace_colors(old_svg)
 		
 		if not DirAccess.dir_exists_absolute(dst_dir):
 			DirAccess.make_dir_recursive_absolute(dst_dir)
@@ -42,12 +43,14 @@ func convert_icons(from_path: String, to_path: String, base_path: String = from_
 		var file := FileAccess.open(dst_path, FileAccess.WRITE)
 		file.store_string(new_svg)
 		file.flush()
+		file.close()
 		
 		#file = FileAccess.open(dst_path + ".import", FileAccess.WRITE)
 		#file.store_string(default_import)
 		#file.flush()
+		#file.close()
 		
-		print("Converted ", src_path.trim_prefix(base_path))
+		print("Converted ", src_path.trim_prefix(base_path + "/"))
 	
 	for dirname in DirAccess.get_directories_at(from_path):
 		convert_icons(from_path.path_join(dirname), to_path, base_path)
@@ -93,6 +96,7 @@ func color_string(color: Color) -> String:
 
 func t_color(color: Color) -> Color:
 	color = rgb_to_hsl(color)
+	#color.s *= 0.7
 	color.b = 1.0 - color.b
 	return hsl_to_rgb(color)
 

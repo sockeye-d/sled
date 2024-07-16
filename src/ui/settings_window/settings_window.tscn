@@ -69,6 +69,7 @@ keycode = 4194309
 title = "Settings"
 position = Vector2i(226, 74)
 size = Vector2i(700, 500)
+wrap_controls = true
 transient = true
 exclusive = true
 theme = ExtResource("1_8ki8x")

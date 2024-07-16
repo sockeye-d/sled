@@ -22,6 +22,7 @@ var search_can_open: bool:
 
 
 @onready var view: ViewPopupMenu = %View
+@onready var about_sled_window: Window = %AboutSledWindow
 
 
 func _item_pressed(menu_name: String, index: int, menu: PopupMenu) -> void:

@@ -16,7 +16,7 @@ var last_imported_scale: float = -1.0
 
 func _init() -> void:
 	_set_image()
-	Icons.singleton.icons_changed.connect(_set_image)
+	Icons.singleton.icons_changed.connect(_set_image, CONNECT_DEFERRED)
 
 
 func _set_image():
@@ -26,10 +26,7 @@ func _set_image():
 		var current_scale := _get_scale()
 		svg.load_svg_from_string(svg_str, current_scale)
 		found_icon = true
-		if has_set_image and is_equal_approx(last_imported_scale, current_scale):
-			update(svg)
-		else:
-			set_image(svg)
+		set_image(svg)
 	else:
 		found_icon = false
 

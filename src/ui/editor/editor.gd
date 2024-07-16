@@ -24,14 +24,6 @@ signal _continue(action_taken: ConfirmationAction)
 @onready var caret_pos_label: Label = %CaretPosLabel
 
 
-@export var editor_theme: String:
-	set(value):
-		editor_theme = value
-		load_theme(editor_theme)
-	get:
-		return editor_theme
-
-
 var file_handle: FileAccess
 var last_saved_text: String
 var file_path: String
@@ -60,8 +52,6 @@ var analyzer_mut: Mutex = Mutex.new()
 
 
 func _ready() -> void:
-	load_theme(editor_theme)
-	
 	confirmation_dialog.add_button("Discard", true, "discarded")
 	
 	if EditorThemeManager:
@@ -80,9 +70,9 @@ func _ready() -> void:
 	analysis_thread.start(analyze_file_on_thread)
 	
 	Settings.settings_window.setting_changed.connect(func(_identifier: StringName, _new_value): _set_all_settings())
-	await get_tree().process_frame
-	await get_tree().process_frame
 	_set_all_settings()
+	
+	load_theme()
 
 
 func _exit_tree() -> void:
@@ -189,11 +179,11 @@ func save(path: String = file_path) -> void:
 	code_editor.tag_saved_version()
 
 
-func load_theme(file: String) -> void:
-	if file and code_editor:
+func load_theme(file: String = "") -> void:
+	if code_editor:
 		ThemeImporter.mut_highlighter(EditorThemeManager.last_imported_theme, highlighter, GLSLLanguage.base_types, GLSLLanguage.keywords.keys(), GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
 		if not highlighter.has_color_region("#"):
-			highlighter.add_color_region("#", "", get_theme_color("background_color").lightened(0.5))
+			highlighter.add_color_region("#", "", Color(code_editor.get_theme_color(&"font_color"), 0.7))
 
 
 func analyze_file_on_thread() -> void:
@@ -328,20 +318,23 @@ func _on_save_button_pressed() -> void:
 
 func _on_find_box_pattern_changed(pattern: String, use_regex: bool, case_insensitive: bool, select_occurence: bool = true) -> void:
 	if use_regex:
-		var regex: RegEx
-		var text: String
-		if case_insensitive:
-			pattern = RegExUtil.as_lowercase(pattern)
-			text = code_editor.text.to_lower()
+		if pattern:
+			var regex: RegEx
+			var text: String
+			if case_insensitive:
+				pattern = RegExUtil.as_lowercase(pattern)
+				text = code_editor.text.to_lower()
+			else:
+				text = code_editor.text
+			regex = RegExUtil.create(pattern)
+			if not regex:
+				found_ranges = []
+			else:
+				# have to use assign because it treats Array and Array[Vector2i] as
+				# separate types :(
+				found_ranges.assign(regex.search_all(text).map(_match_to_range))
 		else:
-			text = code_editor.text
-		regex = RegExUtil.create(pattern)
-		if not regex:
 			found_ranges = []
-		else:
-			# have to use assign because it treats Array and Array[Vector2i] as
-			# separate types :(
-			found_ranges.assign(regex.search_all(text).map(_match_to_range))
 	else:
 		if case_insensitive:
 			found_ranges = StringUtil.findn_all_occurrences(code_editor.text, pattern)

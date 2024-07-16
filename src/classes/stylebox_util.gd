@@ -8,10 +8,10 @@ static func new_flat(bg_color: Color, radii: PackedInt32Array = [0], margins: Pa
 	var sb := StyleBoxFlat.new()
 	# Uses indices relative to the end so that a single-item array will result
 	# in all the radii being the same
-	sb.corner_radius_top_left = radii[-4 % radii.size()]
-	sb.corner_radius_top_right = radii[-3 % radii.size()]
-	sb.corner_radius_bottom_left = radii[-2 % radii.size()]
-	sb.corner_radius_bottom_right = radii[-1 % radii.size()]
+	sb.corner_radius_top_left = maxi(0, int(radii[-4 % radii.size()] * scale))
+	sb.corner_radius_top_right = maxi(0, int(radii[-3 % radii.size()] * scale))
+	sb.corner_radius_bottom_left = maxi(0, int(radii[-2 % radii.size()] * scale))
+	sb.corner_radius_bottom_right = maxi(0, int(radii[-1 % radii.size()] * scale))
 	
 	sb.content_margin_left = maxi(-1, int(margins[-4 % margins.size()] * scale))
 	sb.content_margin_top = maxi(-1, int(margins[-3 % margins.size()] * scale))

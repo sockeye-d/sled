@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://b6i8nyq1toap0"]
+
+[ext_resource type="Material" uid="uid://rxkr8oua7nab" path="res://src/shaders/bar_throbber.tres" id="1_8fenh"]
+[ext_resource type="Script" path="res://src/ui/throbber/throbber.gd" id="2_3b2vj"]
+
+[node name="Throbber" type="Control"]
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_3b2vj")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+unique_name_in_owner = true
+material = ExtResource("1_8fenh")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

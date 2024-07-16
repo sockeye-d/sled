@@ -130,7 +130,10 @@ func _on_text_submitted(new_text: String) -> void:
 	if in_replace_mode:
 		replace_requested.emit(replacement)
 	else:
-		go_to_next_requested.emit()
+		if Input.is_key_pressed(KEY_SHIFT):
+			go_to_previous_requested.emit()
+		else:
+			go_to_next_requested.emit()
 
 
 func _le_gui_input(event: InputEvent) -> void:

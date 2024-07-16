@@ -1,16 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://crbljbnqdthrc"]
+[gd_scene load_steps=4 format=3 uid="uid://crbljbnqdthrc"]
 
 [ext_resource type="Script" path="res://src/ui/quick_switch_dialog/quick_switch_dialog.gd" id="1_50mwx"]
 [ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="2_l1gdf"]
 [ext_resource type="Script" path="res://src/ui/quick_switch_dialog/preview.gd" id="3_y0fpf"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_17rkc"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.6, 0.6, 0.6, 0)
-draw_center = false
 
 [node name="QuickSwitchDialog" type="ConfirmationDialog"]
 title = "Quick switch"
@@ -57,9 +49,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/read_only = SubResource("StyleBoxFlat_17rkc")
 text = "hello there"
-editable = false
 context_menu_enabled = false
 shortcut_keys_enabled = false
 deselect_on_focus_loss_enabled = false
@@ -73,3 +63,4 @@ script = ExtResource("3_y0fpf")
 [connection signal="text_submitted" from="VBoxContainer/SearchBox" to="." method="_on_search_box_text_submitted"]
 [connection signal="item_activated" from="VBoxContainer/RelativeSplitContainer/ItemList" to="." method="_on_item_list_item_activated"]
 [connection signal="item_selected" from="VBoxContainer/RelativeSplitContainer/ItemList" to="." method="_on_item_list_item_selected"]
+[connection signal="caret_changed" from="VBoxContainer/RelativeSplitContainer/PreviewContainer/Preview" to="VBoxContainer/RelativeSplitContainer/PreviewContainer/Preview" method="_on_caret_changed"]

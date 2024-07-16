@@ -13,16 +13,29 @@ signal search_done(results: Array[SearchResult])
 
 var current_results: SearchResults
 var search_data: Dictionary
+
+
+var header_items: Array[TreeItem]
+
 @onready var mut: Mutex = Mutex.new()
 @onready var search_thread: Thread = Thread.new()
 @onready var sem: Semaphore = Semaphore.new()
 
 @onready var label: Label = %Label
-@onready var throbber: ColorRect = %Throbber
+@onready var throbber: Throbber = %Throbber
 @onready var stats_container: LowerPanelContainer = %StatsContainer
 @onready var count_label: Label = %CountLabel
 @onready var stats_label: Label = %StatsLabel
 @onready var results_tree: ResultsTree = %ResultsTree
+@onready var fold_button: Button = %FoldButton
+
+@onready var fold_icon := Icons.create("fold_large")
+@onready var unfold_icon := Icons.create("unfold_large")
+
+@export_multiline var fold_tooltip: String = ""
+@export_multiline var unfold_tooltip: String = ""
+
+var unfolded_count: int = 0
 
 func _ready() -> void:
 	EditorManager.simple_search_requested.connect(_on_search_requested)
@@ -42,16 +55,6 @@ func _exit_tree() -> void:
 		search_thread.wait_to_finish()
 
 
-func _notification(what: int) -> void:
-	if what == NOTIFICATION_THEME_CHANGED:
-		(func():
-			throbber.material.set_shader_parameter(
-				&"color",
-				get_theme_color(&"loader_color", &"SearchPanel"),
-			)
-		).call_deferred()
-
-
 func display_results(results: SearchResults = current_results, is_new: bool = false) -> void:
 	if is_new:
 		current_results = results
@@ -60,9 +63,13 @@ func display_results(results: SearchResults = current_results, is_new: bool = fa
 	results_tree.clear()
 	results_tree.hide_root = true
 	results_tree.create_item()
+	header_items.clear()
 	for result in results.results:
 		if not result.file_path in items:
-			items[result.file_path] = _create_header_item(result.file_path)
+			var header := _create_header_item(result.file_path)
+			items[result.file_path] = header
+			header_items.append(header)
+			unfolded_count += 1
 		_create_result_item(items[result.file_path], result)
 	
 	throbber.hide()
@@ -78,6 +85,7 @@ func display_results(results: SearchResults = current_results, is_new: bool = fa
 	]
 	
 	count_label.text = "%s results" % results.results.size()
+	fold_button.icon = fold_icon
 
 
 func _create_header_item(file_path: String) -> TreeItem:
@@ -295,3 +303,27 @@ class SearchResults extends RefCounted:
 		new.ticks_usec_start = self.ticks_usec_start
 		new.ticks_usec_end = self.ticks_usec_end
 		return new
+
+
+func _on_fold_button_pressed() -> void:
+	var should_fold := unfolded_count > 0
+	
+	for item in header_items:
+		item.collapsed = should_fold
+	
+	if should_fold:
+		unfolded_count = 0
+	else:
+		unfolded_count = header_items.size()
+	
+	_set_fold_button_icon()
+
+
+func _on_results_tree_item_collapsed(item: TreeItem) -> void:
+	unfolded_count += -1 if item.collapsed else 1
+	_set_fold_button_icon()
+
+
+func _set_fold_button_icon() -> void:
+	fold_button.icon = fold_icon if unfolded_count > 0 else unfold_icon
+	fold_button.tooltip_text 

@@ -1,10 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://dfkt6ernbrafa"]
+[gd_scene load_steps=9 format=3 uid="uid://dfkt6ernbrafa"]
 
 [ext_resource type="Script" path="res://src/ui/menu_bar/menu_bar.gd" id="1_j76tb"]
 [ext_resource type="Script" path="res://src/ui/menu_bar/file.gd" id="2_6qdxv"]
 [ext_resource type="Script" path="res://src/ui/menu_bar/open_recent.gd" id="3_errp1"]
 [ext_resource type="Script" path="res://src/ui/menu_bar/view.gd" id="4_7pvbc"]
 [ext_resource type="Script" path="res://src/ui/menu_bar/edit.gd" id="4_bpaeo"]
+[ext_resource type="Script" path="res://src/ui/menu_bar/help.gd" id="6_7xxr2"]
+[ext_resource type="PackedScene" uid="uid://bqbwgc0np2nmd" path="res://src/ui/menu_bar/about_sled_window.tscn" id="7_la7ai"]
+[ext_resource type="PackedScene" uid="uid://b0s2lt0ijy6kc" path="res://src/ui/menu_bar/statistics_window.tscn" id="8_nemhs"]
 
 [node name="MenuBar" type="MenuBar"]
 auto_translate_mode = 1
@@ -13,12 +16,14 @@ script = ExtResource("1_j76tb")
 [node name="File" type="PopupMenu" parent="."]
 auto_translate_mode = 1
 size = Vector2i(152, 100)
-item_count = 3
+item_count = 4
 item_0/text = "Save all"
 item_1/text = "Open new folder"
 item_1/id = 1
 item_2/text = "Quick switch"
 item_2/id = 2
+item_3/text = "Statistics"
+item_3/id = 3
 script = ExtResource("2_6qdxv")
 
 [node name="Open recent" type="PopupMenu" parent="File"]
@@ -52,4 +57,18 @@ item_3/checkable = 1
 item_3/id = 3
 script = ExtResource("4_7pvbc")
 
+[node name="Help" type="PopupMenu" parent="."]
+size = Vector2i(148, 100)
+item_count = 2
+item_0/text = "GitHub"
+item_1/text = "About sled"
+item_1/id = 1
+script = ExtResource("6_7xxr2")
+
 [node name="FileDialog" type="FileDialog" parent="."]
+
+[node name="AboutSledWindow" parent="." instance=ExtResource("7_la7ai")]
+unique_name_in_owner = true
+
+[node name="StatisticsWindow" parent="." instance=ExtResource("8_nemhs")]
+visible = false

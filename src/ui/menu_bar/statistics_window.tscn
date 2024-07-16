@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://b0s2lt0ijy6kc"]
+
+[ext_resource type="Script" path="res://src/ui/menu_bar/statistics_window.gd" id="1_0vfmo"]
+
+[node name="StatisticsWindow" type="Window"]
+auto_translate_mode = 1
+position = Vector2i(0, 36)
+size = Vector2i(600, 550)
+wrap_controls = true
+transient = true
+exclusive = true
+script = ExtResource("1_0vfmo")
+
+[node name="ItemList" type="ItemList" parent="."]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+max_columns = 2
+
+[connection signal="about_to_popup" from="." to="." method="_on_about_to_popup"]
