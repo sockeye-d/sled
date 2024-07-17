@@ -2,7 +2,7 @@
 extends Node
 
 
-const MONTSERRAT = preload("res://src/assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf")
+const MAIN_FONT = preload("res://src/assets/fonts/Red_Hat_Text/RedHatText-VariableFont_wght.ttf")
 var main_font: FontVariation = preload("res://src/assets/fonts/main_font.tres")
 
 
@@ -43,7 +43,7 @@ func _ready() -> void:
 	Settings.connect_setting(&"ui_font", func(new_value: int) -> void:
 		var font: String = Settings.get_item(&"ui_font").get_text()
 		if new_value == 0:
-			main_font.base_font = MONTSERRAT
+			main_font.base_font = MAIN_FONT
 		else:
 			var sys_font := SystemFont.new()
 			sys_font.font_names = [font]

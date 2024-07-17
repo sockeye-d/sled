@@ -75,20 +75,26 @@ func _ready() -> void:
 
 
 func _get_drag_data(at_position: Vector2) -> Variant:
-	if Settings.browser_drag_drop_mode == 0 or not get_selected():
+	if get_selected() == null:
 		return
-	var data := FileManager.get_short_path(paths.get_value(get_selected()))
+	var items := _get_selected_items()
+	var item_paths: PackedStringArray
+	for item in items:
+		item_paths.append(paths.get_value(item))
 	
-	if data.begins_with(FileManager.absolute_base_path) and Settings.browser_drag_drop_mode == 2:
-		data = data.trim_prefix(FileManager.absolute_base_path)
-		data = '#include "%s"' % data
-	elif data.begins_with(FileManager.current_path):
-		data = data.trim_prefix(FileManager.current_path)
-	else:
-		return
+	var data := DragData.new(item_paths, items)
+	
+	#if data.begins_with(FileManager.absolute_base_path) and Settings.browser_drag_drop_mode == 2:
+		#data = data.trim_prefix(FileManager.absolute_base_path)
+		#data = '#include "%s"' % data
+	#elif data.begins_with(FileManager.current_path):
+		#data = data.trim_prefix(FileManager.current_path)
+	#else:
+		#return
 	
 	var preview: Label = Label.new()
-	preview.text = data
+	for path in data.absolute_paths:
+		preview.text += FileManager.get_short_path(path) + "\n"
 	
 	set_drag_preview(preview)
 	
@@ -391,3 +397,25 @@ func _on_item_activated() -> void:
 			get_selected().collapsed = not get_selected().collapsed
 		elif paths.has_value(get_selected()):
 			file_opened.emit(paths.get_value(get_selected()))
+
+
+func _get_selected_items() -> Array[TreeItem]:
+	var arr: Array[TreeItem] = []
+	var item := get_selected()
+	arr.append(item)
+	while true:
+		item = get_next_selected(item)
+		if item == null:
+			break
+		arr.append(item)
+	return arr
+
+
+class DragData:
+	var absolute_paths: PackedStringArray
+	var items: Array[TreeItem]
+	
+	
+	func _init(_absolute_paths: PackedStringArray, _items: Array[TreeItem]) -> void:
+		absolute_paths = _absolute_paths
+		items = _items

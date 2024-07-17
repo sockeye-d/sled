@@ -25,6 +25,7 @@ theme_override_colors/font_selected_color = Color(0, 0, 0, 0)
 theme_override_colors/font_disabled_color = Color(0, 0, 0, 0)
 theme_override_styles/panel = SubResource("StyleBoxEmpty_hk8o6")
 allow_reselect = true
+select_mode = 2
 script = ExtResource("2_3wiph")
 
 [node name="AddFileDialog" parent="BrowserTree" instance=ExtResource("3_evlqf")]

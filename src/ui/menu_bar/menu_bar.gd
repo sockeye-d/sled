@@ -23,6 +23,7 @@ var search_can_open: bool:
 
 @onready var view: ViewPopupMenu = %View
 @onready var about_sled_window: Window = %AboutSledWindow
+@onready var statistics_window: StatisticsWindow = %StatisticsWindow
 
 
 func _item_pressed(menu_name: String, index: int, menu: PopupMenu) -> void:
@@ -39,6 +40,8 @@ func _item_pressed(menu_name: String, index: int, menu: PopupMenu) -> void:
 					FileManager.change_path_browse()
 				2:
 					FileManager.open_quick_switch()
+				3:
+					statistics_window.show()
 		"File/Open recent":
 			if index >= FileManager.last_opened_paths.size():
 				FileManager.clear_recent()
@@ -63,3 +66,9 @@ func _item_pressed(menu_name: String, index: int, menu: PopupMenu) -> void:
 				menu.set_item_disabled(2, true)
 			else:
 				menu.set_item_disabled(2, false)
+		"Help":
+			match index:
+				0:
+					OS.shell_open("https://github.com/sockeye-d/sled")
+				1:
+					about_sled_window.show()

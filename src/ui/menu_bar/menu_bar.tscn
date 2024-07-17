@@ -15,7 +15,7 @@ script = ExtResource("1_j76tb")
 
 [node name="File" type="PopupMenu" parent="."]
 auto_translate_mode = 1
-size = Vector2i(152, 100)
+size = Vector2i(152, 112)
 item_count = 4
 item_0/text = "Save all"
 item_1/text = "Open new folder"
@@ -40,7 +40,7 @@ script = ExtResource("4_bpaeo")
 [node name="View" type="PopupMenu" parent="."]
 unique_name_in_owner = true
 auto_translate_mode = 1
-size = Vector2i(121, 133)
+size = Vector2i(212, 133)
 hide_on_checkable_item_selection = false
 item_count = 4
 item_0/text = "Left editor visibility"
@@ -69,6 +69,8 @@ script = ExtResource("6_7xxr2")
 
 [node name="AboutSledWindow" parent="." instance=ExtResource("7_la7ai")]
 unique_name_in_owner = true
+visible = false
 
 [node name="StatisticsWindow" parent="." instance=ExtResource("8_nemhs")]
+unique_name_in_owner = true
 visible = false

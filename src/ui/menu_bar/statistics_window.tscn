@@ -1,23 +1,77 @@
-[gd_scene load_steps=2 format=3 uid="uid://b0s2lt0ijy6kc"]
+[gd_scene load_steps=3 format=3 uid="uid://b0s2lt0ijy6kc"]
 
 [ext_resource type="Script" path="res://src/ui/menu_bar/statistics_window.gd" id="1_0vfmo"]
+[ext_resource type="PackedScene" uid="uid://b6i8nyq1toap0" path="res://src/ui/throbber/throbber.tscn" id="3_104xo"]
 
 [node name="StatisticsWindow" type="Window"]
 auto_translate_mode = 1
-position = Vector2i(0, 36)
+initial_position = 2
 size = Vector2i(600, 550)
-wrap_controls = true
 transient = true
 exclusive = true
 script = ExtResource("1_0vfmo")
 
-[node name="ItemList" type="ItemList" parent="."]
+[node name="Container" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="Container"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Container/MarginContainer"]
+layout_mode = 2
+
+[node name="Left" type="VBoxContainer" parent="Container/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Container/MarginContainer/HBoxContainer/Left"]
+layout_mode = 2
+
+[node name="Right" type="VBoxContainer" parent="Container/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Container/MarginContainer/HBoxContainer/Right"]
+layout_mode = 2
+
+[node name="LoadingPanel" type="Panel" parent="."]
 unique_name_in_owner = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-max_columns = 2
 
-[connection signal="about_to_popup" from="." to="." method="_on_about_to_popup"]
+[node name="Throbber" parent="LoadingPanel" instance=ExtResource("3_104xo")]
+layout_mode = 1
+anchors_preset = 10
+anchor_bottom = 0.0
+grow_vertical = 1
+
+[node name="Label" type="Label" parent="LoadingPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Please wait"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 3
+
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]

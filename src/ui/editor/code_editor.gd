@@ -26,6 +26,34 @@ func _ready() -> void:
 	EditorThemeManager.code_font_size_changed.connect(func() -> void: _set_zoom())
 
 
+func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
+	if data is BrowserTree.DragData and Settings.browser_drag_drop_mode != 0:
+		var lc := get_line_column_at_pos(at_position, false)
+		if Util.is_none(lc):
+			return false
+		return true
+	return false
+
+
+func _drop_data(at_position: Vector2, data: Variant) -> void:
+	if data is BrowserTree.DragData and Settings.browser_drag_drop_mode != 0:
+		remove_secondary_carets()
+		var lc := get_line_column_at_pos(at_position, false)
+		if Util.is_none(lc):
+			return
+		var insertions: PackedStringArray = []
+		for path: String in data.absolute_paths:
+			var final_path: String
+			match Settings.browser_drag_drop_mode:
+				1:
+					final_path = FileManager.get_short_path(path)
+				2:
+					final_path = FileManager.get_include_path(path)
+			insertions.append("#include \"%s\"" % final_path)
+		
+		insert_text("\n".join(insertions), lc[1], lc[0])
+
+
 func _draw() -> void:
 	var highlight := get_theme_color(&"word_highlighted_color")
 	for r in highlight_ranges:

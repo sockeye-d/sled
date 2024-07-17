@@ -11,4 +11,3 @@ func _notification(what: int) -> void:
 			await ready
 		color_rect.material.set_shader_parameter(&"color", get_theme_color(&"color", &"Throbber"))
 		custom_minimum_size = Vector2(0, get_theme_constant(&"thickness", &"Throbber"))
-		print(get_theme_constant(&"thickness", &"Throbber"))

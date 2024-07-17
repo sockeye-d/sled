@@ -32,6 +32,13 @@ func get_short_path(absolute_path: String) -> String:
 	return absolute_path.trim_prefix(current_path).trim_prefix("/")
 
 
+func get_include_path(absolute_path: String) -> String:
+	if absolute_path.begins_with(absolute_base_path):
+		return absolute_path.trim_prefix(absolute_base_path).trim_prefix("/")
+	else:
+		return get_short_path(absolute_path)
+
+
 func get_abs_path(short_path: String) -> String:
 	return current_path.path_join(short_path)
 
@@ -43,7 +50,7 @@ func request_open_file(path: String):
 func open_quick_switch():
 	var qs: QuickSwitchDialog = preload("res://src/ui/quick_switch_dialog/quick_switch_dialog.tscn").instantiate()
 	qs.path = current_path
-	qs.base_path = current_path
+	qs.base_path = current_path 
 	add_child(qs)
 	qs.popup_centered()
 	var path = await qs.file_selected

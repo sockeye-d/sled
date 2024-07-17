@@ -41,3 +41,31 @@ static func _match_to_range(m: RegExMatch) -> Vector2i:
 
 static func grow_r2(rect: Rect2, amount: float) -> Rect2:
 	return Rect2(rect.position - Vector2.ONE * amount * 0.5, rect.size + Vector2.ONE * amount)
+
+
+static func is_none(value: Variant) -> bool:
+	match typeof(value):
+		TYPE_FLOAT:
+			return is_equal_approx(value, -1.0)
+		TYPE_VECTOR2:
+			return (
+				is_equal_approx(value.x, -1.0)
+				or is_equal_approx(value.y, -1.0)
+			)
+		TYPE_VECTOR3:
+			return (
+				is_equal_approx(value.x, -1.0)
+				or is_equal_approx(value.y, -1.0)
+				or is_equal_approx(value.z, -1.0)
+			)
+		TYPE_INT:
+			return value == -1
+		TYPE_VECTOR2I:
+			return value.x == -1 or value.y == -1
+		TYPE_VECTOR3I:
+			return value.x == -1 or value.y == -1 or value.z == -1
+		TYPE_ARRAY, TYPE_PACKED_BYTE_ARRAY, TYPE_PACKED_INT32_ARRAY, TYPE_PACKED_INT64_ARRAY, TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_FLOAT64_ARRAY, TYPE_PACKED_STRING_ARRAY, TYPE_PACKED_VECTOR2_ARRAY, TYPE_PACKED_VECTOR3_ARRAY, TYPE_PACKED_COLOR_ARRAY:
+			return value.size() == 0
+		TYPE_DICTIONARY:
+			return value.size() == 0
+	return is_instance_valid(value)
