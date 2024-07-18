@@ -57,8 +57,7 @@ func get_item(item_identifier: StringName) -> SettingItem:
 
 func save_settings(path: String = SETTINGS_PATH) -> Error:
 	var file_handle := FileAccess.open(path, FileAccess.WRITE_READ)
-	
-	file_handle.store_var(settings)
+	File.save_variant(path, settings)
 	var err: Error = file_handle.get_error()
 	file_handle.close()
 	
@@ -66,8 +65,8 @@ func save_settings(path: String = SETTINGS_PATH) -> Error:
 
 
 func load_settings(path: String = SETTINGS_PATH) -> Error:
-	if FileAccess.file_exists(path):
-		var new_settings: Dictionary = File.load_variant(path)
+	var new_settings = File.load_variant(path)
+	if new_settings is Dictionary:
 		settings_window.load_settings(new_settings)
 		could_load_settings = true
 		return OK
@@ -77,7 +76,8 @@ func load_settings(path: String = SETTINGS_PATH) -> Error:
 			for setting in cat.settings:
 				def_settings[setting.identifier] = setting._get_default_value()
 		File.save_variant(path, def_settings)
-		return load_settings(path)
+		settings_window.load_settings(def_settings)
+		return OK
 
 
 ## Connects a method to run when the setting specified by target_identifier is changed

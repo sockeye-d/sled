@@ -46,10 +46,9 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 			var final_path: String
 			match Settings.browser_drag_drop_mode:
 				1:
-					final_path = FileManager.get_short_path(path)
+					insertions.append(FileManager.get_short_path(path))
 				2:
-					final_path = FileManager.get_include_path(path)
-			insertions.append("#include \"%s\"" % final_path)
+					insertions.append("#include \"%s\"" % ("\\" + FileManager.get_include_path(path)))
 		
 		insert_text("\n".join(insertions), lc[1], lc[0])
 
