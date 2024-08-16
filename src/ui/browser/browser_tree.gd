@@ -54,7 +54,7 @@ var icons := {
 var last_path: String
 # TwoWayDictionary[TreeItem, String]
 var paths: TwoWayDictionary = TwoWayDictionary.new()
-var folded_paths: Dictionary
+var unfolded_paths: Dictionary
 var new_file_folder_path: String
 
 
@@ -78,6 +78,10 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	if get_selected() == null:
 		return
 	var items := _get_selected_items()
+	# the root folder is not actually the root item
+	# and i'm too scared to change it 😬
+	if get_root().get_child(0) in items:
+		return null
 	var item_paths: PackedStringArray
 	for item in items:
 		item_paths.append(paths.get_value(item))
@@ -102,11 +106,40 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 
 
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
-	return false
+	var item := get_item_at_position(at_position)
+	if not item:
+		return false
+	drop_mode_flags = DROP_MODE_INBETWEEN
+	if _is_item_folder(get_item_at_position(at_position)):
+		drop_mode_flags |= DROP_MODE_ON_ITEM
+	else:
+		for drop_item in (data as DragData).items:
+			if drop_item.get_parent() == item.get_parent():
+				drop_mode_flags = DROP_MODE_DISABLED
+				return false
+	return true
+
+
+func _drop_data(at_position: Vector2, u_data: Variant) -> void:
+	if u_data is BrowserTree.DragData:
+		var data := u_data as BrowserTree.DragData
+		var base_path: String
+		var base_item: TreeItem
+		if get_drop_section_at_position(at_position) == 0:
+			base_item = get_item_at_position(at_position)
+		else:
+			base_item = get_item_at_position(at_position).get_parent()
+		assert(is_instance_valid(base_item))
+		base_path = paths.get_value(base_item)
+		for i in data.absolute_paths.size():
+			var path = data.absolute_paths[i]
+			var new_path := base_path.path_join(path.get_file())
+			DirAccess.rename_absolute(path, new_path)
+		repopulate_tree()
 
 
 func _gui_input(event: InputEvent) -> void:
-	if event.is_action_pressed("refresh", false):
+	if event.is_action_pressed(&"refresh", false):
 		repopulate_tree()
 	if event.is_action_pressed(&"find", false):
 		var selected := get_selected()
@@ -143,18 +176,24 @@ func populate_tree(path: String, parent: TreeItem = null, first: bool = true) ->
 
 func repopulate_tree() -> void:
 	if last_path:
+		var scroll = get_scroll()
+		
 		if get_root():
 			get_root().free()
 		populate_tree(last_path)
-		if folded_paths.size() == 0:
-			set_all_collapsed(true)
-		else:
-			for path in folded_paths:
-				if not paths.has_key(path):
-					continue
-				var item: TreeItem = paths.get_key(path)
-				if item and not item.disable_folding:
-					item.collapsed = true
+		# the engine is kind of inconsistent about how setting which things
+		# will emit what signals so I have to block signals otherwise the
+		# items will emit their collapsed signals
+		set_block_signals(true)
+		set_all_collapsed(true)
+		set_block_signals(false)
+		for path in unfolded_paths:
+			if not paths.has_key(path):
+				unfolded_paths.erase(path)
+				continue
+			var item: TreeItem = paths.get_key(path)
+			if item and not item.disable_folding:
+				item.collapsed = false
 		deselect_all()
 
 
@@ -386,9 +425,9 @@ func _on_add_folder_dialog_confirmed_data(filename: String) -> void:
 
 func _on_item_collapsed(item: TreeItem) -> void:
 	if item.collapsed:
-		folded_paths[paths.get_value(item)] = null
+		unfolded_paths.erase(paths.get_value(item))
 	else:
-		folded_paths.erase(paths.get_value(item))
+		unfolded_paths[paths.get_value(item)] = null
 
 
 func _on_item_activated() -> void:
@@ -409,6 +448,10 @@ func _get_selected_items() -> Array[TreeItem]:
 			break
 		arr.append(item)
 	return arr
+
+
+func _is_item_folder(item: TreeItem) -> bool:
+	return not item.disable_folding
 
 
 class DragData:

@@ -13,6 +13,10 @@ func _init(dictionary: Dictionary = { }) -> void:
 			add(key, dictionary[key])
 
 
+func _to_string() -> String:
+	return str(keys_dict)
+
+
 func has_key(key: Variant) -> bool:
 	return values_dict.has(key)
 
