@@ -41,6 +41,7 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 		var lc := get_line_column_at_pos(at_position, false)
 		if Util.is_none(lc):
 			return
+		
 		var insertions: PackedStringArray = []
 		for path: String in data.absolute_paths:
 			var final_path: String
@@ -48,9 +49,13 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 				1:
 					insertions.append(FileManager.get_short_path(path))
 				2:
-					insertions.append("#include \"%s\"" % ("\\" + FileManager.get_include_path(path)))
+					insertions.append('#include "%s"' % ("/" + FileManager.get_include_path(path)))
 		
 		insert_text("\n".join(insertions), lc[1], lc[0])
+		set_caret_column(lc[0])
+		set_caret_line(lc[1])
+		
+		grab_focus()
 
 
 func _draw() -> void:

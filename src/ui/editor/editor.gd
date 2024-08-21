@@ -24,7 +24,7 @@ signal _continue(action_taken: ConfirmationAction)
 @onready var caret_pos_label: Label = %CaretPosLabel
 
 
-var file_handle: FileAccess
+#var file_handle: FileAccess
 var last_saved_text: String
 var file_path: String
 var file_gets_completion: bool
@@ -88,14 +88,14 @@ func _exit_tree() -> void:
 
 
 func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -> void:
-	if file_handle and path == file_path:
+	if path == file_path:
 		if selection_from > 0:
 			var a := StringUtil.get_line_col(code_editor.text, selection_from)
 			var b := StringUtil.get_line_col(code_editor.text, selection_to)
 			code_editor.select(a.y, a.x, b.y, b.x)
 			code_editor.center_viewport_to_caret.call_deferred()
 		return
-	if file_handle and not code_editor.text == last_saved_text:
+	if not code_editor.text == last_saved_text:
 		confirmation_dialog.popup_centered()
 		var action: ConfirmationAction = await _continue
 		match action:
@@ -105,9 +105,7 @@ func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -
 				return
 			# No ConfirmationAction.DISCARD block, because it will just continue down
 
-	# Save the old one in case loading fails
-	var old_file_handle := file_handle
-	file_handle = FileAccess.open(path, FileAccess.READ)
+	var file_handle = FileAccess.open(path, FileAccess.READ)
 
 	if file_handle == null:
 		NotificationManager.notify("'%s' failed to open" % path.get_file(), NotificationManager.TYPE_ERROR)
@@ -117,8 +115,6 @@ func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -
 		return
 	
 	NotificationManager.notify("Opened '%s'" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_NORMAL)
-	if old_file_handle:
-		old_file_handle.close()
 	code_editor.editable = true
 	code_editor.text = file_handle.get_as_text(true)
 	code_editor.clear_undo_history()
@@ -126,6 +122,8 @@ func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -
 	old_text = code_editor.text
 	found_ranges = []
 	find_box.hide()
+	
+	_set_unsaved(false)
 	
 	file_path = path
 	
@@ -147,8 +145,6 @@ func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -
 	else:
 		code_editor.syntax_highlighter = null
 	
-	file_handle.close()
-	
 	refresh_file_contents()
 
 
@@ -157,19 +153,16 @@ func unload_file() -> void:
 	code_editor.editable = false
 	hide()
 	EditorManager.view_menu_state_change_requested.emit(get_index(), false)
-	if file_handle:
-		NotificationManager.notify("Closed '%s'" % file_path.get_file(), NotificationManager.TYPE_NORMAL)
-		file_handle = null
+	NotificationManager.notify("Closed '%s'" % file_path.get_file(), NotificationManager.TYPE_NORMAL)
 
 
 func save(path: String = file_path) -> void:
-	file_handle = FileAccess.open(path, FileAccess.WRITE)
+	var file_handle = FileAccess.open(path, FileAccess.WRITE)
 	if not file_handle:
 		NotificationManager.notify_err(FileAccess.get_open_error(), "Failed to save '%s' (reason: %s)" % [path.get_file(), "%s"], true)
 		return
-	file_handle.seek(0)
 	file_handle.store_string(code_editor.text)
-	file_handle.flush()
+	file_handle.close()
 	last_saved_text = code_editor.text
 
 	NotificationManager.notify("Saved '%s'" % file_path.get_file(), NotificationManager.TYPE_NORMAL)
@@ -177,6 +170,8 @@ func save(path: String = file_path) -> void:
 	path_button.text = file_handle.get_path_absolute().get_file()
 	
 	code_editor.tag_saved_version()
+	
+	file_path = path
 
 
 func load_theme(file: String = "") -> void:
@@ -242,7 +237,7 @@ func _on_code_editor_text_changed() -> void:
 		refresh_file_contents()
 	
 	if Settings.auto_code_completion and file_gets_completion:
-		if old_text.length() < code_editor.text.length():
+		if old_text.length() <= code_editor.text.length():
 			if Settings.code_completion_delay < 0.0001:
 				_on_code_editor_code_completion_requested()
 			else:
@@ -252,17 +247,21 @@ func _on_code_editor_text_changed() -> void:
 			if not code_completion_timer.is_stopped():
 				code_completion_timer.stop()
 	
-	if code_editor.text == last_saved_text:
-		path_button.remove_theme_font_override(&"font")
-		path_button.text = file_path.get_file()
-	else:
-		path_button.add_theme_font_override(&"font", MAIN_FONT_ITALICS)
-		path_button.text = file_path.get_file() + " (unsaved)"
+	_set_unsaved(code_editor.text == last_saved_text)
 	
 	old_text = code_editor.text
 	
 	if find_box.visible:
 		_on_find_box_pattern_changed(find_box.pattern, find_box.use_regex, find_box.case_insensitive, false)
+
+
+func _set_unsaved(is_unsaved: bool) -> void:
+	if is_unsaved:
+		path_button.remove_theme_font_override(&"font")
+		path_button.text = file_path.get_file()
+	else:
+		path_button.add_theme_font_override(&"font", MAIN_FONT_ITALICS)
+		path_button.text = file_path.get_file() + " (unsaved)"
 
 
 func _on_code_editor_code_completion_requested() -> void:
@@ -374,7 +373,8 @@ func _select_range(selection_range: Vector2i = found_ranges[current_range_index]
 	if selection_range == Vector2i(-1, -1):
 		return
 	var col_offset := 0
-	if code_editor.text[selection_range[1]] == "\n":
+
+	if selection_range[1] < code_editor.text.length() and code_editor.text[selection_range[1]] == "\n":
 		selection_range[1] -= 1
 		col_offset = 1
 	var col_line_0: Vector2i = StringUtil.get_line_col(code_editor.text, selection_range[0])

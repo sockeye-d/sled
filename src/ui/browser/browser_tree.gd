@@ -61,7 +61,6 @@ var new_file_folder_path: String
 func _init() -> void:
 	hide_root = true
 	var scroll_bar: HScrollBar
-	get_scroll()
 	for child in get_children(true):
 		if child is HScrollBar:
 			scroll_bar = child
@@ -70,8 +69,11 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	set_column_custom_minimum_width(0, 100)
-	set_column_clip_content(0, false)
+	FileManager.changed_paths.connect(
+			func():
+				last_path = FileManager.current_path
+				repopulate_tree()
+	)
 
 
 func _get_drag_data(at_position: Vector2) -> Variant:
@@ -213,7 +215,7 @@ func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
 	
 	item.set_metadata(0, path.get_file())
 	item.set_tooltip_text(0, FileManager.get_short_path(path))
-	item.set_text(0, path.get_file())
+	#item.set_text(0, path.get_file())
 	
 	_add_btn(item, BtnType.SHOW_IN_FILE_MANAGER)
 	_add_btn(item, BtnType.COPY_PATH)
@@ -230,13 +232,13 @@ func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
 func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
 	var item :=_create_item(
 		parent,
-		Icons.create("folder"),
+		null,#Icons.create("folder"),
 		FileAccess.get_hidden_attribute(path),
 	)
 	
 	item.set_metadata(0, path.get_file())
 	item.set_tooltip_text(0, FileManager.get_short_path(path))
-	item.set_text(0, path.get_file())
+	#item.set_text(0, path.get_file())
 		
 	_add_btn(item, BtnType.ADD_FILE)
 	_add_btn(item, BtnType.ADD_FOLDER)
@@ -266,28 +268,30 @@ func _item_custom_draw(item: TreeItem, rect: Rect2, icon: Texture2D, is_hidden: 
 	if rect.size.x < 0.0:
 		return
 	var f := get_theme_font(&"font")
+	var h_sep := get_theme_constant(&"h_separation")
 	var f_size := get_theme_font_size(&"font_size") if has_theme_font_size(&"font_size") else get_theme_default_font_size()
 	var text: String = item.get_metadata(0)
 	var ascent := f.get_ascent(f_size)
 	var string_size := f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, f_size)
-	var icon_width: int = icon.get_width()
-	if get_theme_constant(&"icon_max_width") != 0:
+	var icon_width: int = icon.get_width() if icon else 0
+	if icon and get_theme_constant(&"icon_max_width") != 0:
 		icon_width = mini(icon_width, get_theme_constant(&"icon_max_width"))
-	var icon_offset := (rect.size.y - icon_width) / 2.0
-	var icon_rect := Rect2(round(rect.position + Vector2.ONE * icon_offset), Vector2(icon_width, icon_width))
-	#if icon_rect.size.x + 2.0 * icon_offset > rect.size.x:
-		#return
+	var icon_offset := (rect.size.y - icon_width) / 2.0 if icon else 0.0
+	var icon_rect_full := Rect2(round(rect.position + Vector2.ONE * icon_offset), Vector2(icon_width, icon_width))
 	var icon_mod: float = Settings.hidden_file_icon_brightness if is_hidden else 1.0
 	var text_mod: float = Settings.hidden_file_text_brightness if is_hidden else 1.0
-	var icon_rect_isect := icon_rect.intersection(rect)
-	var width_mod := Vector2(icon_rect_isect.size.x / icon_rect.size.x, 1)
-	draw_texture_rect_region(icon, icon_rect.intersection(rect), Rect2(Vector2.ZERO, icon.get_size() * width_mod), Color(Color.WHITE, icon_mod))
+	var icon_rect := icon_rect_full.intersection(rect)
+	var width_mod := Vector2(icon_rect.size.x / icon_rect.size.x, 1)
+	if icon:
+		draw_texture_rect_region(icon, icon_rect, Rect2(Vector2.ZERO, icon.get_size() * width_mod), Color(Color.WHITE, icon_mod))
+		#draw_rect(icon_rect, Color.RED, false)
+	var str_pos := Vector2(
+		rect.position.x + icon_width + icon_offset + h_sep,
+		rect.get_center().y + ascent / 2.0
+	)
 	draw_string(
 		f,
-		Vector2(
-			rect.position.x + icon_width + icon_offset * 2.0,
-			rect.get_center().y + ascent / 2.0
-		),
+		str_pos,
 		text,
 		HORIZONTAL_ALIGNMENT_LEFT,
 		maxi(rect.size.x - icon_width - icon_offset * 2.0, 1),
@@ -295,6 +299,8 @@ func _item_custom_draw(item: TreeItem, rect: Rect2, icon: Texture2D, is_hidden: 
 		EditorThemeManager.theme.get_color(&"font_color", &"Tree") * Color(Color.WHITE, text_mod),
 		TextServer.JUSTIFICATION_CONSTRAIN_ELLIPSIS,
 	)
+	#draw_rect(Rect2(str_pos - Vector2(0.0, string_size.y), string_size), Color.RED, false)
+	#draw_rect(rect, Color.RED, false)
 
 
 func _on_empty_clicked(_position: Vector2, _mouse_button_index: int) -> void:

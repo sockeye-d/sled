@@ -326,4 +326,3 @@ func _on_results_tree_item_collapsed(item: TreeItem) -> void:
 
 func _set_fold_button_icon() -> void:
 	fold_button.icon = fold_icon if unfolded_count > 0 else unfold_icon
-	fold_button.tooltip_text 

@@ -3,7 +3,7 @@ class_name Main extends Control
 
 @onready var nothing_to_show_label: Label = %NothingToShowLabel
 @onready var main_container: SplitContainer = %MainContainer
-@onready var browser: Browser = %Browser
+@onready var browser: BrowserTree = %Browser
 @onready var editors: RelativeSplitContainer = %Editors
 @onready var left_editor: Editor = %LeftEditor
 @onready var right_editor: Editor = %RightEditor

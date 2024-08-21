@@ -145,13 +145,17 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	var t: Theme = theme
 	StyleBoxUtil.scale = get_scale()
 	var contrast: float = Settings.theme_contrast * 5.0
+	
+	var focus_sb := StyleBoxUtil.new_flat(Color.TRANSPARENT, [4], [4], [2], Color.RED, [2])
+	
 	t.clear_color(&"background_color", &"CodeEdit")
+	
 	t.set_stylebox(&"normal", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 0, 0], [4]))
 	t.set_color(&"font_color", &"CodeEdit", colors.text_color)
 	t.set_color(&"word_highlighted_color", &"CodeEdit", Color(colors.word_highlighted_color, colors.word_highlighted_color.a * 0.5))
 	completion_color = colors.completion_font_color
 	
-	t.set_stylebox(&"panel", &"PanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [8, 8, 8, 8], [4]))
+	t.set_stylebox(&"panel", &"PanelContainer",	StyleBoxUtil.new_flat(colors.background_color, [8], [4]))
 	t.set_stylebox(&"panel", &"UpperPanelContainer", StyleBoxUtil.new_flat(colors.background_color, [8, 8, 0, 0], [4]))
 	t.set_stylebox(&"panel", &"LowerPanelContainer", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
 	
@@ -159,8 +163,30 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_constant(&"thickness", &"Throbber", get_scale() * 15.0)
 	
 	t.set_stylebox(&"panel", &"Tree", StyleBoxUtil.new_flat(colors.background_color, [8], [4]))
+	#t.set_stylebox(&"focus", &"Tree", focus_sb)
+	t.set_stylebox(&"cursor", &"Tree",
+		StyleBoxUtil.new_flat(
+			Color(colors.text_color, 0.2), [4], [0], [2], colors.text_color, [2]
+		)
+	)
+	t.set_stylebox(&"cursor_unfocused", &"Tree",
+		StyleBoxUtil.new_flat(
+			Color(colors.text_color, 0.2), [4], [0]
+		)
+	)
+	var guide_color := Color(colors.text_color, 0.5)
 	
 	t.set_color(&"font_color", &"Tree", colors.text_color)
+	t.set_color(&"children_hl_line_color", &"Tree", guide_color)
+	t.set_color(&"parent_hl_line_color", &"Tree", guide_color)
+	t.set_color(&"relationship_line_color", &"Tree", guide_color)
+	t.set_color(&"drop_position_color", &"Tree", guide_color)
+	t.set_color(&"guide_color", &"Tree", guide_color)
+	
+	t.set_constant(&"item_margin", &"Tree", int(16 * get_scale()))
+	t.set_constant(&"h_separation", &"Tree", int(4 * get_scale()))
+	t.set_constant(&"v_separation", &"Tree", int(4 * get_scale()))
+	t.set_constant(&"button_margin", &"Tree", int(4 * get_scale()))
 	
 	t.set_color(&"font_color", &"Button", colors.text_color)
 	t.set_color(&"font_focus_color", &"Button", colors.text_color)
@@ -181,6 +207,7 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_stylebox(&"normal", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color, [4], [4]))
 	t.set_stylebox(&"hover", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.05), [4], [4]))
 	t.set_stylebox(&"pressed", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.075), [4], [4]))
+	t.set_constant(&"h_separation", &"MenuBar", int(4 * get_scale()))
 	
 	t.set_color(&"font_color", &"CheckBox", colors.text_color)
 	t.set_color(&"font_focus_color", &"CheckBox", colors.text_color)
@@ -287,6 +314,14 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_color(&"font_color", &"TooltipLabel", colors.text_color)
 	RenderingServer.set_default_clear_color(colors.background_color.darkened(contrast * 0.2))
 	
+	t.set_constant(&"separation", &"HBoxContainer", int(4 * get_scale()))
+	t.set_constant(&"separation", &"VBoxContainer", int(4 * get_scale()))
+	
+	t.set_constant(&"separation", &"SplitContainer", int(4 * get_scale()))
+	t.set_constant(&"minimum_grab_thickness", &"SplitContainer", int(8 * get_scale()))
+	
+	_set_focus_sb(t, focus_sb)
+	
 	set_icon_mode()
 	
 	await get_tree().process_frame
@@ -294,6 +329,11 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	if main_scene:
 		root.add_child(main_scene)
 	theme_changed.emit(theme_text)
+
+
+func _set_focus_sb(theme: Theme, sb: StyleBox, theme_type := &"Control") -> void:
+	for child_type in ClassDB.get_inheriters_from_class(theme_type):
+		theme.set_stylebox(&"focus", theme_type, sb)
 
 
 func set_icon_mode() -> void:

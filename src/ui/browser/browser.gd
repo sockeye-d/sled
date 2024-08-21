@@ -15,7 +15,7 @@ func _ready() -> void:
 			func():
 				path = FileManager.current_path
 				refresh_tree()
-				)
+	)
 	
 	browser_tree.file_opened.connect(func(opened_path: String): file_opened.emit(opened_path))
 
