@@ -146,11 +146,12 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	StyleBoxUtil.scale = get_scale()
 	var contrast: float = Settings.theme_contrast * 5.0
 	
-	var focus_sb := StyleBoxUtil.new_flat(Color.TRANSPARENT, [4], [4], [2], Color.RED, [2])
+	var focus_sb := StyleBoxUtil.new_flat(Color.TRANSPARENT, [4], [4], [2], colors.text_color, [2])
 	
 	t.clear_color(&"background_color", &"CodeEdit")
 	
 	t.set_stylebox(&"normal", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 0, 0], [4]))
+	t.set_stylebox(&"read_only", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 0, 0], [4]))
 	t.set_color(&"font_color", &"CodeEdit", colors.text_color)
 	t.set_color(&"word_highlighted_color", &"CodeEdit", Color(colors.word_highlighted_color, colors.word_highlighted_color.a * 0.5))
 	completion_color = colors.completion_font_color
@@ -193,32 +194,32 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_color(&"font_hover_color", &"Button", colors.text_color)
 	t.set_color(&"font_hover_pressed_color", &"Button", colors.text_color)
 	t.set_color(&"font_pressed_color", &"Button", colors.text_color)
-	t.set_stylebox(&"disabled", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.25), [4], [4]))
-	t.set_stylebox(&"normal", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
-	t.set_stylebox(&"hover", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [4], [4]))
-	t.set_stylebox(&"pressed", &"Button", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.1), [4], [4]))
+	t.set_stylebox(&"disabled", &"Button", StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.25), [4], [4]))
+	t.set_stylebox(&"normal", &"Button", StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.2), [4], [4]))
+	t.set_stylebox(&"hover", &"Button", StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.15), [4], [4]))
+	t.set_stylebox(&"pressed", &"Button", StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.1), [4], [4]))
 	
 	t.set_color(&"font_color", &"MenuBar", colors.text_color)
 	t.set_color(&"font_focus_color", &"MenuBar", colors.text_color)
-	t.set_color(&"font_hover_color", &"MenuBar", colors.text_color.darkened(contrast * 0.05))
-	t.set_color(&"font_hover_pressed_color", &"MenuBar", colors.text_color.darkened(contrast * 0.15))
-	t.set_color(&"font_pressed_color", &"MenuBar", colors.text_color.darkened(contrast * 0.1))
-	t.set_stylebox(&"disabled", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.25), [4], [4]))
+	t.set_color(&"font_hover_color", &"MenuBar", _color_adjust(colors.text_color, contrast * 0.05))
+	t.set_color(&"font_hover_pressed_color", &"MenuBar", _color_adjust(colors.text_color, contrast * 0.15))
+	t.set_color(&"font_pressed_color", &"MenuBar", _color_adjust(colors.text_color, contrast * 0.1))
+	t.set_stylebox(&"disabled", &"MenuBar", StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.25), [4], [4]))
 	t.set_stylebox(&"normal", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color, [4], [4]))
-	t.set_stylebox(&"hover", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.05), [4], [4]))
-	t.set_stylebox(&"pressed", &"MenuBar", StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.075), [4], [4]))
+	t.set_stylebox(&"hover", &"MenuBar", StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.05), [4], [4]))
+	t.set_stylebox(&"pressed", &"MenuBar", StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.075), [4], [4]))
 	t.set_constant(&"h_separation", &"MenuBar", int(4 * get_scale()))
 	
 	t.set_color(&"font_color", &"CheckBox", colors.text_color)
 	t.set_color(&"font_focus_color", &"CheckBox", colors.text_color)
-	t.set_color(&"font_hover_color", &"CheckBox", colors.text_color.darkened(contrast * 0.05))
-	t.set_color(&"font_hover_pressed_color", &"CheckBox", colors.text_color.darkened(contrast * 0.15))
-	t.set_color(&"font_pressed_color", &"CheckBox", colors.text_color.darkened(contrast * 0.1))
-	t.set_stylebox(&"disabled", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.25), [4], [4]))
-	t.set_stylebox(&"normal", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
-	t.set_stylebox(&"hover", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [4], [4]))
-	t.set_stylebox(&"hover_pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [4], [4]))
-	t.set_stylebox(&"pressed", &"CheckBox", StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
+	t.set_color(&"font_hover_color", &"CheckBox", _color_adjust(colors.text_color, contrast * 0.05))
+	t.set_color(&"font_hover_pressed_color", &"CheckBox", _color_adjust(colors.text_color, contrast * 0.15))
+	t.set_color(&"font_pressed_color", &"CheckBox", _color_adjust(colors.text_color, contrast * 0.1))
+	t.set_stylebox(&"disabled", &"CheckBox", StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.25), [4], [4]))
+	t.set_stylebox(&"normal", &"CheckBox", StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.2), [4], [4]))
+	t.set_stylebox(&"hover", &"CheckBox", StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.15), [4], [4]))
+	t.set_stylebox(&"hover_pressed", &"CheckBox", StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.15), [4], [4]))
+	t.set_stylebox(&"pressed", &"CheckBox", StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.2), [4], [4]))
 	t.set_icon(&"checked", &"CheckBox", Icons.create("checkbox_checked"))
 	t.set_icon(&"checked_disabled", &"CheckBox", Icons.create("checkbox_checked_disabled"))
 	t.set_icon(&"unchecked", &"CheckBox", Icons.create("checkbox_unchecked"))
@@ -231,88 +232,88 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_color(&"font_uneditable_color", &"LineEdit", Color(colors.text_color, 0.5))
 	t.set_color(&"caret_color", &"LineEdit", colors.caret_color)
 	t.set_color(&"selection_color", &"LineEdit", colors.selection_color)
-	t.set_color(&"placeholder_color", &"LineEdit", colors.background_color.darkened(contrast * 0.25))
+	t.set_color(&"placeholder_color", &"LineEdit", _color_adjust(colors.background_color, contrast * 0.25))
 	t.set_stylebox(&"normal", &"LineEdit",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.2), [4], [4]))
 	t.set_stylebox(&"read_only", &"LineEdit",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.25), [4], [4]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.25), [4], [4]))
 	
 	t.set_stylebox(&"invalid", &"RegExLineEdit",
-		StyleBoxUtil.new_flat(Color(colors.background_color).darkened(contrast * 0.2).lerp(Color(0.8, 0.3, 0.2), 0.2), [4], [4], [2], Color(0.8, 0.3, 0.2)))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.2).lerp(Color(0.8, 0.3, 0.2), 0.2), [4], [4], [2], Color(0.8, 0.3, 0.2)))
 	
 	t.set_stylebox(&"panel", &"SliderCombo",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.2), [4], [4]))
 	
 	t.set_stylebox(&"grabber_area", &"HSlider",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.4), [16]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.4), [16]))
 	t.set_stylebox(&"grabber_area_highlight", &"HSlider",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.6), [16]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.6), [16]))
 	t.set_stylebox(&"slider", &"HSlider",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.2), [16], [0, 2]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.2), [16], [0, 2]))
 	
 	t.set_stylebox(&"grabber_area", &"VSlider",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.4), [16]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.4), [16]))
 	t.set_stylebox(&"grabber_area_highlight", &"VSlider",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.6), [16]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.6), [16]))
 	t.set_stylebox(&"slider", &"VSlider",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.2), [16], [2, 0]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.2), [16], [2, 0]))
 	
 	t.set_stylebox(&"grabber", &"HScrollBar",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.3), [16], [2, 0]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.3), [16], [2, 0]))
 	t.set_stylebox(&"grabber_highlight", &"HScrollBar",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.4), [16]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.4), [16]))
 	t.set_stylebox(&"grabber_pressed", &"HScrollBar",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.5), [16]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.5), [16]))
 	t.set_stylebox(&"scroll", &"HScrollBar",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [16], [0, 2]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.2), [16], [0, 2]))
 	t.set_stylebox(&"scroll_focus", &"HScrollBar",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [16], [0, 2]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.15), [16], [0, 2]))
 	t.set_stylebox(&"grabber", &"VScrollBar",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.3), [16], [2, 0]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.3), [16], [2, 0]))
 	t.set_stylebox(&"grabber_highlight", &"VScrollBar",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.4), [16]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.4), [16]))
 	t.set_stylebox(&"grabber_pressed", &"VScrollBar",
-		StyleBoxUtil.new_flat(colors.background_color.lightened(contrast * 0.5), [16]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, -contrast * 0.5), [16]))
 	t.set_stylebox(&"scroll", &"VScrollBar",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [16], [2, 0]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.2), [16], [2, 0]))
 	t.set_stylebox(&"scroll_focus", &"VScrollBar",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [16], [2, 0]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.15), [16], [2, 0]))
 	
 	t.set_stylebox(&"invalid", &"FileLineEdit",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.1), [4], [4], [2], Color(0.8, 0.3, 0.2)))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.1), [4], [4], [2], Color(0.8, 0.3, 0.2)))
 	
 	t.set_color(&"font_color", &"OptionButton", colors.text_color)
 	t.set_color(&"font_focus_color", &"OptionButton", colors.text_color)
-	t.set_color(&"font_hover_color", &"OptionButton", colors.text_color.lightened(contrast * 0.05))
-	t.set_color(&"font_hover_pressed_color", &"OptionButton", colors.text_color.lightened(contrast * 0.15))
-	t.set_color(&"font_pressed_color", &"OptionButton", colors.text_color.lightened(contrast * 0.1))
+	t.set_color(&"font_hover_color", &"OptionButton", _color_adjust(colors.text_color, -contrast * 0.05))
+	t.set_color(&"font_hover_pressed_color", &"OptionButton", _color_adjust(colors.text_color, -contrast * 0.15))
+	t.set_color(&"font_pressed_color", &"OptionButton", _color_adjust(colors.text_color, -contrast * 0.1))
 	t.set_stylebox(&"normal", &"OptionButton",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.2), [4], [4]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.2), [4], [4]))
 	t.set_stylebox(&"hover", &"OptionButton",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.15), [4], [4]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.15), [4], [4]))
 	t.set_stylebox(&"pressed", &"OptionButton",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.1), [4], [4]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.1), [4], [4]))
 	
 	t.set_stylebox(&"panel", &"AcceptDialog",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.0), [0], [4]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.0), [0], [4]))
 	
 	t.set_color(&"font_color", &"PopupMenu", colors.text_color)
-	t.set_color(&"font_disabled_color", &"PopupMenu", colors.text_color.darkened(contrast * 0.2))
-	t.set_color(&"font_hover_color", &"PopupMenu", colors.text_color.lightened(contrast * 0.05))
+	t.set_color(&"font_disabled_color", &"PopupMenu", _color_adjust(colors.text_color, contrast * 0.2))
+	t.set_color(&"font_hover_color", &"PopupMenu", _color_adjust(colors.text_color, -contrast * 0.05))
 	t.set_color(&"font_accelerator_color", &"PopupMenu", Color(colors.text_color, 0.5))
 	t.set_stylebox(&"panel", &"PopupMenu",
-		StyleBoxUtil.new_flat(colors.background_color, [4], [4], [2], colors.background_color.darkened(contrast * 0.2)))
+		StyleBoxUtil.new_flat(colors.background_color, [4], [4], [2], _color_adjust(colors.background_color, contrast * 0.2)))
 	t.set_stylebox(&"hover", &"PopupMenu",
-		StyleBoxUtil.new_flat(colors.background_color.darkened(contrast * 0.1), [4], [4]))
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.1), [4], [4]))
 	t.set_color(&"font_color", &"PopupMenu", colors.text_color)
 	t.set_color(&"font_hover_color", &"PopupMenu", colors.text_color)
 	
 	t.set_stylebox(&"panel", &"TooltipPanel",
 		StyleBoxUtil.new_flat(colors.background_color, [4], [8, 4], [2],
-		colors.background_color.lightened(contrast * 0.2)))
+		_color_adjust(colors.background_color, -contrast * 0.2)))
 	
 	t.set_color(&"font_color", &"TooltipLabel", colors.text_color)
-	RenderingServer.set_default_clear_color(colors.background_color.darkened(contrast * 0.2))
+	RenderingServer.set_default_clear_color(_color_adjust(colors.background_color, contrast * 0.2))
 	
 	t.set_constant(&"separation", &"HBoxContainer", int(4 * get_scale()))
 	t.set_constant(&"separation", &"VBoxContainer", int(4 * get_scale()))
@@ -329,6 +330,13 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	if main_scene:
 		root.add_child(main_scene)
 	theme_changed.emit(theme_text)
+
+
+func _color_adjust(color: Color, amount: float) -> Color:
+	if amount < 0:
+		return color.lightened(-amount)
+	else:
+		return color.darkened(amount)
 
 
 func _set_focus_sb(theme: Theme, sb: StyleBox, theme_type := &"Control") -> void:

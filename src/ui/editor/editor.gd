@@ -88,42 +88,42 @@ func _exit_tree() -> void:
 
 
 func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -> void:
-	if path == file_path:
-		if selection_from > 0:
-			var a := StringUtil.get_line_col(code_editor.text, selection_from)
-			var b := StringUtil.get_line_col(code_editor.text, selection_to)
-			code_editor.select(a.y, a.x, b.y, b.x)
-			code_editor.center_viewport_to_caret.call_deferred()
-		return
-	if not code_editor.text == last_saved_text:
-		confirmation_dialog.popup_centered()
-		var action: ConfirmationAction = await _continue
-		match action:
-			ConfirmationAction.SAVE:
-				save()
-			ConfirmationAction.CANCEL:
-				return
-			# No ConfirmationAction.DISCARD block, because it will just continue down
+	if file_path:
+		if path == file_path and code_editor.editable:
+			if selection_from > 0:
+				var a := StringUtil.get_line_col(code_editor.text, selection_from)
+				var b := StringUtil.get_line_col(code_editor.text, selection_to)
+				code_editor.select(a.y, a.x, b.y, b.x)
+				code_editor.center_viewport_to_caret.call_deferred()
+			return
+		if not code_editor.text == last_saved_text:
+			confirmation_dialog.popup_centered()
+			var action: ConfirmationAction = await _continue
+			match action:
+				ConfirmationAction.SAVE:
+					save()
+				ConfirmationAction.CANCEL:
+					return
+				# No ConfirmationAction.DISCARD block, because it will just continue down
 
 	var file_handle = FileAccess.open(path, FileAccess.READ)
 
 	if file_handle == null:
 		NotificationManager.notify("'%s' failed to open" % path.get_file(), NotificationManager.TYPE_ERROR)
-		#file_handle = old_file_handle
 		file_path = ""
 		unload_file.call_deferred()
 		return
 	
 	NotificationManager.notify("Opened '%s'" % file_handle.get_path_absolute().get_file(), NotificationManager.TYPE_NORMAL)
-	code_editor.editable = true
 	code_editor.text = file_handle.get_as_text(true)
+	code_editor.editable = true
 	code_editor.clear_undo_history()
 	last_saved_text = code_editor.text
 	old_text = code_editor.text
 	found_ranges = []
 	find_box.hide()
 	
-	_set_unsaved(false)
+	_set_saved(true)
 	
 	file_path = path
 	
@@ -151,6 +151,7 @@ func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -
 func unload_file() -> void:
 	code_editor.text = ""
 	code_editor.editable = false
+	file_path = ""
 	hide()
 	EditorManager.view_menu_state_change_requested.emit(get_index(), false)
 	NotificationManager.notify("Closed '%s'" % file_path.get_file(), NotificationManager.TYPE_NORMAL)
@@ -247,7 +248,7 @@ func _on_code_editor_text_changed() -> void:
 			if not code_completion_timer.is_stopped():
 				code_completion_timer.stop()
 	
-	_set_unsaved(code_editor.text == last_saved_text)
+	_set_saved(code_editor.text == last_saved_text)
 	
 	old_text = code_editor.text
 	
@@ -255,8 +256,8 @@ func _on_code_editor_text_changed() -> void:
 		_on_find_box_pattern_changed(find_box.pattern, find_box.use_regex, find_box.case_insensitive, false)
 
 
-func _set_unsaved(is_unsaved: bool) -> void:
-	if is_unsaved:
+func _set_saved(is_saved: bool) -> void:
+	if is_saved:
 		path_button.remove_theme_font_override(&"font")
 		path_button.text = file_path.get_file()
 	else:
