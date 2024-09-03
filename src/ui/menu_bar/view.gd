@@ -14,6 +14,8 @@ func _ready() -> void:
 	EditorManager.opened_single.connect(func():
 			set_item_disabled(1, true)
 			set_item_checked(1, false)
+			set_item_disabled(0, false)
+			set_item_checked(0, true)
 	)
 	#
 	#EditorManager.opened_search_panel.connect(func():
@@ -21,7 +23,7 @@ func _ready() -> void:
 	#)
 	
 	EditorManager.view_menu_state_change_requested.connect(func(index: int, state: bool):
-			set_item_checked(index, false)
+			set_item_checked(index, state)
 	)
 
 
