@@ -321,6 +321,14 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_constant(&"separation", &"SplitContainer", int(4 * get_scale()))
 	t.set_constant(&"minimum_grab_thickness", &"SplitContainer", int(8 * get_scale()))
 	
+	t.set_color(&"font_color", &"ProgressBar", colors.text_color)
+	t.set_stylebox(&"background", &"ProgressBar",
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.05), [4], [4])
+	)
+	t.set_stylebox(&"fill", &"ProgressBar",
+		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.2), [4], [8])
+	)
+	
 	_set_focus_sb(t, focus_sb)
 	
 	set_icon_mode()
@@ -334,7 +342,7 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 
 func _color_adjust(color: Color, amount: float) -> Color:
 	if amount < 0:
-		return color.lightened(-amount)
+		return color.lightened(amount)
 	else:
 		return color.darkened(amount)
 

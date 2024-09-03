@@ -1,9 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://kfuvy0jjrr55"]
+[gd_scene load_steps=5 format=3 uid="uid://kfuvy0jjrr55"]
 
 [ext_resource type="Script" path="res://src/ui/search_panel/search_panel.gd" id="1_5cw5u"]
 [ext_resource type="Script" path="res://src/ui/search_panel/results_tree.gd" id="2_e3bil"]
 [ext_resource type="Script" path="res://src/ui/lower_panel_container.gd" id="3_a18pm"]
-[ext_resource type="PackedScene" uid="uid://b6i8nyq1toap0" path="res://src/ui/throbber/throbber.tscn" id="3_y100u"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l04xs"]
 
@@ -20,19 +19,18 @@ unfold_tooltip = "Unfolds all results"
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
 
+[node name="ProgressBar" type="ProgressBar" parent="VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+max_value = 1.0
+value = 0.52
+
 [node name="ResultsTree" type="Tree" parent="VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("2_e3bil")
-
-[node name="Throbber" parent="VBoxContainer/ResultsTree" instance=ExtResource("3_y100u")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-anchors_preset = 10
-anchor_bottom = 0.0
-grow_vertical = 1
 
 [node name="Label" type="Label" parent="VBoxContainer/ResultsTree"]
 unique_name_in_owner = true

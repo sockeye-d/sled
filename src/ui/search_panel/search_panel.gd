@@ -22,7 +22,7 @@ var header_items: Array[TreeItem]
 @onready var sem: Semaphore = Semaphore.new()
 
 @onready var label: Label = %Label
-@onready var throbber: Throbber = %Throbber
+@onready var progress_bar: ProgressBar = %ProgressBar
 @onready var stats_container: LowerPanelContainer = %StatsContainer
 @onready var count_label: Label = %CountLabel
 @onready var stats_label: Label = %StatsLabel
@@ -72,7 +72,7 @@ func display_results(results: SearchResults = current_results, is_new: bool = fa
 			unfolded_count += 1
 		_create_result_item(items[result.file_path], result)
 	
-	throbber.hide()
+	progress_bar.hide()
 	if not results:
 		label.text = "No results found 😭"
 		label.show()
@@ -120,7 +120,7 @@ func _on_search_requested(folder_path: String, query, file_filter: String, casen
 	results_tree.clear()
 	label.text = "Searching"
 	label.show()
-	throbber.show()
+	progress_bar.show()
 	
 	mut.lock()
 	search_data = {
@@ -153,12 +153,14 @@ func _search_on_thread() -> void:
 		elif data_copy.task == Task.FILTER:
 			var filtered_results: SearchResults = data_copy.old_results.copy_empty()
 			# Dictionary[SearchResult, float (weight)]
+			call_deferred_thread_group(&"_set_progress", false, 0.0)
 			var weights: Dictionary
 			var q: String = data_copy.query
 			var old: SearchResults = data_copy.old_results
-			ArrayUtil.foreach(old.results,
-				func(result: SearchResult) -> void:
+			ArrayUtil.foreach_i(old.results,
+				func(result: SearchResult, index: int) -> void:
 					weights[result] = StringUtil.fuzzy_dist(result.file_path, q)
+					call_deferred_thread_group(&"_set_progress", false, float(index) / filtered_results.results.size())
 			)
 			
 			var old_filtered: Array[SearchResult] = old.results.filter(
@@ -176,6 +178,11 @@ func _search_on_thread() -> void:
 			call_deferred_thread_group(&"display_results", filtered_results, false)
 
 
+func _set_progress(indeterminate: bool, progress: float = 0.0) -> void:
+	progress_bar.indeterminate = indeterminate
+	progress_bar.value = progress
+
+
 func _get_search_results(data: Dictionary) -> SearchResults:
 	var folder_path: String = data.folder_path
 	# either a RegEx or String
@@ -186,12 +193,16 @@ func _get_search_results(data: Dictionary) -> SearchResults:
 	
 	var results := SearchResults.new()
 	results.ticks_usec_start = Time.get_ticks_usec()
+	call_deferred_thread_group(&"_set_progress", true)
 	var files := _filter_files(folder_path, file_filter, recurse)
 	results.files_searched = files.size()
+	var files_searched: int = 0
 	for file in files:
 		var file_text := File.get_text(file)
 		var matches := _get_matches(file_text, query, casen)
 		results.results.append_array(matches.map(func(r: Vector2i): return SearchResult.create_result(file, file_text, r)))
+		files_searched += 1
+		call_deferred_thread_group(&"_set_progress", false, float(files_searched) / files.size())
 	results.ticks_usec_end = Time.get_ticks_usec()
 	
 	return results
@@ -241,7 +252,7 @@ func _on_search_filter_line_edit_text_changed(new_text: String) -> void:
 		display_results()
 		return
 	
-	throbber.show()
+	progress_bar.show()
 	
 	mut.lock()
 	search_data = {
