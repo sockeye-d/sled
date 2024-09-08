@@ -59,13 +59,7 @@ func _item_pressed(menu_name: String, index: int, menu: PopupMenu) -> void:
 					EditorManager.change_browser_visibility(menu.is_item_checked(index))
 				3:
 					EditorManager.change_search_visibility(menu.is_item_checked(index))
-			var checked_sum := view.get_sum()
-			if checked_sum == 0 or (checked_sum == 1 and menu.is_item_checked(2)):
-				EditorManager.change_browser_visibility(true)
-				menu.set_item_checked(2, true)
-				menu.set_item_disabled(2, true)
-			else:
-				menu.set_item_disabled(2, false)
+			view.refresh_disabled()
 		"Help":
 			match index:
 				0:

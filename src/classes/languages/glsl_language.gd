@@ -234,14 +234,15 @@ static func get_file_contents(path: String, file: String, depth: int = 0, base_p
 						new_path = base_path.path_join(included_path).simplify_path()
 				if not included_path in visited_files and FileAccess.file_exists(new_path):
 					var text := File.get_text(new_path)
-					contents.merge(get_file_contents(
-							new_path,
-							text,
-							depth + 1,
-							base_path,
-							false,
-							visited_files,
-							))
+					var include_contents := get_file_contents(
+						new_path,
+						text,
+						depth + 1,
+						base_path,
+						true,
+						visited_files,
+					)
+					contents.merge(include_contents)
 			if kind.begins_with("define"):
 				var obj := Definition.from_def(StringUtil.split_at_first_any(def, StringUtil.WHITESPACE, true)[-1])
 				if obj:
@@ -339,11 +340,12 @@ class FileContents:
 				funcs[obj.name].append(obj)
 	
 	func _to_string() -> String:
-		return "%s\n\n%s\n\n%s" % [
+		return "\n\n".join([
 			ArrayUtil.join_line(ArrayUtil.to_string_array(structs.values())),
 			ArrayUtil.join_line(ArrayUtil.to_string_array(variables)),
 			ArrayUtil.join_line(ArrayUtil.to_string_array(funcs.values())),
-		]
+			ArrayUtil.join_line(ArrayUtil.to_string_array(defs.values())),
+		])
 	
 	## Reports whether more suggestions should be added in the first item of
 	## [code]exclusive[/code]
@@ -1157,18 +1159,18 @@ class Type:
 		var components: Array[Variable] = []
 		for access_set in access_sets:
 			components.append_array(Array(_generate_permutations(access_set.substr(0, count), 4)).map(
-				func(obj_name: String):
+				func(var_name: String):
 					var type: String = ""
-					if obj_name.length() == 1:
+					if var_name.length() == 1:
 						type = base_type
 					else:
-						type = ("" if base_type == "float" else base_type[0]) + "vec" + str(obj_name.length())
-					return Variable.new(obj_name, type)
-					))
+						type = ("" if base_type == "float" else base_type[0]) + "vec" + str(var_name.length())
+					return Variable.new(var_name, type)
+			))
 		return IndexableStruct.new(obj_name, components, base_type, Icons.create("type_" + obj_name))
 	
 	static func _create_matrix(obj_name: String, base_type: String = _prefix_map.get(obj_name[0], "float")) -> IndexableStruct:
-		var dim: String = obj_name.right(3) if "x" in obj_name else obj_name.right(1)
+		#var dim: String = obj_name.right(3) if "x" in obj_name else obj_name.right(1)
 		return IndexableStruct.new(obj_name, [], base_type, Icons.create("type_" + obj_name))
 	
 	static func _generate_single_permutation(sets: String, count: int) -> PackedStringArray:
@@ -1225,17 +1227,17 @@ class Definition extends Type:
 		var whitespace_index: int = StringUtil.find_any(def, StringUtil.WHITESPACE)
 		if not paren_index == -1 and paren_index < whitespace_index:
 			# Macro path
-			var name := def.substr(0, paren_index)
+			var macro_name := def.substr(0, paren_index)
 			var end_paren_index: int = def.find(")", paren_index)
 			var args := StringUtil.substr_pos(def, paren_index + 1, end_paren_index).split(",", false)
-			ArrayUtil.map_in_place_s(args, func(str: String) -> String: return str.strip_edges())
+			ArrayUtil.map_in_place_s(args, func(string: String) -> String: return string.strip_edges())
 			var value := def.substr(end_paren_index + 1).strip_edges()
-			return Macro.new(name, value, args)
+			return Macro.new(macro_name, value, args)
 		else:
 			# Normal path
-			var name := def.substr(0, whitespace_index).strip_edges()
+			var def_name := def.substr(0, whitespace_index).strip_edges()
 			var value := def.substr(whitespace_index).strip_edges()
-			return Definition.new(name, value)
+			return Definition.new(def_name, value)
 		return null
 	
 	func _get_type() -> CodeEdit.CodeCompletionKind:

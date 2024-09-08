@@ -17,6 +17,7 @@ var data: Dictionary
 @onready var right: VBoxContainer = %Right
 @onready var loading_panel: Panel = %LoadingPanel
 @onready var container: Control = %Container
+@onready var progress_bar: ProgressBar = %ProgressBar
 
 
 func _exit_tree() -> void:
@@ -28,6 +29,11 @@ func _exit_tree() -> void:
 		mut.unlock()
 		sem.post()
 		thread.wait_to_finish()
+
+
+func _set_progress(indeterminate: bool, progress: float = 0.0) -> void:
+	progress_bar.indeterminate = indeterminate
+	progress_bar.value = progress
 
 
 func _thread_task() -> void:
@@ -97,26 +103,44 @@ func _create_label(text: String, alignment: HorizontalAlignment = HORIZONTAL_ALI
 	l.text = text
 	return l
 
+var files_counted: int
 
-func _get_folder_stats(text_files: PackedStringArray, path: String = FileManager.current_path) -> Dictionary:
+func _get_folder_stats(text_files: PackedStringArray, path: String = FileManager.current_path, file_count: int = -1) -> Dictionary:
 	var s := {
 		"count": 0,
 		"size": 0.0,
 		"lines": 0,
 	}
+	
+	if file_count == -1:
+		call_deferred_thread_group(&"_set_progress", true)
+		files_counted = 0
+		file_count = _count_files(path)
+	
 	for file_name in DirAccess.get_files_at(path):
 		DictionaryUtil.custom_merge(
 			s,
 			_get_file_stats(path.path_join(file_name), file_name.get_extension() in text_files),
 			_sum
 		)
+		call_deferred_thread_group(&"_set_progress", false, float(files_counted) / file_count)
+		files_counted += 1
+	
 	for folder_name in DirAccess.get_directories_at(path):
 		DictionaryUtil.custom_merge(
 			s,
-			_get_folder_stats(text_files, path.path_join(folder_name)),
-			_sum
+			_get_folder_stats(text_files, path.path_join(folder_name), file_count),
+			_sum,
 		)
 	return s
+
+
+func _count_files(path: String) -> int:
+	var count := 0
+	count += DirAccess.get_files_at(path).size()
+	for folder_name in DirAccess.get_directories_at(path):
+		count += _count_files(path.path_join(folder_name))
+	return count
 
 
 func _get_file_stats(path: String, count_lines: bool) -> Dictionary:

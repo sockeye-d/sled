@@ -41,13 +41,13 @@ static func map_in_place_s(array: PackedStringArray, fn: Callable) -> void:
 		array[i] = fn.call(array[i])
 
 ## TODO: incomplete method??
-static func remove_s(array: PackedStringArray, fn: Callable) -> void:
-	var new_array: PackedStringArray = []
-	new_array.resize(array.size())
-	var used_elements: int = 0
-	for i in array.size():
-		if fn.call(array[i]):
-			new_array
+#static func remove_s(array: PackedStringArray, fn: Callable) -> void:
+	#var new_array: PackedStringArray = []
+	#new_array.resize(array.size())
+	#var used_elements: int = 0
+	#for i in array.size():
+		#if fn.call(array[i]):
+			#new_array
 
 ## If the selector returns a single value, the key will be the result of the
 ## function call and the key will be the element

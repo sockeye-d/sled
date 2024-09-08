@@ -11,6 +11,7 @@ offset_bottom = 648.0
 size_flags_vertical = 3
 allow_reselect = true
 select_mode = 2
+scroll_horizontal_enabled = false
 script = ExtResource("2_3wiph")
 
 [node name="AddFileDialog" parent="." instance=ExtResource("3_evlqf")]

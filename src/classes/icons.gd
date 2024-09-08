@@ -46,7 +46,6 @@ static func find(icon: String) -> String:
 	)
 	icon = mat_regex.sub(icon, "$0x$1")
 	var key := _get_icon_key(icon)
-	var l := loaded_icons
 	if key in loaded_icons:
 		return loaded_icons[key]
 	var tex: String

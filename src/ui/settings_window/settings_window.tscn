@@ -92,7 +92,7 @@ size_flags_vertical = 3
 [node name="SplitContainer" type="SplitContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-split_offset = 175
+split_offset = 13
 script = ExtResource("1_k1b4t")
 relative_split_offset = 0.25
 
@@ -129,18 +129,18 @@ size_flags_vertical = 3
 [node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="ShowSettingsFileButton" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 8
 text = "Show settings file"
 
-[node name="Button2" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="ExportThemeButton" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 8
 text = "Export theme"
 
-[connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/Button2" to="." method="_on_button_2_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/ExportThemeButton" to="." method="_on_button_2_pressed"]

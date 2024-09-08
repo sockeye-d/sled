@@ -11,9 +11,9 @@ signal secret_signaled
 
 @onready var category_container: VBoxContainer = %CategoryContainer
 @onready var setting_option_container: VBoxContainer = %SettingOptionContainer
-@onready var button: Button = %Button
+@onready var show_settings_file_button: Button = %ShowSettingsFileButton
+@onready var export_theme_button: Button = %ExportThemeButton
 @onready var right_container: PanelContainer = %RightContainer
-@onready var button_2: Button = %Button2
 
 
 @export var secret_code: Array[InputEvent]
@@ -35,7 +35,7 @@ func _init() -> void:
 
 func _ready() -> void:
 	populate_setting_categories()
-	button.pressed.connect(func():
+	show_settings_file_button.pressed.connect(func():
 		OS.shell_show_in_file_manager(
 			ProjectSettings.globalize_path(Settings.SETTINGS_PATH)
 		)
@@ -100,17 +100,17 @@ func populate_setting_categories() -> void:
 
 
 func add_setting_category(category: SettingCategory) -> void:
-	var button = HighlightButton.new()
+	var category_button = HighlightButton.new()
 	
-	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	button.text = category.name
-	button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	category_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	category_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	category_button.text = category.name
+	category_button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	
 	if category_container:
-		category_container.add_child(button)
+		category_container.add_child(category_button)
 	
-	button.pressed.connect(func():
+	category_button.pressed.connect(func():
 		if category.name != current_category:
 			current_category = category.name
 			right_container.show()
@@ -128,12 +128,12 @@ func populate_settings(category: SettingCategory) -> void:
 		setting.run_init_script.call_deferred()
 		setting.control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		
-		var button = HighlightButton.new()
-		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		button.text = setting.name
-		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		button.tooltip_text = setting.tooltip
-		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		var label_button = HighlightButton.new()
+		label_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		label_button.text = setting.name
+		label_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		label_button.tooltip_text = setting.tooltip
+		label_button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		
 		var reset_button = HighlightButton.new()
 		reset_button.icon = Icons.create("reset_value")
@@ -144,7 +144,7 @@ func populate_settings(category: SettingCategory) -> void:
 		)
 		
 		var container = HBoxContainer.new()
-		container.add_child(button)
+		container.add_child(label_button)
 		container.add_child(reset_button)
 		container.add_child(setting.control)
 		setting.setting_changed.connect(func(new_value):
@@ -153,7 +153,7 @@ func populate_settings(category: SettingCategory) -> void:
 		)
 		
 		if setting is DividerSettingItem:
-			button.add_theme_font_override(&"font", Fonts.main_font_bold)
+			label_button.add_theme_font_override(&"font", Fonts.main_font_bold)
 		
 		setting_option_container.add_child(container)
 

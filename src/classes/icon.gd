@@ -7,7 +7,14 @@ class_name IconTexture2D extends ImageTexture
 		return icon
 	set(value):
 		icon = value
-		resource_name = "%s (IconTexture2D)" % icon
+		_reset_name()
+		_set_image()
+@export_range(0.5, 3.0, 0.0001, "or_greater", "or_less") var icon_scale: float = 1.0:
+	get:
+		return icon_scale
+	set(value):
+		icon_scale = value
+		_reset_name()
 		_set_image()
 var has_set_image: bool = false
 var found_icon: bool = false
@@ -34,5 +41,9 @@ func _set_image():
 func _get_scale() -> float:
 	var t := ThemeDB.get_project_theme()
 	if not t:
-		return 1.0
-	return t.default_base_scale if t.has_default_base_scale() else ThemeDB.fallback_base_scale
+		return icon_scale
+	return (t.default_base_scale if t.has_default_base_scale() else ThemeDB.fallback_base_scale) * icon_scale
+
+
+func _reset_name() -> void:
+	resource_name = "%s@%.2fx (IconTexture2D)" % [icon, icon_scale]

@@ -82,7 +82,7 @@ func _ready() -> void:
 	)
 	
 	Settings.connect_setting(&"main_font_size", func(new_value: float) -> void:
-		theme.default_font_size = new_value
+		theme.default_font_size = int(new_value)
 		main_font_size_changed.emit()
 	)
 	
@@ -161,7 +161,7 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_stylebox(&"panel", &"LowerPanelContainer", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 8, 8], [4]))
 	
 	t.set_color(&"color", &"Throbber", Color(colors.selection_color, 1.0))
-	t.set_constant(&"thickness", &"Throbber", get_scale() * 15.0)
+	t.set_constant(&"thickness", &"Throbber", int(get_scale() * 15.0))
 	
 	t.set_stylebox(&"panel", &"Tree", StyleBoxUtil.new_flat(colors.background_color, [8], [4]))
 	#t.set_stylebox(&"focus", &"Tree", focus_sb)
@@ -282,8 +282,8 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_stylebox(&"invalid", &"FileLineEdit",
 		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.1), [4], [4], [2], Color(0.8, 0.3, 0.2)))
 	
-	t.set_color(&"font_color", &"OptionButton", colors.text_color)
 	t.set_color(&"font_focus_color", &"OptionButton", colors.text_color)
+	t.set_color(&"font_color", &"OptionButton", colors.text_color)
 	t.set_color(&"font_hover_color", &"OptionButton", _color_adjust(colors.text_color, -contrast * 0.05))
 	t.set_color(&"font_hover_pressed_color", &"OptionButton", _color_adjust(colors.text_color, -contrast * 0.15))
 	t.set_color(&"font_pressed_color", &"OptionButton", _color_adjust(colors.text_color, -contrast * 0.1))
@@ -342,14 +342,18 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 
 func _color_adjust(color: Color, amount: float) -> Color:
 	if amount < 0:
-		return color.lightened(amount)
+		# it is negated here because amount would be negative
+		# but I want the absolute value
+		#
+		# so don't remove the - here please
+		return color.lightened(-amount)
 	else:
 		return color.darkened(amount)
 
 
-func _set_focus_sb(theme: Theme, sb: StyleBox, theme_type := &"Control") -> void:
+func _set_focus_sb(on_theme: Theme, sb: StyleBox, theme_type := &"Control") -> void:
 	for child_type in ClassDB.get_inheriters_from_class(theme_type):
-		theme.set_stylebox(&"focus", theme_type, sb)
+		on_theme.set_stylebox(&"focus", theme_type, sb)
 
 
 func set_icon_mode() -> void:

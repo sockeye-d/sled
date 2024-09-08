@@ -130,8 +130,8 @@ static func substr_line_pos(string: String, start: int, end: int = 0x7FFFFFFF) -
 	return "\n".join(string.split("\n", true).slice(start, end + 1))
 
 
-static func substr_line(string: String, start: int, len: int = -1) -> String:
-	return "\n".join(string.split("\n", true).slice(start, 0x7FFFFFFF if len == -1 else start + len))
+static func substr_line(string: String, start: int, length: int = -1) -> String:
+	return "\n".join(string.split("\n", true).slice(start, 0x7FFFFFFF if length == -1 else start + length))
 
 ## index_map maps between indices in the string with the comments removed and
 ## the string with comments
@@ -152,7 +152,7 @@ static func remove_comments(string: String, index_map: Dictionary = { }, opening
 		if not inside_comment and string.substr(i).begins_with(single_opening):
 			while i < string.length() and string[i] != "\n":
 				i += 1
-			i += 1
+			#i += 1
 			continue
 		if not inside_comment:
 			index_map[mapped_i] = i
