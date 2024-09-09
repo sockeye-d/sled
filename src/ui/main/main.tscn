@@ -1,12 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://cpp730e50fn3p"]
+[gd_scene load_steps=10 format=3 uid="uid://cpp730e50fn3p"]
 
 [ext_resource type="Script" path="res://src/ui/main/main.gd" id="1_86qe4"]
 [ext_resource type="PackedScene" uid="uid://b45p8nijrvd3v" path="res://src/ui/browser/browser.tscn" id="1_prqn1"]
 [ext_resource type="PackedScene" uid="uid://cfbphdd74su8c" path="res://src/ui/editor/editor.tscn" id="1_x2835"]
 [ext_resource type="PackedScene" uid="uid://dfkt6ernbrafa" path="res://src/ui/menu_bar/menu_bar.tscn" id="2_xxxww"]
 [ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="3_3bsis"]
-[ext_resource type="FontVariation" uid="uid://b0slpuo2u08uv" path="res://src/assets/fonts/main_font_bold.tres" id="3_thik5"]
-[ext_resource type="Script" path="res://src/ui/main/logo.gd" id="4_ytbde"]
+[ext_resource type="Script" path="res://src/ui/main/notification_tray.gd" id="3_33nu0"]
 [ext_resource type="PackedScene" uid="uid://b5buokqgbn0uf" path="res://src/ui/image_viewer/image_viewer.tscn" id="8_b55ab"]
 [ext_resource type="PackedScene" uid="uid://kfuvy0jjrr55" path="res://src/ui/search_panel/search_panel.tscn" id="8_jng44"]
 [ext_resource type="Script" path="res://src/classes/keep_visible_component.gd" id="8_u3jv8"]
@@ -42,17 +41,12 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Logo" type="RichTextLabel" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
-modulate = Color(1, 1, 1, 0.25)
+[node name="NotificationTray" type="Container" parent="VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+clip_contents = true
 layout_mode = 2
-size_flags_horizontal = 10
-theme_override_fonts/normal_font = ExtResource("3_thik5")
-bbcode_enabled = true
-text = "[right][font_size=23]s[color=FF8080]l[/color][color=80FF80]e[/color][color=8080FF]d[/color][/font_size][/right]"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
-script = ExtResource("4_ytbde")
+size_flags_horizontal = 3
+mouse_filter = 2
+script = ExtResource("3_33nu0")
 
 [node name="NothingToShowLabel" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -69,7 +63,7 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 theme_override_constants/autohide = 1
-split_offset = 3
+split_offset = 227
 script = ExtResource("3_3bsis")
 relative_split_offset = 0.2
 
@@ -117,46 +111,5 @@ layout_mode = 2
 
 [node name="KeepVisibleComponent" type="Node" parent="VBoxContainer/MarginContainer/VBoxContainer/MainContainer/Editors"]
 script = ExtResource("8_u3jv8")
-
-[node name="Spacer" type="HBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer"]
-clip_contents = true
-layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 8
-mouse_filter = 2
-alignment = 2
-
-[node name="Spacer" type="Label" parent="VBoxContainer/MarginContainer/VBoxContainer/Spacer"]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="Control" type="Control" parent="MarginContainer"]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="NotificationTray" type="HBoxContainer" parent="MarginContainer/Control"]
-clip_contents = true
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -1326.0
-offset_top = -21.0
-grow_horizontal = 0
-grow_vertical = 0
-size_flags_horizontal = 9
-size_flags_vertical = 8
-mouse_filter = 2
-alignment = 2
 
 [connection signal="file_opened" from="VBoxContainer/MarginContainer/VBoxContainer/MainContainer/Browser" to="." method="open_file"]

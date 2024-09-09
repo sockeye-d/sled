@@ -23,6 +23,7 @@ func notify(what: String, type: int, color: Color = NOTIFICATION_COLORS[type]) -
 	label.add_theme_constant_override(&"outline_size", 3)
 	label.add_theme_color_override(&"font_outline_color", color.darkened(0.5))
 	notification_tray.add_child(label)
+	notification_tray.move_child(label, 0)
 
 
 ## Use a %s placeholder for the error

@@ -74,7 +74,6 @@ script = ExtResource("6_7xxr2")
 unique_name_in_owner = true
 size = Vector2i(283, 705)
 visible = false
-wrap_controls = true
 
 [node name="StatisticsWindow" parent="." instance=ExtResource("8_nemhs")]
 unique_name_in_owner = true

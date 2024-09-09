@@ -163,7 +163,9 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_color(&"color", &"Throbber", Color(colors.selection_color, 1.0))
 	t.set_constant(&"thickness", &"Throbber", int(get_scale() * 15.0))
 	
-	t.set_stylebox(&"panel", &"Tree", StyleBoxUtil.new_flat(colors.background_color, [8], [4]))
+	t.set_stylebox(&"panel", &"Tree",
+		StyleBoxUtil.new_flat(colors.background_color, [8], [4])
+	)
 	#t.set_stylebox(&"focus", &"Tree", focus_sb)
 	t.set_stylebox(&"cursor", &"Tree",
 		StyleBoxUtil.new_flat(
@@ -185,6 +187,7 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_color(&"guide_color", &"Tree", guide_color)
 	
 	t.set_constant(&"item_margin", &"Tree", int(16 * get_scale()))
+	t.set_constant(&"inner_item_margin_left", &"Tree", int(4 * get_scale()))
 	t.set_constant(&"h_separation", &"Tree", int(4 * get_scale()))
 	t.set_constant(&"v_separation", &"Tree", int(4 * get_scale()))
 	t.set_constant(&"button_margin", &"Tree", int(4 * get_scale()))
@@ -328,6 +331,8 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_stylebox(&"fill", &"ProgressBar",
 		StyleBoxUtil.new_flat(_color_adjust(colors.background_color, contrast * 0.2), [4], [8])
 	)
+	
+	t.set_constant(&"separation", &"NotificationTray", int(4 * get_scale()))
 	
 	_set_focus_sb(t, focus_sb)
 	

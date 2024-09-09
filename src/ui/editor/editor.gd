@@ -149,12 +149,13 @@ func load_file(path: String, selection_from: int = -1, selection_to: int = -1) -
 
 
 func unload_file() -> void:
-	code_editor.text = ""
-	code_editor.editable = false
-	file_path = ""
-	hide()
-	EditorManager.view_menu_state_change_requested.emit(get_index(), false)
-	NotificationManager.notify("Closed '%s'" % file_path.get_file(), NotificationManager.TYPE_NORMAL)
+	if file_path:
+		code_editor.text = ""
+		code_editor.editable = false
+		file_path = ""
+		hide()
+		EditorManager.view_menu_state_change_requested.emit(get_index(), false)
+		NotificationManager.notify("Closed '%s'" % file_path.get_file(), NotificationManager.TYPE_NORMAL)
 
 
 func save(path: String = file_path) -> void:

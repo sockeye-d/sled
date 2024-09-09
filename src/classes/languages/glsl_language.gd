@@ -1,4 +1,5 @@
 class_name GLSLLanguage extends Language
+## This class really needs better abstraction to Language but I'm lazy
 
 
 const _ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._"
@@ -181,7 +182,7 @@ static func get_code_completion_suggestions(path: String, file: String, line: in
 	var caret_index := StringUtil.get_index(file, line, col)
 	return contents.as_suggestions(caret_index, file)
 
-
+## spaghetti code mess 🥖🍝
 static func get_file_contents(path: String, file: String, depth: int = 0, base_path: String = "", currently_edited_file: bool = false, visited_files: PackedStringArray = []) -> FileContents:
 	visited_files.append(path)
 	if not currently_edited_file and contents_cache.has(path):
@@ -227,8 +228,8 @@ static func get_file_contents(path: String, file: String, depth: int = 0, base_p
 			last_func = null
 			var kind := def.trim_prefix("#").strip_edges(true, false)
 			if kind.begins_with("include"):
-				var included_path = StringUtil.substr_pos(def, def.find("\"") + 1, def.rfind("\""))
-				var new_path = path.get_base_dir().path_join(included_path).simplify_path()
+				var included_path := StringUtil.substr_pos(def, def.find("\"") + 1, def.rfind("\""))
+				var new_path := path.get_base_dir().path_join(included_path).simplify_path()
 				if included_path.begins_with("/") or included_path.begins_with("\\"):
 					if base_path:
 						new_path = base_path.path_join(included_path).simplify_path()
@@ -294,8 +295,6 @@ static func get_file_contents(path: String, file: String, depth: int = 0, base_p
 						scope_stack[-1].variables[obj.name] = obj
 			if end == -1:
 				break
-			#if substr[end] == ";":
-				#end = substr.find(";")
 			i += end
 			continue
 		i += 1

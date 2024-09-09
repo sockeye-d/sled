@@ -213,9 +213,8 @@ func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
 		FileAccess.get_hidden_attribute(path),
 	)
 	
-	item.set_metadata(0, path.get_file())
+	item.set_text(0, path.get_file())
 	item.set_tooltip_text(0, FileManager.get_short_path(path))
-	#item.set_text(0, path.get_file())
 	
 	_add_btn(item, BtnType.SHOW_IN_FILE_MANAGER)
 	_add_btn(item, BtnType.COPY_PATH)
@@ -232,14 +231,13 @@ func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
 func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
 	var item :=_create_item(
 		parent,
-		null,#Icons.create("folder"),
+		null,
 		FileAccess.get_hidden_attribute(path),
 	)
 	
-	item.set_metadata(0, path.get_file())
+	item.set_text(0, path.get_file())
 	item.set_tooltip_text(0, FileManager.get_short_path(path))
-	#item.set_text(0, path.get_file())
-		
+	
 	_add_btn(item, BtnType.ADD_FILE)
 	_add_btn(item, BtnType.ADD_FOLDER)
 	_add_btn(item, BtnType.FOLDER_FIND)
@@ -259,48 +257,9 @@ func _add_btn(item: TreeItem, type: BtnType) -> void:
 
 func _create_item(parent: TreeItem, icon: Texture2D, is_hidden: bool) -> TreeItem:
 	var item := create_item(parent)
-	item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
-	item.set_custom_draw_callback(0, func(draw_item: TreeItem, rect: Rect2) -> void: _item_custom_draw(draw_item, rect, icon, is_hidden))
+	item.set_cell_mode(0, TreeItem.CELL_MODE_STRING)
+	item.set_icon(0, icon)
 	return item
-
-
-func _item_custom_draw(item: TreeItem, rect: Rect2, icon: Texture2D, is_hidden: bool) -> void:
-	if rect.size.x < 0.0:
-		return
-	var f := get_theme_font(&"font")
-	var h_sep := get_theme_constant(&"h_separation")
-	var f_size := get_theme_font_size(&"font_size") if has_theme_font_size(&"font_size") else get_theme_default_font_size()
-	var text: String = item.get_metadata(0)
-	var ascent := f.get_ascent(f_size)
-	var string_size := f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, f_size)
-	var icon_width: int = icon.get_width() if icon else 0
-	if icon and get_theme_constant(&"icon_max_width") != 0:
-		icon_width = mini(icon_width, get_theme_constant(&"icon_max_width"))
-	var icon_offset := (rect.size.y - icon_width) / 2.0 if icon else 0.0
-	var icon_rect_full := Rect2(round(rect.position + Vector2.ONE * icon_offset), Vector2(icon_width, icon_width))
-	var icon_mod: float = Settings.hidden_file_icon_brightness if is_hidden else 1.0
-	var text_mod: float = Settings.hidden_file_text_brightness if is_hidden else 1.0
-	var icon_rect := icon_rect_full.intersection(rect)
-	var width_mod := Vector2(icon_rect.size.x / icon_rect.size.x, 1)
-	if icon:
-		draw_texture_rect_region(icon, icon_rect, Rect2(Vector2.ZERO, icon.get_size() * width_mod), Color(Color.WHITE, icon_mod))
-		#draw_rect(icon_rect, Color.RED, false)
-	var str_pos := Vector2(
-		rect.position.x + icon_width + icon_offset + h_sep,
-		rect.get_center().y + ascent / 2.0
-	)
-	draw_string(
-		f,
-		str_pos,
-		text,
-		HORIZONTAL_ALIGNMENT_LEFT,
-		maxi(rect.size.x - icon_width - icon_offset * 2.0, 1),
-		f_size,
-		EditorThemeManager.theme.get_color(&"font_color", &"Tree") * Color(Color.WHITE, text_mod),
-		TextServer.JUSTIFICATION_CONSTRAIN_ELLIPSIS,
-	)
-	#draw_rect(Rect2(str_pos - Vector2(0.0, string_size.y), string_size), Color.RED, false)
-	#draw_rect(rect, Color.RED, false)
 
 
 func _on_empty_clicked(_position: Vector2, _mouse_button_index: int) -> void:
@@ -341,7 +300,7 @@ func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_ind
 
 func _delete_item(item: TreeItem) -> void:
 	var cd := ConfirmationDialog.new()
-	cd.dialog_text = "Delete '%s'?" % item.get_metadata(0)
+	cd.dialog_text = "Delete '%s'?" % item.get_text(0)
 	cd.ok_button_text = "Delete"
 	cd.title = "Confirm deletion"
 	add_child(cd)
@@ -365,7 +324,7 @@ func _rename_item(item: TreeItem, title: String) -> void:
 	var dialog = LineEditDialog.new()
 	dialog.title = title
 	add_child(dialog)
-	dialog.text = item.get_metadata(0)
+	dialog.text = item.get_text(0)
 	dialog.disallowed_chars = r':/\?*"|%<>'
 	dialog.popup_centered()
 	var new_name = await dialog.finished
@@ -374,7 +333,7 @@ func _rename_item(item: TreeItem, title: String) -> void:
 		var new_path: String = path.get_base_dir().path_join(new_name)
 		var err: Error = DirAccess.rename_absolute(path, new_path)
 		if not err:
-			item.set_metadata(0, new_name)
+			item.set_text(0, new_name)
 			paths.add(item, path.get_base_dir().path_join(new_name))
 		NotificationManager.notify_if_err(err, "'%s' renamed to '%s' successfully" % [path.get_file(), new_name], "'%s' failed to be renamed to '%s'" % [path.get_file(), new_name])
 	dialog.queue_free()
