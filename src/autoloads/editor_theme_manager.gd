@@ -166,17 +166,26 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_stylebox(&"panel", &"Tree",
 		StyleBoxUtil.new_flat(colors.background_color, [8], [4])
 	)
-	#t.set_stylebox(&"focus", &"Tree", focus_sb)
 	t.set_stylebox(&"cursor", &"Tree",
 		StyleBoxUtil.new_flat(
-			Color(colors.text_color, 0.2), [4], [0], [2], colors.text_color, [2]
-		)
-	)
+			Color(colors.text_color, 0.1), [4], [0], [2], colors.text_color, [2]
+	))
 	t.set_stylebox(&"cursor_unfocused", &"Tree",
 		StyleBoxUtil.new_flat(
 			Color(colors.text_color, 0.2), [4], [0]
-		)
-	)
+	))
+	t.set_stylebox(&"hovered", &"Tree",
+		StyleBoxUtil.new_flat(
+			Color(colors.text_color, 0.1), [4], [0]
+	))
+	t.set_stylebox(&"selected", &"Tree",
+		StyleBoxUtil.new_flat(
+			Color(colors.text_color, 0.2), [4], [0]
+	))
+	t.set_stylebox(&"selected_focus", &"Tree",
+		StyleBoxUtil.new_flat(
+			Color(colors.text_color, 0.3), [4], [0]
+	))
 	var guide_color := Color(colors.text_color, 0.5)
 	
 	t.set_color(&"font_color", &"Tree", colors.text_color)
@@ -191,6 +200,24 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	t.set_constant(&"h_separation", &"Tree", int(4 * get_scale()))
 	t.set_constant(&"v_separation", &"Tree", int(4 * get_scale()))
 	t.set_constant(&"button_margin", &"Tree", int(4 * get_scale()))
+	
+	t.set_stylebox(&"panel", &"ItemList", t.get_stylebox(&"panel", &"Tree"))
+	t.set_stylebox(&"cursor", &"ItemList", t.get_stylebox(&"cursor", &"Tree"))
+	t.set_stylebox(&"cursor_unfocused", &"ItemList", t.get_stylebox(&"cursor_unfocused", &"Tree"))
+	t.set_stylebox(&"hovered", &"ItemList", t.get_stylebox(&"hovered", &"Tree"))
+	t.set_stylebox(&"selected", &"ItemList", t.get_stylebox(&"selected", &"Tree"))
+	t.set_stylebox(&"selected_focus", &"ItemList", t.get_stylebox(&"selected_focus", &"Tree"))
+	
+	t.set_color(&"font_color", &"ItemList", colors.text_color)
+	t.set_color(&"children_hl_line_color", &"ItemList", guide_color)
+	t.set_color(&"parent_hl_line_color", &"ItemList", guide_color)
+	t.set_color(&"relationship_line_color", &"ItemList", guide_color)
+	t.set_color(&"drop_position_color", &"ItemList", guide_color)
+	t.set_color(&"guide_color", &"ItemList", guide_color)
+	
+	t.set_constant(&"line_separation", &"ItemList", int(4 * get_scale()))
+	t.set_constant(&"h_separation", &"ItemList", int(4 * get_scale()))
+	t.set_constant(&"v_separation", &"ItemList", int(4 * get_scale()))
 	
 	t.set_color(&"font_color", &"Button", colors.text_color)
 	t.set_color(&"font_focus_color", &"Button", colors.text_color)

@@ -49,10 +49,12 @@ static func find(icon: String) -> String:
 	if key in loaded_icons:
 		return loaded_icons[key]
 	var tex: String
-	if ResourceLoader.exists(icons_path + ("%s.svg" % icon)):
+	if FileAccess.file_exists(icons_path + ("%s.svg" % icon)):
 		tex = FileAccess.get_file_as_string(icons_path + ("%s.svg" % icon))
-	elif ResourceLoader.exists(icons_path + ("type_%s.svg" % icon)):
+	elif FileAccess.file_exists(icons_path + ("type_%s.svg" % icon)):
 		tex = FileAccess.get_file_as_string(icons_path + ("type_%s.svg" % icon))
+	else:
+		printerr("Icon '%s' not found" % icon)
 	if tex:
 		loaded_icons[key] = tex
 	return tex

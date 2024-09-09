@@ -180,7 +180,7 @@ func load_theme(file: String = "") -> void:
 	if code_editor:
 		ThemeImporter.mut_highlighter(EditorThemeManager.last_imported_theme, highlighter, GLSLLanguage.base_types, GLSLLanguage.keywords.keys(), GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
 		if not highlighter.has_color_region("#"):
-			highlighter.add_color_region("#", "", Color(code_editor.get_theme_color(&"font_color"), 0.7))
+			highlighter.add_color_region("#", " ", Color(code_editor.get_theme_color(&"font_color"), 0.7))
 
 
 func analyze_file_on_thread() -> void:

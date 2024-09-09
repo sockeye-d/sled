@@ -22,7 +22,7 @@ func _ready() -> void:
 func load_theme(file: String = "") -> void:
 	ThemeImporter.mut_highlighter(EditorThemeManager.last_imported_theme, highlighter, GLSLLanguage.base_types, GLSLLanguage.keywords.keys(), GLSLLanguage.comment_regions, GLSLLanguage.string_regions)
 	if not highlighter.has_color_region("#"):
-		highlighter.add_color_region("#", "", Color(get_theme_color(&"font_color"), 0.7))
+		highlighter.add_color_region("#", " ", Color(get_theme_color(&"font_color"), 0.7))
 
 
 func load_file(path: String) -> void:

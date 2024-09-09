@@ -173,6 +173,9 @@ func populate_tree(path: String, parent: TreeItem = null, first: bool = true) ->
 	
 	for file in da.get_files():
 		_create_file_item(path.path_join(file), item)
+	
+	get_root().get_child(0).set_deferred("collapsed", false)
+	
 	return item
 
 

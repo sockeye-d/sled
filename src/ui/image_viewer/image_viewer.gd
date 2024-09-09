@@ -21,7 +21,7 @@ func _ready() -> void:
 func load_image(path: String) -> Error:
 	var img := Image.new()
 	var err: Error = img.load(path)
-	if not img:
+	if img.is_empty():
 		return err
 	
 	image_display.texture = ImageTexture.create_from_image(img)

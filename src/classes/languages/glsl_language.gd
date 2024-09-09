@@ -154,8 +154,7 @@ static func _static_init() -> void:
 	])
 #endregion
 	comment_regions = ["//", "/* */"]
-	# GLSL has no strings
-	string_regions = []
+	string_regions = ["\"", "\'"]
 
 ## Dictionary[String, FileContents]
 ## Used to cache the results of get_file_contents() calls, keys are file paths
