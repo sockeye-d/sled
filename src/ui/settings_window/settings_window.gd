@@ -158,7 +158,7 @@ func populate_settings(category: SettingCategory) -> void:
 		setting_option_container.add_child(container)
 
 
-func load_settings(new_settings: Dictionary) -> void:
+func load_settings(new_settings: Dictionary[StringName, Variant]) -> void:
 	setting_categories.assign(SETTING_CATEGORIES.setting_categories)
 	if not settings_items:
 		populate_setting_categories()

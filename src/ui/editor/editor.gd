@@ -47,7 +47,7 @@ var highlighter: CodeHighlighter = CodeHighlighter.new()
 var analysis_thread: Thread = Thread.new()
 var analyzer_invalidate_sem: Semaphore = Semaphore.new()
 ## [code]{ file_path: String, text: String, base_path: String, exit_loop: bool }[/code]
-var analysis_data: Dictionary
+var analysis_data: Dictionary[String, Variant]
 var analyzer_mut: Mutex = Mutex.new()
 
 

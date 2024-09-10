@@ -17,7 +17,7 @@ var highlight_ranges: Array[Vector2i]:
 		highlight_ranges = value
 		_generate_highlight_cache()
 var _old_ranges_hash: int
-var _highlight_cache: Dictionary
+var _highlight_cache: Dictionary[Vector2i, Vector2i]
 
 
 func _ready() -> void:

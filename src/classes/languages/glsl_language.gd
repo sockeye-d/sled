@@ -1383,7 +1383,7 @@ class IndexableStruct extends Struct:
 	
 	func _init(_name: String, _properties: Array[Variable], _element_type: String, _icon: Texture2D = Icons.create("struct")) -> void:
 		name = _name
-		properties = ArrayUtil.create_dictionary(_properties, func(v): return v.name)
+		properties.assign(ArrayUtil.create_dictionary(_properties, func(v): return v.name))
 		element_type = _element_type
 		icon = _icon
 	

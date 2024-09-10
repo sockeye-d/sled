@@ -10,7 +10,7 @@ enum Task {
 @onready var mut: Mutex = Mutex.new()
 @onready var thread: Thread = Thread.new()
 @onready var sem: Semaphore = Semaphore.new()
-var data: Dictionary
+var data: Dictionary[String, Variant]
 
 
 @onready var left: VBoxContainer = %Left
@@ -72,7 +72,7 @@ func generate_list() -> void:
 	sem.post()
 
 
-func _add_stats(stats: Dictionary) -> void:
+func _add_stats(stats: Dictionary[String, Variant]) -> void:
 	_clear()
 	_add_item("File count", stats.count)
 	_add_item("Total file size", "%2.f MiB" % (stats.size / 1024 ** 2))
@@ -105,8 +105,8 @@ func _create_label(text: String, alignment: HorizontalAlignment = HORIZONTAL_ALI
 
 var files_counted: int
 
-func _get_folder_stats(text_files: PackedStringArray, path: String = FileManager.current_path, file_count: int = -1) -> Dictionary:
-	var s := {
+func _get_folder_stats(text_files: PackedStringArray, path: String = FileManager.current_path, file_count: int = -1) -> Dictionary[String, Variant]:
+	var s: Dictionary[String, Variant] = {
 		"count": 0,
 		"size": 0.0,
 		"lines": 0,
@@ -143,7 +143,7 @@ func _count_files(path: String) -> int:
 	return count
 
 
-func _get_file_stats(path: String, count_lines: bool) -> Dictionary:
+func _get_file_stats(path: String, count_lines: bool) -> Dictionary[String, Variant]:
 	var file_bytes: PackedByteArray = FileAccess.get_file_as_bytes(path)
 	var lines := 0
 	if count_lines:

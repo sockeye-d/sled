@@ -133,6 +133,7 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	var main_scene := get_node_or_null(^"/root/Main")
 	if main_scene:
 		root.remove_child(main_scene)
+		root.gui_disable_input = true
 	
 	await get_tree().process_frame
 	var colors: Dictionary[String, Color]
@@ -369,6 +370,7 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	
 	if main_scene:
 		root.add_child(main_scene)
+		root.gui_disable_input = false
 	theme_changed.emit(theme_text)
 
 

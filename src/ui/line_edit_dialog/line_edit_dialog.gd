@@ -7,7 +7,7 @@ signal finished(text: String)
 
 var line_edit: LineEdit
 var container: VBoxContainer
-var custom_ui: Dictionary
+var custom_ui: Dictionary[String, Control]
 
 
 @export var text: String = "":

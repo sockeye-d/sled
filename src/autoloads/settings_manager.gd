@@ -67,7 +67,9 @@ func save_settings(path: String = SETTINGS_PATH) -> Error:
 func load_settings(path: String = SETTINGS_PATH) -> Error:
 	var new_settings = File.load_variant(path)
 	if new_settings is Dictionary:
-		settings_window.load_settings(new_settings)
+		var typed_new_settings: Dictionary[StringName, Variant]
+		typed_new_settings.assign(new_settings)
+		settings_window.load_settings(typed_new_settings)
 		could_load_settings = true
 		return OK
 	else:

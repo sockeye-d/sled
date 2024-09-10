@@ -2,3 +2,4 @@
 .godot/
 
 export/
+*.afdesign\~lock\~

@@ -12,7 +12,7 @@ signal search_done(results: Array[SearchResult])
 
 
 var current_results: SearchResults
-var search_data: Dictionary
+var search_data: Dictionary[String, Variant]
 
 
 var header_items: Array[TreeItem]
@@ -152,9 +152,9 @@ func _search_on_thread() -> void:
 			call_deferred_thread_group(&"display_results", search_results, true)
 		elif data_copy.task == Task.FILTER:
 			var filtered_results: SearchResults = data_copy.old_results.copy_empty()
-			# Dictionary[SearchResult, float (weight)]
 			call_deferred_thread_group(&"_set_progress", false, 0.0)
-			var weights: Dictionary
+			# Dictionary[SearchResult, float (weight)]
+			var weights: Dictionary[SearchResult, float]
 			var q: String = data_copy.query
 			var old: SearchResults = data_copy.old_results
 			ArrayUtil.foreach_i(old.results,
