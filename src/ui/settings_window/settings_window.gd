@@ -21,8 +21,8 @@ signal secret_signaled
 
 
 var setting_categories: Array[SettingCategory]
-var settings: Dictionary
-var settings_items: Dictionary
+var settings: Dictionary[StringName, Variant]
+var settings_items: Dictionary[StringName, SettingItem]
 var current_category := ""
 var current_secret_index: int
 var old_window_pos: Vector2i

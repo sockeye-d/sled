@@ -9,7 +9,7 @@ var main_font: FontVariation = preload("res://src/assets/fonts/main_font.tres")
 var theme: Theme:
 	get:
 		return ThemeDB.get_project_theme()
-var last_imported_theme: Dictionary
+var last_imported_theme: Dictionary[String, Color]
 var completion_color: Color
 var current_code_font: Font
 
@@ -22,7 +22,7 @@ signal main_font_size_changed()
 
 const DEFAULT_THEME: String = "vs code dark"
 const THEMES: ThemeLibrary = preload("res://src/themes/themes.tres")
-const LIGATURE_SHORTHANDS: Dictionary = {
+const LIGATURE_SHORTHANDS: Dictionary[String, String] = {
 	"ss": "stylistic_set_",
 	"dlig": "discretionary_ligatures",
 	"calt": "contextual_alternates",
@@ -135,7 +135,7 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 		root.remove_child(main_scene)
 	
 	await get_tree().process_frame
-	var colors: Dictionary
+	var colors: Dictionary[String, Color]
 	if use_cache:
 		colors = last_imported_theme
 	else:
@@ -422,7 +422,7 @@ func set_font(font_name: String, ligatures: String = ""):
 	var new_font: FontVariation = FontVariation.new()
 	new_font.base_font = create_system_font(font_name, "Monospace")
 	
-	var features: Dictionary = convert_tags_to_names(new_font.get_supported_feature_list())
+	var features := convert_tags_to_names(new_font.get_supported_feature_list())
 	new_font.opentype_features = _convert_ligatures(features, ligatures)
 	
 	current_code_font = new_font
@@ -433,13 +433,13 @@ func set_font(font_name: String, ligatures: String = ""):
 
 
 func set_ligatures(font = current_code_font, ligatures: String = Settings.ligatures) -> void:
-	var features := convert_tags_to_names(font.get_supported_feature_list())
-	features = _convert_ligatures(features, ligatures)
+	var font_features := convert_tags_to_names(font.get_supported_feature_list())
+	var ot_ligatures := _convert_ligatures(font_features, ligatures)
 	
 	if font is FontFile:
-		font.opentype_feature_overrides = features
+		font.opentype_feature_overrides = ot_ligatures
 	elif font is FontVariation:
-		font.opentype_features = features
+		font.opentype_features = ot_ligatures
 
 
 func set_font_from_path(font_path: String, ligatures: String = "") -> void:
@@ -480,8 +480,8 @@ func create_system_font(font_name: String, fallback: String = "") -> SystemFont:
 	return font
 
 
-func convert_tags_to_names(dict: Dictionary) -> Dictionary:
-	var new_dict := { }
+func convert_tags_to_names(dict: Dictionary) -> Dictionary[String, Dictionary]:
+	var new_dict: Dictionary[String, Dictionary]
 	
 	for key in dict:
 		new_dict[TextServerManager.get_primary_interface().tag_to_name(key)] = dict[key]
@@ -489,8 +489,8 @@ func convert_tags_to_names(dict: Dictionary) -> Dictionary:
 	return new_dict
 
 
-func _convert_ligatures(features: Dictionary, ligatures: String, shorthands: Dictionary = LIGATURE_SHORTHANDS) -> Dictionary:
-	var filtered: Dictionary = { }
+func _convert_ligatures(features: Dictionary[String, Dictionary], ligatures: String, shorthands := LIGATURE_SHORTHANDS) -> Dictionary[int, int]:
+	var filtered: Dictionary[int, int]
 	var replaced: String = StringUtil.replace_all(ligatures, shorthands)
 	for lig in replaced.split(",", false):
 		if lig in features:

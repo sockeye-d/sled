@@ -9,7 +9,7 @@ enum {
 }
 
 
-const NOTIFICATION_COLORS: Dictionary = {
+const NOTIFICATION_COLORS: Dictionary[int, Color] = {
 	TYPE_NORMAL: Color(0.5, 0.8, 0.5),
 	TYPE_WARNING: Color(0.95, 0.95, 0.0),
 	TYPE_ERROR: Color(1.0, 0.5, 0.5),

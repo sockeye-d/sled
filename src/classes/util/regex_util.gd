@@ -8,7 +8,7 @@ class_name RegExUtil
 # /(?:float|vec2|vec3|vec4)\s+\w+\((?:[\w]+\s*,?\s*)*\)/
 
 
-static var _memoized_regexes: Dictionary = { }
+static var _memoized_regexes: Dictionary[String, RegEx] = { }
 
 
 static var last_regex_create_error: Error

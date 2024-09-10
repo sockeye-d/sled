@@ -71,14 +71,14 @@ static func detect_inaccesible_scope(string: String, scope_opening: String, scop
 	return array
 
 ## Replaces all instances of the keys of replacements with their values
-static func replace_all(string: String, replacements: Dictionary) -> String:
+static func replace_all(string: String, replacements: Dictionary[String, String]) -> String:
 	for key in replacements:
 		string = string.replacen(key, replacements[key])
 	
 	return string
 
-## Case-insensitive version of replace_all
-static func replacen_all(string: String, replacements: Dictionary) -> String:
+## Case-insensitive version of [member replace_all]
+static func replacen_all(string: String, replacements: Dictionary[String, String]) -> String:
 	for key in replacements:
 		string = string.replacen(key, replacements[key])
 	return string
@@ -135,7 +135,7 @@ static func substr_line(string: String, start: int, length: int = -1) -> String:
 
 ## index_map maps between indices in the string with the comments removed and
 ## the string with comments
-static func remove_comments(string: String, index_map: Dictionary = { }, opening := "/*", closing := "*/", single_opening := "//") -> String:
+static func remove_comments(string: String, index_map: Dictionary[int, int] = { }, opening := "/*", closing := "*/", single_opening := "//") -> String:
 	var inside_comment := false
 	var sb: StringBuilder = StringBuilder.new()
 	var i: int = 0

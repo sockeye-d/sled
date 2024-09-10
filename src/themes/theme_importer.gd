@@ -3,13 +3,13 @@ class_name ThemeImporter extends Object
 
 
 static var last_imported_theme: String = ""
-static var last_imported_theme_dict: Dictionary = { }
-static var last_imported_theme_overrides: Dictionary = { }
+static var last_imported_theme_dict: Dictionary[String, Color] = { }
+static var last_imported_theme_overrides: Dictionary[String, Color] = { }
 static var last_imported_code_highlighter: CodeHighlighter = null
 
 ## Mutates a CodeHighlighter
 static func mut_highlighter(
-	theme: Dictionary,
+	theme: Dictionary[String, Color],
 	highlighter: CodeHighlighter,
 	types: PackedStringArray = [],
 	keywords: PackedStringArray = [],
@@ -32,8 +32,8 @@ static func mut_highlighter(
 	highlighter.clear_color_regions()
 	if "comment_color" in theme:
 		for region in comment_regions:
-			var region_split = region.split(" ")
-			var single_line = not " " in region
+			var region_split := region.split(" ")
+			var single_line: bool = not " " in region
 			highlighter.add_color_region(region_split[0], "" if single_line else region_split[-1], theme.comment_color, single_line)
 	if "string_color" in theme:
 		for region in string_regions:
@@ -42,8 +42,8 @@ static func mut_highlighter(
 	return highlighter
 
 
-static func get_theme_dict(file: String, random: bool = false) -> Dictionary:
-	var theme_dict: Dictionary = { }
+static func get_theme_dict(file: String, random: bool = false) -> Dictionary[String, Color]:
+	var theme_dict: Dictionary[String, Color] = { }
 	if last_imported_theme == file:
 		theme_dict = last_imported_theme_dict
 	else:
@@ -52,14 +52,14 @@ static func get_theme_dict(file: String, random: bool = false) -> Dictionary:
 			if not key_value.size() == 2:
 				continue
 			# no secrets here :)
-			var value = Color.from_ok_hsl(randf(), randf(), randf()) if random else Color(key_value[1].strip_edges().trim_prefix('"').trim_suffix('"'))
+			var value := Color.from_ok_hsl(randf(), randf(), randf()) if random else Color(key_value[1].strip_edges().trim_prefix('"').trim_suffix('"'))
 			theme_dict[key_value[0]] = value
 	
 	last_imported_theme_dict = theme_dict
 	return theme_dict
 
 
-static func add_code_edit_themes(theme: Theme, colors: Dictionary) -> void:
+static func add_code_edit_themes(theme: Theme, colors: Dictionary[String, Color]) -> void:
 	for key in colors:
 		if String(key).is_valid_identifier():
 			theme.set_color(key, &"CodeEdit", colors[key])

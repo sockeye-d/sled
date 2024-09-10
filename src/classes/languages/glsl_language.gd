@@ -156,19 +156,20 @@ static func _static_init() -> void:
 	comment_regions = ["//", "/* */"]
 	string_regions = ["\"", "\'"]
 
-## Dictionary[String, FileContents]
 ## Used to cache the results of get_file_contents() calls, keys are file paths
-static var contents_cache: Dictionary = { }
+static var contents_cache: Dictionary[String, FileContents] = { }
 
 
-static func _create_icons(arr: PackedStringArray) -> Dictionary:
-	var dict: Dictionary = { }
+static func _create_icons(arr: PackedStringArray) -> Dictionary[String, IconTexture2D]:
+	var dict: Dictionary[String, IconTexture2D]
 	for item in arr:
-		var icon: Texture2D
+		var icon: IconTexture2D
 		if item.begins_with("#"):
 			icon = Icons.create("keyword_definition")
 		else:
-			icon = Util.default(Icons.create("keyword_" + item, true), Icons.create("keyword"))
+			icon = Icons.create("keyword_" + item, true)
+			if not icon:
+				icon = Icons.create("keyword")
 		dict[item] = icon
 	return dict
 
@@ -193,7 +194,7 @@ static func get_file_contents(path: String, file: String, depth: int = 0, base_p
 	if not file:
 		return contents
 	var structs_keys: PackedStringArray = Type.built_in_structs.keys()
-	var index_map: Dictionary = { }
+	var index_map: Dictionary[int, int] = { }
 	file = StringUtil.remove_comments(file, index_map)
 	var tl_scope := Scope.new(0)
 	var scope_stack: Array[Scope] = [tl_scope]
@@ -308,20 +309,22 @@ class FileContents:
 		get:
 			if not built_in_contents:
 				built_in_contents = FileContents.new()
-				built_in_contents.structs.merge(Type.built_in_structs)
-				built_in_contents.funcs.merge(Type.built_in_functions)
+				var a = DictionaryUtil.untype(built_in_contents.structs).merged(Type.built_in_structs)
+				built_in_contents.structs.assign(a)
+				var b = DictionaryUtil.untype(built_in_contents.funcs).merged(Type.built_in_functions)
+				built_in_contents.funcs.assign(b)
 				#for s: Struct in Type.built_in_structs.values():
 					#built_in_contents.add(s.as_fn())
 				built_in_contents.add_depth(CodeEdit.LOCATION_OTHER)
 			return built_in_contents
 	
 	## Dictionary[String, Struct]
-	var structs: Dictionary = { }
+	var structs: Dictionary[String, Type] = { }
 	var variables: Array[Scope]
 	## Dictionary[String, Array[Function]]
-	var funcs: Dictionary = { }
+	var funcs: Dictionary[String, Array] = { }
 	## Dictionary[String, Definition]
-	var defs: Dictionary
+	var defs: Dictionary[String, Definition]
 	
 	func add(obj: Type) -> void:
 		if not obj:
@@ -390,15 +393,16 @@ class FileContents:
 			suggestions.append(prop.as_completion_suggestion())
 		return suggestions
 	
+	
 	func add_depth(depth: int) -> void:
 		for key in structs:
 			structs[key].depth += depth
 		for scope in variables:
 			scope.add_depth(depth)
 		for key in funcs:
-			for f in funcs[key]:
+			for f: Function in funcs[key]:
 				f.depth += depth
-		for d: Definition in defs:
+		for d: Definition in defs.values():
 			d.depth += depth
 	
 	
@@ -419,7 +423,7 @@ class FileContents:
 				# Function does not exist so insert a new key
 				funcs[key] = file_contents.funcs[key]
 	
-	func find(what: String) -> Type:
+	func find(what: String) -> Variant:
 		if funcs.has(what):
 			return funcs[what]
 		var found_var := Scope.find(variables, what)
@@ -486,7 +490,7 @@ class FileContents:
 				var args: PackedStringArray = StringUtil.split_scoped(StringUtil.substr_pos(text, simple_word_bounds[1] + 1, StringUtil.find_scope_end(text, i + 1, "(", ")")), ",", "(", ")")
 				ArrayUtil.map_in_place_s(args, func(arg: String) -> String: return arg.strip_edges())
 				return str(defs[simple_word]) + "\n\n" + (defs[simple_word] as Macro).get_expanded(args)
-			var m_funcs := funcs.merged(FileContents.built_in_contents.funcs)
+			var m_funcs := DictionaryUtil.untype(funcs).merged(FileContents.built_in_contents.funcs)
 			if simple_word in m_funcs:
 				return str("\n".join(m_funcs[simple_word]))
 		if simple_word in structs:
@@ -504,7 +508,7 @@ class Scope:
 	var start_index: int = -1
 	var end_index: int = -1
 	## Dictionary[String, Variable]
-	var variables: Dictionary = { }
+	var variables: Dictionary[String, Variable] = { }
 	
 	func _init(_start_index: int) -> void:
 		start_index = _start_index
@@ -520,7 +524,7 @@ class Scope:
 		return end_index == -1 or start_index < index and index <= end_index
 	
 	func merge(with_variables: Dictionary) -> void:
-		variables.merge(with_variables)
+		variables.assign(DictionaryUtil.untype(variables).merged(with_variables))
 	
 	func add_depth(depth: int) -> void:
 		for key in variables:
@@ -557,7 +561,7 @@ class Type:
 		"d": "double",
 	}
 	
-	static var built_in_structs := {
+	static var built_in_structs: Dictionary[String, Type] = {
 		"float": _create_vector("float", "float", 1),
 		"bool": _create_vector("bool", "bool", 1),
 		"int": _create_vector("int", "int", 1),
@@ -579,11 +583,11 @@ class Type:
 		"vec2": _create_vector("vec2"),
 		"vec3": _create_vector("vec3"),
 		"vec4": _create_vector("vec4"),
-		## Square matrices
+		# Square matrices
 		"mat2": _create_matrix("mat2"),
 		"mat3": _create_matrix("mat3"),
 		"mat4": _create_matrix("mat4"),
-		## Non-square matrices
+		# Non-square matrices
 		"mat2x2": _create_matrix("mat2x2"),
 		"mat2x3": _create_matrix("mat2x3"),
 		"mat2x4": _create_matrix("mat2x4"),
@@ -593,7 +597,7 @@ class Type:
 		"mat4x2": _create_matrix("mat4x2"),
 		"mat4x3": _create_matrix("mat4x3"),
 		"mat4x4": _create_matrix("mat4x4"),
-		## Double-precision matrices
+		# Double-precision matrices
 		"dmat2": _create_matrix("dmat2"),
 		"dmat3": _create_matrix("dmat3"),
 		"dmat4": _create_matrix("dmat4"),
@@ -606,7 +610,7 @@ class Type:
 		"dmat4x2": _create_matrix("dmat4x2"),
 		"dmat4x3": _create_matrix("dmat4x3"),
 		"dmat4x4": _create_matrix("dmat4x4"),
-		## Samplers
+		# Samplers
 		"sampler1D": Type.new("sampler1D", 16, Icons.create("type_sampler1d")),
 		"sampler2D": Type.new("sampler2D", 16, Icons.create("type_sampler2d")),
 		"sampler3D": Type.new("sampler3D", 16, Icons.create("type_sampler3d")),
@@ -939,7 +943,7 @@ class Type:
 		],
 	}
 	
-	static var built_in_functions := {
+	static var built_in_functions: Dictionary[String, Array] = {
 #region Trig funcs
 		"radians": _create_multi_func("radians", ["degrees"], ["f"]),
 		"degrees": _create_multi_func("degrees", ["radians"], ["f"]),
@@ -1332,16 +1336,16 @@ class Function extends Type:
 
 
 class Struct extends Type:
-	var properties: Dictionary = { }
+	var properties: Dictionary[String, Variable] = { }
 	
 	func _init(_name: String, _properties: Array[Variable], _icon: Texture2D = Icons.create("struct")) -> void:
 		name = _name
 		properties = ArrayUtil.create_dictionary(_properties,
-			func(v: Variable):
+			func(v: Variable) -> String:
 				v.depth = 255
 				v.icon = Icons.create("member")
 				return v.name
-				)
+		)
 		icon = _icon
 	
 	func as_fn() -> Function:
@@ -1416,7 +1420,7 @@ class Variable extends Type:
 	
 	static var _qualifiers_flipped := DictionaryUtil.flip(qualifiers)
 	
-	var _qualifier_icons: Dictionary = {
+	var _qualifier_icons: Dictionary[Qualifier, IconTexture2D] = {
 		Qualifier.IN: Icons.create("var_in"),
 		Qualifier.OUT: Icons.create("var_out"),
 		Qualifier.UNIFORM: Icons.create("var_uniform"),

@@ -2,8 +2,7 @@ class_name Language extends Object
 
 
 static var base_types: PackedStringArray
-## [code]Dictionary[String, Texture2D][/code]
-static var keywords: Dictionary
+static var keywords: Dictionary[String, IconTexture2D]
 static var comment_regions: PackedStringArray
 static var string_regions: PackedStringArray
 

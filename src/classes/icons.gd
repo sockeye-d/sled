@@ -7,8 +7,8 @@ signal icons_changed
 
 static var icons_path: String = "res://src/assets/icons_light/"
 static var is_light_mode: bool = true
-static var loaded_icons: Dictionary = { }
-static var icon_textures: Dictionary = { }
+static var loaded_icons: Dictionary[String, String] = { }
+static var icon_textures: Dictionary[String, IconTexture2D] = { }
 static var singleton: Icons:
 	get:
 		if singleton == null:

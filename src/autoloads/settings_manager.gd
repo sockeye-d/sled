@@ -5,12 +5,12 @@ const SETTINGS_PATH: String = "user://settings.sled"
 
 
 var settings_window: SettingsWindow = load("res://src/ui/settings_window/settings_window.tscn").instantiate()
-var settings: Dictionary:
+var settings: Dictionary[StringName, Variant]:
 	get:
 		if settings_window:
 			return settings_window.settings
 		return { }
-var settings_items: Dictionary:
+var settings_items: Dictionary[StringName, SettingItem]:
 	get:
 		if settings_window:
 			return settings_window.settings_items
@@ -71,7 +71,7 @@ func load_settings(path: String = SETTINGS_PATH) -> Error:
 		could_load_settings = true
 		return OK
 	else:
-		var def_settings: Dictionary = { }
+		var def_settings: Dictionary[StringName, Variant] = { }
 		for cat in SettingsWindow.SETTING_CATEGORIES.setting_categories:
 			for setting in cat.settings:
 				def_settings[setting.identifier] = setting._get_default_value()
