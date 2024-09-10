@@ -43,4 +43,4 @@ func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_PREDELETE:
 			if stop_on_disposal:
-				stop()
+				print(timer_name, float(Time.get_ticks_usec() - _start_ticks) / unit, _UNIT_LABELS[unit])

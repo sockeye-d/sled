@@ -22,10 +22,11 @@ func _ready() -> void:
 			set_item_checked(0, true)
 			refresh_disabled()
 	)
-	#
-	#EditorManager.opened_search_panel.connect(func():
-			#set_item_disabled(3, false)
-	#)
+	
+	EditorManager.search_visible_change_requested.connect(func(panel_visible: bool):
+			set_item_checked(3, panel_visible)
+			refresh_disabled()
+	)
 	
 	EditorManager.view_menu_state_change_requested.connect(func(index: int, state: bool):
 			set_item_checked(index, state)

@@ -49,8 +49,8 @@ func _ready() -> void:
 		
 		EditorManager.search_visible_change_requested.connect(
 			func(new_visible: bool):
-				if not editors.visible:
-					editors.show()
+				#if not editors.visible:
+					#editors.show()
 				search_panel.visible = new_visible
 		)
 		
