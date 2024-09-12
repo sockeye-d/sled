@@ -161,7 +161,7 @@ func populate_tree(path: String, parent: TreeItem = null, first: bool = true) ->
 		clear()
 		parent = create_item()
 		parent.disable_folding = true
-	var item := _create_folder_item(path, parent)
+	var item := _create_folder_item(path, parent, first)
 	if first:
 		item.add_button(0, Icons.create("refresh"), BtnType.REFRESH)
 	
@@ -231,7 +231,7 @@ func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
 	return item
 
 
-func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
+func _create_folder_item(path: String, parent: TreeItem, first: bool = false) -> TreeItem:
 	var item :=_create_item(
 		parent,
 		null,
@@ -246,8 +246,9 @@ func _create_folder_item(path: String, parent: TreeItem) -> TreeItem:
 	_add_btn(item, BtnType.FOLDER_FIND)
 	_add_btn(item, BtnType.SHOW_IN_FILE_MANAGER)
 	_add_btn(item, BtnType.COPY_PATH)
-	_add_btn(item, BtnType.RENAME_FOLDER)
-	_add_btn(item, BtnType.DELETE_FOLDER)
+	if not first:
+		_add_btn(item, BtnType.RENAME_FOLDER)
+		_add_btn(item, BtnType.DELETE_FOLDER)
 	
 	paths.add(item, path)
 	

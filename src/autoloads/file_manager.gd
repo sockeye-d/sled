@@ -21,6 +21,10 @@ func _ready() -> void:
 	
 	await get_tree().process_frame
 	await get_tree().process_frame
+	while last_opened_paths.size() > 0:
+		if DirAccess.dir_exists_absolute(last_opened_paths[0]):
+			break
+		last_opened_paths.remove_at(0)
 	if last_opened_paths:
 		loaded_recent_paths.emit(true)
 		change_path(last_opened_paths[0])
