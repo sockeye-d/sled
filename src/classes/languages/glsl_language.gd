@@ -309,6 +309,7 @@ class FileContents:
 		get:
 			if not built_in_contents:
 				built_in_contents = FileContents.new()
+				# HACK: fix in next 4.4 update
 				var a = DictionaryUtil.untype(built_in_contents.structs).merged(Type.built_in_structs)
 				built_in_contents.structs.assign(a)
 				var b = DictionaryUtil.untype(built_in_contents.funcs).merged(Type.built_in_functions)

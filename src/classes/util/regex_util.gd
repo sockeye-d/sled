@@ -14,11 +14,11 @@ static var _memoized_regexes: Dictionary[String, RegEx] = { }
 static var last_regex_create_error: Error
 
 
-static func create(pattern: String) -> RegEx:
+static func create(pattern: String, show_error := false) -> RegEx:
 	if pattern in _memoized_regexes:
 		return _memoized_regexes[pattern]
 	var regex := RegEx.new()
-	var err := regex.compile(pattern)
+	var err := regex.compile(pattern, show_error)
 	if err:
 		last_regex_create_error = err
 		return null
