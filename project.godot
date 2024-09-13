@@ -11,11 +11,11 @@ config_version=5
 [application]
 
 config/name="sled"
+config/version="1.0.1"
 run/main_scene="res://src/ui/main/main.tscn"
 config/features=PackedStringArray("4.4")
 run/low_processor_mode=true
 boot_splash/image="res://src/assets/icons/boot.png"
-boot_splash/fullsize=false
 config/icon="res://src/assets/icons/icon.png"
 boot_splash/minimum_display_time=250
 
@@ -46,6 +46,10 @@ mouse_cursor/debug_redraw_time=0.969
 [dotnet]
 
 project/assembly_name="shader-editor"
+
+[editor]
+
+export/convert_text_resources_to_binary=false
 
 [editor_plugins]
 

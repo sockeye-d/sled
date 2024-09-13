@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://src/themes/theme_library.gd" id="1_rb6fd"]
 [ext_resource type="Script" path="res://src/themes/ed_theme.gd" id="2_7235v"]
 
-[sub_resource type="Resource" id="Resource_7orbm"]
+[sub_resource type="Resource" id="Resource_bq6el"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -56,7 +56,7 @@ gdscript/node_path_color=\"5fafafff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_uj4ul"]
+[sub_resource type="Resource" id="Resource_jhiya"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -99,7 +99,7 @@ word_highlighted_color=\"343434ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_3gv5t"]
+[sub_resource type="Resource" id="Resource_b3b0o"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -142,7 +142,7 @@ word_highlighted_color=\"262f3eff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_x2h2f"]
+[sub_resource type="Resource" id="Resource_t4dt2"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -191,7 +191,7 @@ gdscript/string_name_color=\"c6d0f5ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_u48of"]
+[sub_resource type="Resource" id="Resource_y0df5"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -240,7 +240,7 @@ gdscript/string_name_color=\"4c4f69ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_8jp0c"]
+[sub_resource type="Resource" id="Resource_s6pka"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -289,7 +289,7 @@ gdscript/string_name_color=\"cad3f5ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_1tr7b"]
+[sub_resource type="Resource" id="Resource_dqgmq"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -338,7 +338,7 @@ gdscript/string_name_color=\"cdd6f4ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_8n1ws"]
+[sub_resource type="Resource" id="Resource_xkny5"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -377,7 +377,7 @@ gdscript/node_path_color=\"bbb529ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_nutxq"]
+[sub_resource type="Resource" id="Resource_c5rca"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -416,7 +416,7 @@ gdscript/node_path_color=\"ffb86cff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_o766y"]
+[sub_resource type="Resource" id="Resource_mebmp"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -455,7 +455,7 @@ gdscript/node_path_color=\"d3869bff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_85urw"]
+[sub_resource type="Resource" id="Resource_6v31u"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -495,7 +495,7 @@ gdscript/node_path_color=\"F09383ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_kj6d6"]
+[sub_resource type="Resource" id="Resource_85olq"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -534,7 +534,7 @@ gdscript/node_path_color=\"ff9292ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_248d3"]
+[sub_resource type="Resource" id="Resource_rxf5d"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -573,7 +573,7 @@ gdscript/node_path_color=\"fd971fff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_7j8m3"]
+[sub_resource type="Resource" id="Resource_q43gx"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -616,7 +616,7 @@ word_highlighted_color=\"4c566aff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_8vt8u"]
+[sub_resource type="Resource" id="Resource_6hl4e"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -655,7 +655,7 @@ gdscript/node_path_color=\"d19a66ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_4jn4f"]
+[sub_resource type="Resource" id="Resource_p3p3r"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -696,7 +696,7 @@ gdscript/node_path_color=\"d19a66ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_36arv"]
+[sub_resource type="Resource" id="Resource_axctd"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -735,7 +735,7 @@ gdscript/node_path_color=\"ab6526ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_sxskl"]
+[sub_resource type="Resource" id="Resource_xpu3k"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -774,7 +774,7 @@ gdscript/node_path_color=\"d33682ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_7ggcu"]
+[sub_resource type="Resource" id="Resource_253iu"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -813,7 +813,7 @@ gdscript/node_path_color=\"cb4b16ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_5ntr7"]
+[sub_resource type="Resource" id="Resource_y36tw"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -857,7 +857,7 @@ gdscript/string_name_color = \"c3e88d\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_g6mmm"]
+[sub_resource type="Resource" id="Resource_0grhn"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -901,7 +901,7 @@ gdscript/string_name_color = \"9ece6a\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_vftev"]
+[sub_resource type="Resource" id="Resource_h6pc2"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -945,7 +945,7 @@ gdscript/string_name_color = \"9ece6a\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_hwasx"]
+[sub_resource type="Resource" id="Resource_tokma"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -989,7 +989,7 @@ word_highlighted_color=\"343a40ff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_o3bmx"]
+[sub_resource type="Resource" id="Resource_0kptu"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -1033,7 +1033,7 @@ word_highlighted_color=\"d9e9feff\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_1rffu"]
+[sub_resource type="Resource" id="Resource_we5eq"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -1082,7 +1082,7 @@ word_highlighted_color=\"ffffff12\"
 "
 is_dark = true
 
-[sub_resource type="Resource" id="Resource_afi8u"]
+[sub_resource type="Resource" id="Resource_m0hd1"]
 script = ExtResource("2_7235v")
 text = "[color_theme]
 
@@ -1135,30 +1135,30 @@ is_dark = true
 script = ExtResource("1_rb6fd")
 theme_path = "res://src/themes/godot-syntax-themes"
 themes = Dictionary[String, ExtResource("2_7235v")]({
-"apprentice": SubResource("Resource_7orbm"),
-"atom dark": SubResource("Resource_uj4ul"),
-"ayu mirage": SubResource("Resource_3gv5t"),
-"catppuccin frappé": SubResource("Resource_x2h2f"),
-"catppuccin latte": SubResource("Resource_u48of"),
-"catppuccin macchiato": SubResource("Resource_8jp0c"),
-"catppuccin mocha": SubResource("Resource_1tr7b"),
-"darcula": SubResource("Resource_8n1ws"),
-"dracula": SubResource("Resource_nutxq"),
-"gruvbox dark": SubResource("Resource_o766y"),
-"horizon": SubResource("Resource_85urw"),
-"metro": SubResource("Resource_kj6d6"),
-"monokai": SubResource("Resource_248d3"),
-"nord": SubResource("Resource_7j8m3"),
-"one dark": SubResource("Resource_8vt8u"),
-"one monokai": SubResource("Resource_4jn4f"),
-"quiet light": SubResource("Resource_36arv"),
-"solarized dark": SubResource("Resource_sxskl"),
-"solarized light": SubResource("Resource_7ggcu"),
-"tokyo night moon": SubResource("Resource_5ntr7"),
-"tokyo night night": SubResource("Resource_g6mmm"),
-"tokyo night storm": SubResource("Resource_vftev"),
-"vs code dark": SubResource("Resource_hwasx"),
-"vs code light": SubResource("Resource_o3bmx"),
-"xcode dark": SubResource("Resource_1rffu"),
-"xcode light": SubResource("Resource_afi8u")
+"apprentice": SubResource("Resource_bq6el"),
+"atom dark": SubResource("Resource_jhiya"),
+"ayu mirage": SubResource("Resource_b3b0o"),
+"catppuccin frappé": SubResource("Resource_t4dt2"),
+"catppuccin latte": SubResource("Resource_y0df5"),
+"catppuccin macchiato": SubResource("Resource_s6pka"),
+"catppuccin mocha": SubResource("Resource_dqgmq"),
+"darcula": SubResource("Resource_xkny5"),
+"dracula": SubResource("Resource_c5rca"),
+"gruvbox dark": SubResource("Resource_mebmp"),
+"horizon": SubResource("Resource_6v31u"),
+"metro": SubResource("Resource_85olq"),
+"monokai": SubResource("Resource_rxf5d"),
+"nord": SubResource("Resource_q43gx"),
+"one dark": SubResource("Resource_6hl4e"),
+"one monokai": SubResource("Resource_p3p3r"),
+"quiet light": SubResource("Resource_axctd"),
+"solarized dark": SubResource("Resource_xpu3k"),
+"solarized light": SubResource("Resource_253iu"),
+"tokyo night moon": SubResource("Resource_y36tw"),
+"tokyo night night": SubResource("Resource_0grhn"),
+"tokyo night storm": SubResource("Resource_h6pc2"),
+"vs code dark": SubResource("Resource_tokma"),
+"vs code light": SubResource("Resource_0kptu"),
+"xcode dark": SubResource("Resource_we5eq"),
+"xcode light": SubResource("Resource_m0hd1")
 })

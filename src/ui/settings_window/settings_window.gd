@@ -1,7 +1,17 @@
 class_name SettingsWindow extends Window
 
 
-const SETTING_CATEGORIES = preload("res://src/ui/settings_window/setting_categories.tres")
+static var SETTING_CATEGORIES: SettingCategoryContainer = null:
+	get:
+		if not SETTING_CATEGORIES:
+			SETTING_CATEGORIES = ResourceLoader.load(
+				"res://src/ui/settings_window/setting_categories.tres",
+				"SettingCategoryContainer",
+				ResourceLoader.CACHE_MODE_REPLACE_DEEP
+			)
+		return SETTING_CATEGORIES
+	set(value):
+		SETTING_CATEGORIES = value
 
 
 signal population_complete()
@@ -31,6 +41,12 @@ var window_offset: Vector2
 
 func _init() -> void:
 	close_requested.connect(func(): hide())
+	if SETTING_CATEGORIES:
+		print(SETTING_CATEGORIES.setting_categories.size())
+		print(SETTING_CATEGORIES.setting_categories)
+		print("sc: ", SETTING_CATEGORIES)
+	else:
+		printerr("no setting categories")
 
 
 func _ready() -> void:

@@ -15,4 +15,4 @@ class_name ThemeLibrary extends Resource
 		theme_path = value
 	get:
 		return theme_path
-@export_multiline var themes: Dictionary[String, EdTheme]
+@export var themes: Dictionary[String, EdTheme]

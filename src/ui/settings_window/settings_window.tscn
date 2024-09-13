@@ -92,7 +92,7 @@ size_flags_vertical = 3
 [node name="SplitContainer" type="SplitContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-split_offset = 13
+split_offset = 175
 script = ExtResource("1_k1b4t")
 relative_split_offset = 0.25
 

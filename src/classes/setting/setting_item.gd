@@ -72,3 +72,7 @@ func _create_control() -> Control:
 
 func _get_default_value():
 	return null
+
+
+func _to_string() -> String:
+	return "%s (%s)" % [name, type_string(typeof(_get_default_value()))]
