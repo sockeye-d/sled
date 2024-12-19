@@ -153,7 +153,6 @@ func _search_on_thread() -> void:
 		elif data_copy.task == Task.FILTER:
 			var filtered_results: SearchResults = data_copy.old_results.copy_empty()
 			call_deferred_thread_group(&"_set_progress", false, 0.0)
-			# Dictionary[SearchResult, float (weight)]
 			var weights: Dictionary[SearchResult, float]
 			var q: String = data_copy.query
 			var old: SearchResults = data_copy.old_results

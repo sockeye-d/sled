@@ -5,9 +5,7 @@ const MAIN_FONT = preload("res://src/assets/fonts/Red_Hat_Text/RedHatText-Variab
 var main_font: FontVariation = preload("res://src/assets/fonts/main_font.tres")
 
 
-var theme: Theme:
-	get:
-		return ThemeDB.get_project_theme()
+@onready var theme := ThemeDB.get_project_theme()
 var last_imported_theme: Dictionary[String, Color]
 var completion_color: Color
 var current_code_font: Font
@@ -128,13 +126,10 @@ func change_theme_from_path(theme_path: String):
 
 
 func change_theme_from_text(use_cache: bool = true, theme_text: String = "", random: bool = false) -> void:
-	var root := get_tree().root
-	var main_scene := get_node_or_null(^"/root/Main")
-	if main_scene:
-		root.remove_child(main_scene)
-		root.gui_disable_input = true
+	theme.set_block_signals(true)
 	
 	await get_tree().process_frame
+	
 	var colors: Dictionary[String, Color]
 	if use_cache:
 		colors = last_imported_theme
@@ -142,12 +137,12 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 		colors = ThemeImporter.get_theme_dict(theme_text, random)
 		last_imported_theme = colors
 	ThemeImporter.add_code_edit_themes(EditorThemeManager.theme, colors)
-	var t: Theme = theme
 	StyleBoxUtil.scale = get_scale()
 	var contrast: float = Settings.theme_contrast * 5.0
 	
 	var focus_sb := StyleBoxUtil.new_flat(Color.TRANSPARENT, [4], [4], [2], colors.text_color, [2])
-	
+
+	var t := theme
 	t.clear_color(&"background_color", &"CodeEdit")
 	
 	t.set_stylebox(&"normal", &"CodeEdit", StyleBoxUtil.new_flat(colors.background_color, [0, 0, 0, 0], [4]))
@@ -360,17 +355,21 @@ func change_theme_from_text(use_cache: bool = true, theme_text: String = "", ran
 	)
 	
 	t.set_constant(&"separation", &"NotificationTray", int(4 * get_scale()))
-	
+
 	_set_focus_sb(t, focus_sb)
 	
 	set_icon_mode()
 	
 	await get_tree().process_frame
 	
-	if main_scene:
-		root.add_child(main_scene)
-		root.gui_disable_input = false
+	t.set_block_signals(false)
+	t.emit_changed()
+	
+	
 	theme_changed.emit(theme_text)
+	
+	for ce: CodeEdit in get_tree().root.find_children("", "CodeEdit", true, false):
+		ce.notification(Control.NOTIFICATION_THEME_CHANGED)
 
 
 func _color_adjust(color: Color, amount: float) -> Color:

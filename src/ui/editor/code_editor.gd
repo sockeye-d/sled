@@ -35,13 +35,13 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	return false
 
 
-func _drop_data(at_position: Vector2, data: Variant) -> void:
-	if data is BrowserTree.DragData and Settings.browser_drag_drop_mode != 0:
+func _drop_data(at_position: Vector2, _data: Variant) -> void:
+	if _data is BrowserTree.DragData and Settings.browser_drag_drop_mode != 0:
+		var data := _data as BrowserTree.DragData
 		remove_secondary_carets()
 		var lc := get_line_column_at_pos(at_position, false)
 		if Util.is_none(lc):
 			return
-		
 		var insertions: PackedStringArray = []
 		for path: String in data.absolute_paths:
 			var final_path: String
@@ -49,7 +49,11 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 				1:
 					insertions.append(FileManager.get_short_path(path))
 				2:
-					insertions.append('#include "%s"' % ("/" + FileManager.get_include_path(path)))
+					insertions.append('#include "/%s"' % FileManager.get_include_path(path))
+		print(data.absolute_paths)
+		print(FileManager.get_include_path(data.absolute_paths[0]))
+		print(insertions)
+		print(Settings.browser_drag_drop_mode)
 		
 		insert_text("\n".join(insertions), lc[1], lc[0])
 		set_caret_column(lc[0])

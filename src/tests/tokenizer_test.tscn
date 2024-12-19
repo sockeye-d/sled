@@ -1,0 +1,36 @@
+[gd_scene load_steps=2 format=3 uid="uid://c0g42mfkwvgkr"]
+
+[ext_resource type="Script" uid="uid://dldl82p0whsf4" path="res://src/tests/tokenizer_test.gd" id="1_nasw7"]
+
+[node name="TokenizerTest" type="Node"]
+script = ExtResource("1_nasw7")
+test_string = "void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    // Normalized pixel coordinates (from 0 to 1)
+    vec2 uv = fragCoord/iResolution.xy;
+
+    // Time varying pixel color
+    vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
+
+    // Output to screen
+    fragColor = vec4(col,1.0);
+}
+
+#define HI 20
+
+#define iAmAMacro(   abc   , def   ) 20
+
+/*
+	multiline
+	comment
+*/
+return
+/ // <- division
+
+
+6.0
+
+0x234deadaf 012345 1.5e3 1561e1683 1.6392
+
+( ) [ ] . / /= * *= + += - -= > >= >>= >> < <= <<= ~ ~= ! != = == % %= & &= && ^ ^= ^^ | |= ||
+"

@@ -41,12 +41,6 @@ var window_offset: Vector2
 
 func _init() -> void:
 	close_requested.connect(func(): hide())
-	if SETTING_CATEGORIES:
-		print(SETTING_CATEGORIES.setting_categories.size())
-		print(SETTING_CATEGORIES.setting_categories)
-		print("sc: ", SETTING_CATEGORIES)
-	else:
-		printerr("no setting categories")
 
 
 func _ready() -> void:

@@ -25,7 +25,8 @@ func _init() -> void:
 
 func _ready() -> void:
 	settings_window.setting_changed.connect(func(_identifier: String, _new_value): save_settings())
-	$/root/Main.add_child(settings_window)
+	if has_node("/root/Main"):
+		$/root/Main.add_child(settings_window)
 	
 	if not could_load_settings:
 		await get_tree().process_frame

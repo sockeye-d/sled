@@ -1,14 +1,14 @@
 [gd_scene load_steps=10 format=3 uid="uid://cpp730e50fn3p"]
 
-[ext_resource type="Script" path="res://src/ui/main/main.gd" id="1_86qe4"]
+[ext_resource type="Script" uid="uid://butfc66all2no" path="res://src/ui/main/main.gd" id="1_86qe4"]
 [ext_resource type="PackedScene" uid="uid://b45p8nijrvd3v" path="res://src/ui/browser/browser.tscn" id="1_prqn1"]
 [ext_resource type="PackedScene" uid="uid://cfbphdd74su8c" path="res://src/ui/editor/editor.tscn" id="1_x2835"]
 [ext_resource type="PackedScene" uid="uid://dfkt6ernbrafa" path="res://src/ui/menu_bar/menu_bar.tscn" id="2_xxxww"]
-[ext_resource type="Script" path="res://src/classes/relative_split_container.gd" id="3_3bsis"]
-[ext_resource type="Script" path="res://src/ui/main/notification_tray.gd" id="3_33nu0"]
+[ext_resource type="Script" uid="uid://cfgw7s0cva7bu" path="res://src/classes/relative_split_container.gd" id="3_3bsis"]
+[ext_resource type="Script" uid="uid://c0dv7nxul5psh" path="res://src/ui/main/notification_tray.gd" id="3_33nu0"]
 [ext_resource type="PackedScene" uid="uid://b5buokqgbn0uf" path="res://src/ui/image_viewer/image_viewer.tscn" id="8_b55ab"]
 [ext_resource type="PackedScene" uid="uid://kfuvy0jjrr55" path="res://src/ui/search_panel/search_panel.tscn" id="8_jng44"]
-[ext_resource type="Script" path="res://src/classes/keep_visible_component.gd" id="8_u3jv8"]
+[ext_resource type="Script" uid="uid://cvskefdh0dvlr" path="res://src/classes/keep_visible_component.gd" id="8_u3jv8"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -63,7 +63,7 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 theme_override_constants/autohide = 1
-split_offset = 227
+split_offset = 3
 script = ExtResource("3_3bsis")
 relative_split_offset = 0.2
 

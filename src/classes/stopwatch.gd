@@ -16,7 +16,7 @@ const _UNIT_LABELS := {
 
 
 var timer_name: String
-var unit: TimeUnit
+var unit := TimeUnit.MILLISECONDS
 var stop_on_disposal: bool
 var _start_ticks: int
 

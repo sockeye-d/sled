@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ThemeLibrary" load_steps=29 format=3 uid="uid://ba5152uqn2drw"]
 
-[ext_resource type="Script" path="res://src/themes/theme_library.gd" id="1_rb6fd"]
-[ext_resource type="Script" path="res://src/themes/ed_theme.gd" id="2_7235v"]
+[ext_resource type="Script" uid="uid://pgjbpdxdlhhq" path="res://src/themes/theme_library.gd" id="1_rb6fd"]
+[ext_resource type="Script" uid="uid://c6ytueumw4hfw" path="res://src/themes/ed_theme.gd" id="2_7235v"]
 
 [sub_resource type="Resource" id="Resource_bq6el"]
 script = ExtResource("2_7235v")
