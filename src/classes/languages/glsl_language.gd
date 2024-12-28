@@ -390,15 +390,15 @@ class Tokenizer:
 
 
 class Parser:
-	class ParseNode:
-		var parent: ParseNode
-		var children: Array[ParseNode]
+	class ASTNode:
+		var parent: ASTNode
+		var children: Array[ASTNode]
 	
-	class FunctionParseNode extends ParseNode:
+	class Function extends ASTNode:
 		var return_type: String
 		var parameters: Array[Variable]
 	
-	class AssignmentParseNode extends ParseNode:
+	class Assignment extends ASTNode:
 		var variable: Variable
 	
 	class Variable:

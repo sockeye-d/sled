@@ -54,6 +54,7 @@ static func find(icon: String) -> String:
 	elif FileAccess.file_exists(icons_path + ("type_%s.svg" % icon)):
 		tex = FileAccess.get_file_as_string(icons_path + ("type_%s.svg" % icon))
 	else:
+		print_stack()
 		printerr("Icon '%s' not found" % icon)
 	if tex:
 		loaded_icons[key] = tex

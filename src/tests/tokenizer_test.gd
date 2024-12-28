@@ -4,7 +4,7 @@ extends Node
 @export_multiline var test_string: String
 
 
-const CELL = "[cell padding=1,0,1,0 border=#AAAAAA11]"
+const CELL = "[cell padding=1,0,1,0 border=#AAAAAA12]"
 
 
 func _ready() -> void:
