@@ -30,13 +30,13 @@ var file_path: String
 var file_gets_completion: bool
 var old_text: String
 var base_path: String
-var file_contents: GLSLLanguage.FileContents:
+var parse_tree: Language.Document:
 	set(value):
-		file_contents = value
+		parse_tree = value
 	get:
-		if not file_contents:
+		if not parse_tree:
 			refresh_file_contents()
-		return file_contents
+		return parse_tree
 var found_ranges: Array[Vector2i]
 var current_range_index: int
 
@@ -272,29 +272,9 @@ func _on_code_editor_code_completion_requested() -> void:
 
 
 func _get_completion_suggestions() -> void:
-	var is_exclusive: Array
+	#var is_exclusive: Array
 	analyzer_mut.lock()
-	if not file_contents:
-		analyzer_mut.unlock()
-		return
-	CodeCompletionSuggestion.add_arr_to(
-			file_contents.as_suggestions(
-				StringUtil.get_index(
-					code_editor.text,
-					code_editor.get_caret_line(code_editor.get_caret_count() - 1),
-					code_editor.get_caret_column(code_editor.get_caret_count() - 1),
-				),
-				code_editor.text,
-				Settings.exclusive_suggestions,
-				is_exclusive,
-			),
-			code_editor,
-		)
 	analyzer_mut.unlock()
-	if not is_exclusive[0]:
-		CodeCompletionSuggestion.add_arr_to(GLSLLanguage.FileContents.built_in_contents.as_suggestions(0), code_editor)
-		for keyword in GLSLLanguage.keywords:
-			code_editor.add_code_completion_option(CodeEdit.KIND_PLAIN_TEXT, keyword, keyword, EditorThemeManager.completion_color, GLSLLanguage.keywords[keyword])
 
 
 func refresh_file_contents():

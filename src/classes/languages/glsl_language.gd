@@ -44,9 +44,6 @@ static func _static_init() -> void:
 		"struct",
 	])
 
-## Used to cache the results of get_file_contents() calls, keys are file paths
-static var contents_cache: Dictionary[String, FileContents]
-
 
 static func _create_icons(arr: PackedStringArray) -> Dictionary[String, IconTexture2D]:
 	var dict: Dictionary[String, IconTexture2D]
@@ -60,27 +57,6 @@ static func _create_icons(arr: PackedStringArray) -> Dictionary[String, IconText
 				icon = Icons.create("keyword")
 		dict[item] = icon
 	return dict
-
-
-static func get_code_completion_suggestions(path: String, file: String, line: int = -1, col: int = -1, base_path: String = path, contents: FileContents = null) -> Array[CodeCompletionSuggestion]:
-	if not contents:
-		contents = Language.FileContents.new()
-	contents = get_file_contents(path, file, 0, base_path, true)
-	contents.merge(Language.FileContents.built_in_contents)
-	var caret_index := StringUtil.get_index(file, line, col)
-	return contents.as_suggestions(caret_index, file)
-
-## spaghetti code mess 🥖🍝
-static func get_file_contents(path: String, file: String, depth: int = 0, base_path: String = "", currently_edited_file: bool = false, visited_files: PackedStringArray = []) -> Language.FileContents:
-	visited_files.append(path)
-	if not currently_edited_file and contents_cache.has(path):
-		# NOTE: determine whether shallow duplication is necessary
-		# because get_code_completion_suggestions merges it with the built-in
-		# types
-		return contents_cache[path]
-	var contents := Language.FileContents.new()
-	
-	return contents
 
 
 class Tokenizer:
@@ -108,23 +84,23 @@ class Tokenizer:
 		var tk: Array[Token]
 		match c:
 			"(":
-				tk.append(token(Token.Type.SEPARATOR, consume()))
+				tk.append(token(Token.Type.OPEN_PAREN, consume()))
 			")":
-				tk.append(token(Token.Type.SEPARATOR, consume()))
+				tk.append(token(Token.Type.CLOSE_PAREN, consume()))
 			"[":
-				tk.append(token(Token.Type.SEPARATOR, consume()))
+				tk.append(token(Token.Type.OPEN_BRACKET, consume()))
 			"]":
-				tk.append(token(Token.Type.SEPARATOR, consume()))
+				tk.append(token(Token.Type.CLOSE_BRACKET, consume()))
 			"{":
-				tk.append(token(Token.Type.SEPARATOR, consume()))
+				tk.append(token(Token.Type.OPEN_BRACE, consume()))
 			"}":
-				tk.append(token(Token.Type.SEPARATOR, consume()))
+				tk.append(token(Token.Type.CLOSE_BRACE, consume()))
 			".":
-				tk.append(token(Token.Type.SEPARATOR, consume()))
+				tk.append(token(Token.Type.DOT, consume()))
 			",":
-				tk.append(token(Token.Type.SEPARATOR, consume()))
+				tk.append(token(Token.Type.COMMA, consume()))
 			";":
-				tk.append(token(Token.Type.SEPARATOR, consume()))
+				tk.append(token(Token.Type.SEMICOLON, consume()))
 			"/":
 				if peek() == "/":
 					consume(2)
@@ -141,62 +117,65 @@ class Tokenizer:
 						consume(2)
 					tk.append(token(Token.Type.MULTILINE_COMMENT, s))
 				else:
-					var length := 1
 					if peek() == "=":
-						length = 2
-					tk.append(token(Token.Type.OPERATOR, consume(length)))
+						tk.append(token(Token.Type.DIV_EQ, consume(2)))
+					else:
+						tk.append(token(Token.Type.DIV, consume(1)))
 			"*":
-				var length := 1
 				if peek() == "=":
-					length = 2
-				tk.append(token(Token.Type.OPERATOR, consume(length)))
+					tk.append(token(Token.Type.MUL_EQ, consume(2)))
+				else:
+					tk.append(token(Token.Type.MUL, consume()))
 			"+":
-				var length := 1
 				if peek() == "=":
-					length = 2
-				if peek() == "+":
-					length = 2
-				tk.append(token(Token.Type.OPERATOR, consume(length)))
+					tk.append(token(Token.Type.ADD_EQ, consume(2)))
+				elif peek() == "+":
+					tk.append(token(Token.Type.ADD_ADD, consume(2)))
+				else:
+					tk.append(token(Token.Type.ADD, consume()))
 			"-":
-				var length := 1
 				if peek() == "=":
-					length = 2
-				if peek() == "-":
-					length = 2
-				tk.append(token(Token.Type.OPERATOR, consume(length)))
+					tk.append(token(Token.Type.SUB_EQ, consume(2)))
+				elif peek() == "-":
+					tk.append(token(Token.Type.SUB_SUB, consume(2)))
+				else:
+					tk.append(token(Token.Type.SUB, consume(length)))
 			">":
-				var length := 1
 				if peek() == "=":
-					length = 2
-				elif peek(2) == ">=":
-					length = 3
+					# > =
+					tk.append(token(Token.Type.GREATER_THAN_EQ, consume(2)))
 				elif peek() == ">":
-					length = 2
-				tk.append(token(Token.Type.OPERATOR, consume(length)))
+					# > >
+					tk.append(token(Token.Type.SHIFT_RIGHT, consume(2)))
+				elif peek(2) == ">=":
+					# > > =
+					tk.append(token(Token.Type.SHIFT_RIGHT_EQ, consume(3)))
+				else:
+					# >
+					tk.append(token(Token.Type.GREATER_THAN, consume()))
 			"<":
-				var length := 1
 				if peek() == "=":
-					length = 2
-				elif peek(2) == "<=":
-					length = 3
+					tk.append(token(Token.Type.LESS_THAN_EQ, consume(2)))
 				elif peek() == "<":
-					length = 2
-				tk.append(token(Token.Type.OPERATOR, consume(length)))
+					tk.append(token(Token.Type.SHIFT_LEFT, consume(2)))
+				elif peek(2) == "<=":
+					tk.append(token(Token.Type.SHIFT_LEFT_EQ, consume(3)))
+				else:
+					tk.append(token(Token.Type.LESS_THAN, consume()))
 			"~":
-				var length := 1
 				if peek() == "=":
-					length = 2
-				tk.append(token(Token.Type.OPERATOR, consume(length)))
+					tk.append(token(Token.Type.BITWISE_NOT_EQ, consume(2)))
+				else:
+					tk.append(token(Token.Type.BITWISE_NOT, consume()))
 			"!":
-				var length := 1
 				if peek() == "=":
-					length = 2
-				tk.append(token(Token.Type.OPERATOR, consume(length)))
+					tk.append(token(Token.Type.NOT_EQ, consume(2)))
+				else:
+					tk.append(token(Token.Type.NOT, consume()))
 			"=":
-				var length := 1
 				if peek() == "=":
-					length = 2
-				tk.append(token(Token.Type.OPERATOR, consume(length)))
+					tk.append(token(Token.Type.EQUALS, consume(2)))
+				tk.append(token(Token.Type.ASSIGN, consume()))
 			"%":
 				var length := 1
 				if peek() == "=":
@@ -387,20 +366,33 @@ class Tokenizer:
 		
 		func _to_string() -> String:
 			return "%s '%s' @ %s" % [Type.find_key(type), content.c_escape(), source_index]
+		
+		
+		func is_type(compare_type: Type) -> bool:
+			return type == compare_type
+
+# expression	-> equality
+# equality		-> comparison ( ( "!=" | "==" ) comparison )*
+# comparison	-> term ( ( ">" | ">=" | "<" | "<=" ) term )*
+# term			-> factor ( ( "-" | "+" ) factor )*
+# factor		-> unary ( ( "/" | "*" ) unary )*
+# unary			-> ( "!" | "-" ) unary | primary
+# primary		-> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")"
+
+static func parse(string: String) -> Language.Document:
+	return Parser.new(Tokenizer.new(string).tokenize()).parse()
 
 
 class Parser:
-	class ASTNode:
-		var parent: ASTNode
-		var children: Array[ASTNode]
+	var tokens: Array[Tokenizer.Token]
+	var current: int = 0
 	
-	class Function extends ASTNode:
-		var return_type: String
-		var parameters: Array[Variable]
+	func _init(tokens: Array[Tokenizer.Token] = []) -> void:
+		self.tokens = tokens
 	
-	class Assignment extends ASTNode:
-		var variable: Variable
+	func parse() -> Language.ASTNode:
+		
+		return null
 	
-	class Variable:
-		var type: String
-		var name: String
+	#func match_tk(Tokenizer.to
+	
