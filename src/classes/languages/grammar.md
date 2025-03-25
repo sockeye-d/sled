@@ -1,5 +1,5 @@
 expression	-> selection
-assignment	-> logical_or "=" expression
+assignment	-> right "=" expression
 selection omitted for now
 logical_or	-> logical_xor ( ( "||" ) logical_xor )*
 logical_xor	-> logical_and ( ( "||" ) logical_and )*
