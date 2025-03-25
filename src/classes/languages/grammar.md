@@ -1,7 +1,17 @@
-expression	-> equality
+expression	-> selection
+assignment	-> logical_or "=" expression
+selection omitted for now
+logical_or	-> logical_xor ( ( "||" ) logical_xor )*
+logical_xor	-> logical_and ( ( "||" ) logical_and )*
+logical_and	-> bitwise_or ( ( "&&" ) bitwise_or )*
+bitwise_or 	-> bitwise_xor ( ( "|" ) bitwise_xor )*
+bitwise_xor -> bitwise_and ( ( "^" ) bitwise_and )*
+bitwise_and -> equality ( ( "&" ) equality )*
 equality	-> comparison ( ( "!=" | "==" ) comparison )*
-comparison	-> term ( ( ">" | ">=" | "<" | "<=" ) term )*
+comparison	-> bitshift ( ( ">" | ">=" | "<" | "<=" ) bitshift )*
+bitshift	-> term ( ( ">>" | "<<" ) term )*
 term		-> factor ( ( "-" | "+" ) factor )*
-factor		-> unary ( ( "/" | "*" ) unary )*
-unary		-> ( "!" | "-" ) unary | primary
+factor		-> left_unary ( ( "/" | "*" | "%" ) left_unary )*
+left_unary	-> ( "!" | "-" | "++" | "--" ) left_unary | right_unary
+right_unary	-> primary ( "++" | "--" )
 primary		-> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")"

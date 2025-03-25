@@ -194,10 +194,10 @@ func analyze_file_on_thread() -> void:
 		if data_copy.exit_loop:
 			break
 		
-		var parse_results := GLSLLanguage.get_file_contents(data_copy.file_path, data_copy.text, 0, data_copy.base_path, true)
+		#var parse_results := GLSLLanguage.get_file_contents(data_copy.file_path, data_copy.text, 0, data_copy.base_path, true)
 		
 		analyzer_mut.lock()
-		file_contents = parse_results
+		#file_contents = parse_results
 		analyzer_mut.unlock()
 
 
