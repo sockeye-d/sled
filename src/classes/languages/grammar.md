@@ -1,6 +1,6 @@
 expression	-> selection
-assignment	-> right "=" expression
-selection omitted for now
+assignment	-> selection | selection "=" expression
+selection 	-> logical_or | logical_or "?" expression ":" selection
 logical_or	-> logical_xor ( ( "||" ) logical_xor )*
 logical_xor	-> logical_and ( ( "||" ) logical_and )*
 logical_and	-> bitwise_or ( ( "&&" ) bitwise_or )*

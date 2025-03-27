@@ -89,6 +89,19 @@ class BinaryExpr extends Expr:
 	func _to_string() -> String:
 		return "(%s %s %s)" % [left.to_string(), Op.find_key(op), right.to_string()]
 
+class TernaryExpr extends Expr:
+	var left: Expr
+	var middle: Expr
+	var right: Expr
+	
+	func _init(_left: Expr, _middle: Expr, _right: Expr) -> void:
+		left = _left
+		middle = _middle
+		right = _right
+	
+	func _to_string() -> String:
+		return "(%s ? %s : %s)" % [left.to_string(), middle.to_string(), right.to_string()]
+
 class LeftUnaryExpr extends Expr:
 	enum Op {
 		NOT,
@@ -119,20 +132,17 @@ class RightUnaryExpr extends Expr:
 	func _to_string() -> String:
 		return "(%s UNARY_%s)" % [exp.to_string(), Op.find_key(op)]
 
+class Identifier extends Expr:
+	var content: String
+	
+	func _init(_content: String) -> void:
+		content = _content
+	
+	func _to_string() -> String:
+		return content
 
 class Document:
 	pass
-
-class Function:
-	var return_type: String
-	var parameters: Array[VariableDeclaration]
-
-class Assignment:
-	var variable: VariableDeclaration
-
-class VariableDeclaration:
-	var type: String
-	var name: String
 
 
 #static func parse(string: String) -> Document:

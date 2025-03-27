@@ -588,7 +588,72 @@ class Parser:
 		return expression()
 	
 	func expression() -> Language.Expr:
-		return equality()
+		return assignment()
+	
+	func assignment() -> Language.Expr:
+		var expr := selection()
+		if match_any_tk([
+				Token.Type.ASSIGN,
+				Token.Type.ADD_ASSIGN,
+				Token.Type.MUL_ASSIGN,
+				Token.Type.SUB_ASSIGN,
+				Token.Type.DIV_ASSIGN,
+				Token.Type.SHIFT_RIGHT_ASSIGN,
+				Token.Type.SHIFT_LEFT_ASSIGN,
+				Token.Type.BITWISE_NOT_ASSIGN,
+				Token.Type.MOD_ASSIGN,
+				Token.Type.BITWISE_AND_ASSIGN,
+				Token.Type.BITWISE_XOR_ASSIGN,
+				Token.Type.BITWISE_OR_ASSIGN,
+			]):
+			var right := expression()
+			expr = Language.BinaryExpr.new(expr, tk2binaryop(previous().type), right)
+		return expr
+	
+	func selection() -> Language.Expr:
+		var expr := logical_or()
+		if match_tk(Token.Type.TERNARY_CONDITION):
+			var on_true := expression()
+			assert(match_tk(Token.Type.TERNARY_SWITCH), "Expected ':' after ternary")
+			var on_false := selection()
+			expr = Language.TernaryExpr.new(expr, on_true, on_false)
+		return expr
+	
+	func logical_or() -> Language.Expr:
+		var expr := logical_xor()
+		while match_tk(Token.Type.OR):
+			expr = Language.BinaryExpr.new(expr, Language.BinaryExpr.Op.OR, logical_xor())
+		return expr
+	
+	func logical_xor() -> Language.Expr:
+		var expr := logical_and()
+		while match_tk(Token.Type.XOR):
+			expr = Language.BinaryExpr.new(expr, Language.BinaryExpr.Op.XOR, logical_and())
+		return expr
+	
+	func logical_and() -> Language.Expr:
+		var expr := bitwise_xor()
+		while match_tk(Token.Type.AND):
+			expr = Language.BinaryExpr.new(expr, Language.BinaryExpr.Op.AND, bitwise_xor())
+		return expr
+	
+	func bitwise_xor() -> Language.Expr:
+		var expr := bitwise_or()
+		while match_tk(Token.Type.BITWISE_XOR):
+			expr = Language.BinaryExpr.new(expr, Language.BinaryExpr.Op.BITWISE_XOR, bitwise_or())
+		return expr
+	
+	func bitwise_or() -> Language.Expr:
+		var expr := bitwise_and()
+		while match_tk(Token.Type.BITWISE_OR):
+			expr = Language.BinaryExpr.new(expr, Language.BinaryExpr.Op.BITWISE_OR, bitwise_and())
+		return expr
+	
+	func bitwise_and() -> Language.Expr:
+		var expr := equality()
+		while match_tk(Token.Type.BITWISE_AND):
+			expr = Language.BinaryExpr.new(expr, Language.BinaryExpr.Op.BITWISE_AND, equality())
+		return expr
 	
 	func equality() -> Language.Expr:
 		var expr := comparison()
@@ -597,11 +662,17 @@ class Parser:
 		return expr
 	
 	func comparison() -> Language.Expr:
-		var expr := term()
+		var expr := bitshift()
 		while match_any_tk([
 				Token.Type.LESS_THAN, Token.Type.LESS_THAN_EQ,
 				Token.Type.GREATER_THAN, Token.Type.GREATER_THAN_EQ,
 			]):
+			expr = Language.BinaryExpr.new(expr, tk2binaryop(previous().type), bitshift())
+		return expr
+	
+	func bitshift() -> Language.Expr:
+		var expr := term()
+		while match_any_tk([Token.Type.SHIFT_LEFT, Token.Type.SHIFT_RIGHT]):
 			expr = Language.BinaryExpr.new(expr, tk2binaryop(previous().type), term())
 		return expr
 	
@@ -612,30 +683,27 @@ class Parser:
 		return expr
 	
 	func factor() -> Language.Expr:
-		var expr := unary_left()
+		var expr := left_unary()
 		while match_any_tk([Token.Type.MUL, Token.Type.DIV, Token.Type.MOD]):
-			expr = Language.BinaryExpr.new(expr, tk2binaryop(previous().type), unary_left())
+			expr = Language.BinaryExpr.new(expr, tk2binaryop(previous().type), left_unary())
 		return expr
 	
-	func unary_left() -> Language.Expr:
+	func left_unary() -> Language.Expr:
 		if match_any_tk([
 				Token.Type.SUB, Token.Type.ADD,
 				Token.Type.SUB_SUB, Token.Type.ADD_ADD,
 				Token.Type.NOT, Token.Type.BITWISE_NOT
 		]):
 			var op := tk2unaryleftop(previous().type)
-			return Language.LeftUnaryExpr.new(unary_right(), op)
-		return unary_right()
+			return Language.LeftUnaryExpr.new(right_unary(), op)
+		return right_unary()
 	
-	func unary_right() -> Language.Expr:
-		if match_any_tk([
-				Token.Type.SUB, Token.Type.ADD,
-				Token.Type.SUB_SUB, Token.Type.ADD_ADD,
-				Token.Type.NOT, Token.Type.BITWISE_NOT
-		]):
+	func right_unary() -> Language.Expr:
+		var expr := primary()
+		if match_any_tk([Token.Type.SUB_SUB, Token.Type.ADD_ADD]):
 			var op := tk2unaryrightop(previous().type)
-			return Language.RightUnaryExpr.new(primary(), op)
-		return primary()
+			expr = Language.RightUnaryExpr.new(expr, op)
+		return expr
 	
 	func primary() -> Language.Expr:
 		if match_tk(Token.Type.LITERAL):
@@ -650,6 +718,9 @@ class Parser:
 			# need real error solution; see panic mode
 			assert(match_tk(Token.Type.CLOSE_PAREN), "Must have closing parenthesis")
 			return expr
+		elif match_tk(Token.Type.IDENTIFIER):
+			return Language.Identifier.new(previous().content)
+		assert(false, "Unknown token type")
 		return null
 	
 	func match_tk(token_type: Token.Type) -> bool:

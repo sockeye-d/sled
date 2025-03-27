@@ -4,4 +4,4 @@
 
 [node name="TokenizerTest" type="Node"]
 script = ExtResource("1_nasw7")
-test_string = "12345 == 5 && 16 == 21673 + 436 + (-21)"
+test_string = "21673 + 436++ == 5 ? yes : (no++ >> 5)"
