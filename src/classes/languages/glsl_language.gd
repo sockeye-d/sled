@@ -757,8 +757,7 @@ class Parser:
 			Token.Type.MUL: Language.BinaryExpr.Op.MUL,
 			Token.Type.DIV: Language.BinaryExpr.Op.DIV,
 			Token.Type.SUB: Language.BinaryExpr.Op.SUB,
-			Token.Type.ADD_ADD: Language.BinaryExpr.Op.ADD_ADD,
-			Token.Type.SUB_SUB: Language.BinaryExpr.Op.SUB_SUB,
+
 			Token.Type.ADD_ASSIGN: Language.BinaryExpr.Op.ADD_ASSIGN,
 			Token.Type.MUL_ASSIGN: Language.BinaryExpr.Op.MUL_ASSIGN,
 			Token.Type.SUB_ASSIGN: Language.BinaryExpr.Op.SUB_ASSIGN,
@@ -774,9 +773,7 @@ class Parser:
 			Token.Type.SHIFT_RIGHT_ASSIGN: Language.BinaryExpr.Op.SHIFT_RIGHT_ASSIGN,
 			Token.Type.SHIFT_LEFT_ASSIGN: Language.BinaryExpr.Op.SHIFT_LEFT_ASSIGN,
 
-			Token.Type.BITWISE_NOT: Language.BinaryExpr.Op.BITWISE_NOT,
 			Token.Type.BITWISE_NOT_ASSIGN: Language.BinaryExpr.Op.BITWISE_NOT_ASSIGN,
-			Token.Type.NOT: Language.BinaryExpr.Op.NOT,
 			Token.Type.NOT_EQUAL: Language.BinaryExpr.Op.NOT_EQUAL,
 			Token.Type.ASSIGN: Language.BinaryExpr.Op.ASSIGN,
 			Token.Type.EQUALS: Language.BinaryExpr.Op.EQUALS,

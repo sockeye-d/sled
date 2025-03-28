@@ -39,8 +39,6 @@ class BinaryExpr extends Expr:
 		MUL,
 		DIV,
 		SUB,
-		ADD_ADD,
-		SUB_SUB,
 		ADD_ASSIGN,
 		MUL_ASSIGN,
 		SUB_ASSIGN,
@@ -56,9 +54,7 @@ class BinaryExpr extends Expr:
 		SHIFT_RIGHT_ASSIGN,
 		SHIFT_LEFT_ASSIGN,
 
-		BITWISE_NOT,
 		BITWISE_NOT_ASSIGN,
-		NOT,
 		NOT_EQUAL,
 		ASSIGN,
 		EQUALS,

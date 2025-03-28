@@ -69,3 +69,7 @@ static func is_none(value: Variant) -> bool:
 		TYPE_DICTIONARY:
 			return value.size() == 0
 	return is_instance_valid(value)
+
+
+static func signed_sqr(x: float) -> float:
+	return x * x * signf(x)
