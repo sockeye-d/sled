@@ -6,6 +6,9 @@ extends Control
 var root_control: ForceDirectedControl
 
 func _ready() -> void:
+	var x := GLSLLanguageParser.new()
+	x.parse("hi")
+	
 	pass
 	#var parse_tree := GLSLLanguage.parse(test_string)
 	#print(test_string, " -> ", parse_tree)

@@ -5,8 +5,8 @@ class_name Icons extends Object
 signal icons_changed
 
 
-static var icons_path: String = "res://src/assets/icons_light/"
 static var is_light_mode: bool = true
+static var icons_path: String
 static var loaded_icons: Dictionary[String, String] = { }
 static var icon_textures: Dictionary[String, IconTexture2D] = { }
 static var singleton: Icons:
@@ -20,6 +20,7 @@ static var mat_regex := RegEx.create_from_string(r"mat(\d+)\b")
 
 
 static func _static_init() -> void:
+	icons_path = "res://src/assets/icons_%s/" % _get_mode_str()
 	singleton.icons_changed.connect(func():
 		icons_path = "res://src/assets/icons_%s/" % _get_mode_str()
 	)
@@ -54,8 +55,8 @@ static func find(icon: String) -> String:
 	elif FileAccess.file_exists(icons_path + ("type_%s.svg" % icon)):
 		tex = FileAccess.get_file_as_string(icons_path + ("type_%s.svg" % icon))
 	else:
-		print_stack()
-		printerr("Icon '%s' not found" % icon)
+		pass
+		#printerr("Icon '%s' not found" % icon)
 	if tex:
 		loaded_icons[key] = tex
 	return tex

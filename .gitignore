@@ -1,6 +1,35 @@
-# Godot 4+ specific ignores
+*.gen.*
 .godot/
+.sconsign*.dblite
 
 export/
 *.afdesign\~lock\~
 .vscode/
+
+# godot-cpp stuff
+compile_commands.json
+bin/**
+
+# clangd
+.cache
+
+# binaries
+*.o
+*.os
+*.so
+*.obj
+*.bc
+*.pyc
+*.dblite
+*.pdb
+*.lib
+*.config
+*.creator
+*.creator.user
+*.files
+*.includes
+*.idb
+*.exp
+
+# Other stuff
+*.log

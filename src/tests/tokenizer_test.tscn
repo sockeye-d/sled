@@ -14,7 +14,7 @@ test_string = "21673 + 436++ == 5 ? yes : (no++ >> 5)"
 
 [node name="LineEdit" type="LineEdit" parent="."]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = -1
 anchor_right = 1.0
 offset_bottom = 30.0
 grow_horizontal = 2
