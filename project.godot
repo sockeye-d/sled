@@ -66,6 +66,7 @@ version_hint=""
 [gui]
 
 timers/tooltip_delay_sec=0.3
+common/snap_controls_to_pixels=false
 theme/custom="res://src/main.theme"
 
 [input]

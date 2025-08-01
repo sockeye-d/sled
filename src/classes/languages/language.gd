@@ -118,6 +118,9 @@ class RightUnaryExpr extends Expr:
 	enum Op {
 		ADD_ADD,
 		SUB_SUB,
+		
+		SUBSCRIPT,
+		FIELD_ACCESS,
 	}
 	var exp: Expr
 	var op: Op
@@ -127,6 +130,36 @@ class RightUnaryExpr extends Expr:
 			
 	func _to_string() -> String:
 		return "(%s UNARY_%s)" % [exp.to_string(), Op.find_key(op)]
+
+class SubscriptExpr extends RightUnaryExpr:
+	var subscript_exp: Expr
+	
+	func _init(_exp: Expr, _subscript_exp: Expr) -> void:
+		op = Op.SUBSCRIPT
+		exp = _exp
+		subscript_exp = _subscript_exp
+	
+	func _to_string() -> String:
+		return "(%s[%s])" % [exp.to_string(), subscript_exp.to_string()]
+
+class FieldAccessExpr extends RightUnaryExpr:
+	var right: RightUnaryExpr
+	
+	func _init(_exp: Expr, _right: RightUnaryExpr) -> void:
+		op = Op.FIELD_ACCESS
+		exp = _exp
+		right = _right
+	
+	func _to_string() -> String:
+		return "(%s.%s)" % [exp.to_string(), right.to_string()]
+
+class FunctionCallExpr extends Expr:
+	var identifier: Identifier
+	var arguments: Array[Expr]
+	
+	func _init(_identifier: Identifier, _arguments: Array[Expr]) -> void:
+		identifier = _identifier
+		arguments = _arguments
 
 class Identifier extends Expr:
 	var content: String

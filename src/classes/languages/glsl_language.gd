@@ -28,10 +28,7 @@ static func _static_init() -> void:
 		"in",
 		"out",
 		"inout",
-		"float",
-		"int",
 		"void",
-		"bool",
 		"true",
 		"false",
 		"invariant",
@@ -299,14 +296,8 @@ class Tokenizer:
 						tk.append(token(Token.Type.OUT, consume(3)))
 					"inout":
 						tk.append(token(Token.Type.INOUT, consume(5)))
-					"float":
-						tk.append(token(Token.Type.FLOAT, consume(5)))
-					"int":
-						tk.append(token(Token.Type.INT, consume(3)))
 					"void":
 						tk.append(token(Token.Type.VOID, consume(4)))
-					"bool":
-						tk.append(token(Token.Type.BOOL, consume(4)))
 					"true":
 						tk.append(token(Token.Type.TRUE, consume(4)))
 					"false":
@@ -503,10 +494,7 @@ class Token:
 		IN,
 		OUT,
 		INOUT,
-		FLOAT,
-		INT,
 		VOID,
-		BOOL,
 		TRUE,
 		FALSE,
 		INVARIANT,
@@ -606,8 +594,8 @@ class Parser:
 				Token.Type.BITWISE_XOR_ASSIGN,
 				Token.Type.BITWISE_OR_ASSIGN,
 			]):
-			var right := expression()
-			expr = Language.BinaryExpr.new(expr, tk2binaryop(previous().type), right)
+			
+			expr = Language.BinaryExpr.new(expr, tk2binaryop(previous().type), expression())
 		return expr
 	
 	func selection() -> Language.Expr:
@@ -699,10 +687,26 @@ class Parser:
 		return right_unary()
 	
 	func right_unary() -> Language.Expr:
-		var expr := primary()
+		var expr := fn_call()
 		if match_any_tk([Token.Type.SUB_SUB, Token.Type.ADD_ADD]):
 			var op := tk2unaryrightop(previous().type)
 			expr = Language.RightUnaryExpr.new(expr, op)
+		elif match_tk(Token.Type.OPEN_BRACKET):
+			expr = Language.SubscriptExpr.new(expr, expression())
+			assert(match_tk(Token.Type.CLOSE_BRACKET), "Expect ']' after subscription operator")
+		elif match_tk(Token.Type.DOT):
+			expr = Language.FieldAccessExpr.new(expr, right_unary())
+		return expr
+	
+	func fn_call() -> Language.Expr:
+		var expr := primary()
+		if match_tk(Token.Type.OPEN_PAREN):
+			assert(expr is Language.Identifier, "Function name expected")
+			var args: Array[Language.Expr] = []
+			if peek().type != Token.Type.CLOSE_PAREN:
+				args = argument()
+			expr = Language.FunctionCallExpr.new(expr, args)
+			assert(match_tk(Token.Type.CLOSE_PAREN), "Expect ')' after function call")
 		return expr
 	
 	func primary() -> Language.Expr:
@@ -722,6 +726,12 @@ class Parser:
 			return Language.Identifier.new(previous().content)
 		assert(false, "Unknown token type")
 		return null
+	
+	func argument() -> Array[Language.Expr]:
+		var exprs: Array[Language.Expr] = [expression()]
+		while match_tk(Token.Type.COMMA):
+			exprs.append(expression())
+		return exprs
 	
 	func match_tk(token_type: Token.Type) -> bool:
 		if check(token_type):

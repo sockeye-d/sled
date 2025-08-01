@@ -87,6 +87,12 @@ func convert_node(expr: Language.Expr) -> ForceDirectedControl:
 			Language.LeftUnaryExpr.Op.ADD_ADD: "++",
 		}
 		content = operator_symbols[expr.op]
+	elif expr is Language.SubscriptExpr:
+		content = "[]"
+	elif expr is Language.FieldAccessExpr:
+		content = "."
+	elif expr is Language.FunctionCallExpr:
+		content = "%s()" % expr.identifier.to_string()
 	elif expr is Language.RightUnaryExpr:
 		const operator_symbols: Dictionary[Language.RightUnaryExpr.Op, String] = {
 			Language.RightUnaryExpr.Op.SUB_SUB: "--",
@@ -99,43 +105,64 @@ func convert_node(expr: Language.Expr) -> ForceDirectedControl:
 		content = expr.content
 	
 	var node := make_node(content)
-	for child in get_expr_node_children(expr):
-		node.add_child(convert_node(child))
+	var children := get_expr_node_children(expr)
+	for child_label in children:
+		var child := convert_node(children[child_label])
+		node.labels[child] = child_label
+		node.add_child(child)
 	return node
 
 
-func make_node(content: String) -> Control:
+func make_node(content: String) -> ForceDirectedControl:
 	var label := Label.new()
 	label.text = content
 	label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var outer := ForceDirectedControl.new()
 	outer.add_child(label)
 	outer.size = Vector2(100, 50)
-	outer.top_level = true
 	return outer
 
 
-func get_expr_node_children(expr: Language.Expr) -> Array[Language.Expr]:
+func get_expr_node_children(expr: Language.Expr) -> Dictionary[String, Language.Expr]:
 	if expr is Language.NumberLiteral:
-		return []
+		return {}
 	elif expr is Language.BooleanLiteral:
-		return []
+		return {}
 	elif expr is Language.BinaryExpr:
-		return [expr.left, expr.right]
+		return {"left": expr.left, "right": expr.right}
 	elif expr is Language.LeftUnaryExpr:
-		return [expr.exp]
+		return {"exp": expr.exp}
+	elif expr is Language.SubscriptExpr:
+		return {"[]": expr.subscript_exp}
+	elif expr is Language.FieldAccessExpr:
+		return {".": expr.right}
+	elif expr is Language.FunctionCallExpr:
+		var d: Dictionary[String, Language.Expr] = {"fn": expr.identifier}
+		var i := 0
+		for arg in expr.arguments:
+			d["arg%s" % i] = arg
+			i += 1
+		return d
 	elif expr is Language.RightUnaryExpr:
-		return [expr.exp]
+		return {"exp": expr.exp}
 	elif expr is Language.TernaryExpr:
-		return [expr.left, expr.middle, expr.right]
-	return []
+		return {"left": expr.left, "middle": expr.middle, "right": expr.right}
+	else:
+		return {}
 
 
 func _on_line_edit_text_submitted(new_text: String) -> void:
 	var parse_tree := GLSLLanguage.parse(new_text)
 	print(new_text, " -> ", parse_tree)
-	if root_control:
-		root_control.queue_free()
+	find_children("", "ForceDirectedControl", true, false).map(func(e: Node): e.queue_free())
 	root_control = convert_node(parse_tree)
 	root_control.connect_tree()
+	root_control.flatten_hierarchy(self)
+	for child in get_children():
+		if child is not ForceDirectedControl:
+			continue
+		child.position = get_rect().get_center()
+	root_control.connect_parents()
 	add_child(root_control)

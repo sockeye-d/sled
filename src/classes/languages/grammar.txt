@@ -1,0 +1,64 @@
+expression	-> selection
+assignment	-> selection | selection "=" expression
+selection 	-> logical_or | logical_or "?" expression ":" selection
+logical_or	-> logical_xor ( ( "||" ) logical_xor )*
+logical_xor	-> logical_and ( ( "||" ) logical_and )*
+logical_and	-> bitwise_or ( ( "&&" ) bitwise_or )*
+bitwise_or 	-> bitwise_xor ( ( "|" ) bitwise_xor )*
+bitwise_xor -> bitwise_and ( ( "^" ) bitwise_and )*
+bitwise_and -> equality ( ( "&" ) equality )*
+equality	-> comparison ( ( "!=" | "==" ) comparison )*
+comparison	-> bitshift ( ( ">" | ">=" | "<" | "<=" ) bitshift )*
+bitshift	-> term ( ( ">>" | "<<" ) term )*
+term		-> factor ( ( "-" | "+" ) factor )*
+factor		-> left_unary ( ( "/" | "*" | "%" ) left_unary )*
+left_unary	-> ( "!" | "-" | "++" | "--" ) left_unary | right_unary
+right_unary	-> fn_call
+		| fn_call ( "++" | "--" )
+		| fn_call "[" expression "]"
+		| fn_call "." right_unary
+fn_call 	-> primary | IDENTIFIER "(" argument? ")"
+primary		->
+		NUMBER
+		| IDENTIFIER
+		| "true" | "false"
+		| "(" expression ")"
+
+program 	-> declaration* EOF
+declaration ->
+		var_declaration
+		| function_declaration
+		| struct_declaration
+		| statement
+
+
+
+argument -> expression ( "," expression )*
+type_qualifier -> keyword_qualifier | layout_qualifier
+keyword_qualifier -> 
+	CONST
+	| IN
+	| OUT
+	| INOUT
+	| CENTROID
+	| PATCH
+	| SAMPLE
+	| UNIFORM
+	| BUFFER
+	| SHARED
+	| COHERENT
+	| VOLATILE
+	| RESTRICT
+	| READONLY
+	| WRITEONLY
+	| SMOOTH
+	| FLAT
+	| NOPERSPECTIVE
+	| INVARIANT
+	| LOWP
+	| MEDIUMP
+	| HIGHP
+	| PRECISE
+layout_qualifier -> LAYOUT "(" layout_qualifier_argument_list ")"
+layout_qualifier_argument_list -> layout_qualifier_argument ( "," layout_qualifier_argument)*
+layout_qualifier_argument -> IDENTIFIER | IDENTIFIER "=" expression | SHARED

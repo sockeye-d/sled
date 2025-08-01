@@ -11,6 +11,7 @@ enum SnapMode {
 @export var start_control: Control
 @export var end_control: Control
 @export var arrow_size: Vector2 = Vector2(10.0, 10.0)
+@export var label: String
 
 @export var snap_mode: SnapMode:
 	set(value):
@@ -75,3 +76,9 @@ func _draw() -> void:
 				var tx2d := Transform2D(start_end_vec.rotated(PI / 2) * arrow_size.x, start_end_vec * arrow_size.y, end_pos)
 				tri_points.append(tx2d * tri_point)
 		draw_colored_polygon(tri_points, Color.BLACK)
+		draw_set_transform_matrix(Transform2D.IDENTITY)
+		var font := get_theme_font("font", "Label")
+		var string_size := font.get_string_size(label)
+		string_size.y = -string_size.y * 0.5
+		draw_string_outline(font, (start_pos - global_position) + (end_pos - start_pos) * 0.5 - string_size * 0.5, label, 0, -1, 16, 10, Color.BLACK)
+		draw_string(font, (start_pos - global_position) + (end_pos - start_pos) * 0.5 - string_size * 0.5 , label)
