@@ -1,0 +1,9 @@
+description=
+icon=src/assets/icons/icon.png
+name=sled
+tags=application
+
+[version]
+isMono=false
+repo=/godotengine/godot-builds
+tagName=4.5-beta4

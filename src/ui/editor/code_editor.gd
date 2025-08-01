@@ -148,13 +148,14 @@ func _make_custom_tooltip(for_text: String) -> Object:
 
 
 func _get_tooltip(at_position: Vector2) -> String:
-	if not editor.file_contents:
-		return ""
-	var line_column: Vector2i = get_line_column_at_pos(at_position, false)
-	if line_column == Vector2i(-1, -1):
-		return ""
-	var index: int = StringUtil.get_index(text, line_column.y, line_column.x)
-	return editor.file_contents.get_tooltip(text, index)
+	return ""
+	#if not editor.file_contents:
+		#return ""
+	#var line_column: Vector2i = get_line_column_at_pos(at_position, false)
+	#if line_column == Vector2i(-1, -1):
+		#return ""
+	#var index: int = StringUtil.get_index(text, line_column.y, line_column.x)
+	#return editor.file_contents.get_tooltip(text, index)
 
 
 func get_carets(sort_func: Callable = Callable()) -> Array[Vector2i]:
