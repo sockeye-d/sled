@@ -3,8 +3,8 @@
 
 #include "godot_cpp/classes/ref_counted.hpp"
 
-class GLSLToken {
-	// GDCLASS(GLSLToken, godot::RefCounted)
+class GLSLToken : public godot::RefCounted {
+    GDCLASS(GLSLToken, godot::RefCounted)
 
 public:
 	enum Type {
@@ -77,39 +77,39 @@ public:
 		TYPE_TERNARY_CONDITION,
 		TYPE_TERNARY_SWITCH,
 
-		TYPE_ATTRIBUTE,
-		TYPE_CONST,
-		TYPE_UNIFORM,
-		TYPE_VARYING,
-		TYPE_LAYOUT,
-		TYPE_CENTROID,
-		TYPE_FLAT,
-		TYPE_SMOOTH,
-		TYPE_NOPERSPECTIVE,
-		TYPE_BREAK,
-		TYPE_CONTINUE,
-		TYPE_DO,
-		TYPE_FOR,
-		TYPE_WHILE,
-		TYPE_SWITCH,
-		TYPE_CASE,
-		TYPE_DEFAULT,
-		TYPE_IF,
-		TYPE_ELSE,
-		TYPE_IN,
-		TYPE_OUT,
-		TYPE_INOUT,
-		TYPE_VOID,
-		TYPE_TRUE,
-		TYPE_FALSE,
-		TYPE_INVARIANT,
-		TYPE_DISCARD,
-		TYPE_RETURN,
-		TYPE_LOWP,
-		TYPE_MEDIUMP,
-		TYPE_HIGHP,
-		TYPE_PRECISION,
-		TYPE_STRUCT,
+		TYPE_KW_ATTRIBUTE,
+		TYPE_KW_CONST,
+		TYPE_KW_UNIFORM,
+		TYPE_KW_VARYING,
+		TYPE_KW_LAYOUT,
+		TYPE_KW_CENTROID,
+		TYPE_KW_FLAT,
+		TYPE_KW_SMOOTH,
+		TYPE_KW_NOPERSPECTIVE,
+		TYPE_KW_BREAK,
+		TYPE_KW_CONTINUE,
+		TYPE_KW_DO,
+		TYPE_KW_FOR,
+		TYPE_KW_WHILE,
+		TYPE_KW_SWITCH,
+		TYPE_KW_CASE,
+		TYPE_KW_DEFAULT,
+		TYPE_KW_IF,
+		TYPE_KW_ELSE,
+		TYPE_KW_IN,
+		TYPE_KW_OUT,
+		TYPE_KW_INOUT,
+		TYPE_KW_VOID,
+		TYPE_KW_TRUE,
+		TYPE_KW_FALSE,
+		TYPE_KW_INVARIANT,
+		TYPE_KW_DISCARD,
+		TYPE_KW_RETURN,
+		TYPE_KW_LOWP,
+		TYPE_KW_MEDIUMP,
+		TYPE_KW_HIGHP,
+		TYPE_KW_PRECISION,
+		TYPE_KW_STRUCT,
 
 		TYPE_COMMENT,
 		TYPE_MULTILINE_COMMENT,
@@ -118,6 +118,9 @@ public:
 
 		TYPE_UNKNOWN,
 	};
+
+protected:
+	static void _bind_methods();
 
 private:
 	Type type{TYPE_UNKNOWN};
@@ -143,11 +146,13 @@ public:
 	[[nodiscard]] bool is_type(Type p_type) const;
 	static godot::String get_type_name(Type p_type);
 
-	static GLSLToken create(Type p_type, int64_t p_source_index, const godot::String& p_content = godot::String());
+	static GLSLToken* create(Type p_type, int64_t p_source_index, const godot::String& p_content = godot::String());
+	static Type get_kw_type(const godot::String& p_type, int& out_kw_length);
 
-	[[nodiscard]] godot::Vector <GLSLToken> as_vector() const;
+	GLSLToken() = default;
+	~GLSLToken() override = default;
 };
 
-VARIANT_ENUM_CAST(GLSLToken::Type)
+VARIANT_ENUM_CAST(GLSLToken::Type);
 
 #endif // GLSL_TOKEN_H

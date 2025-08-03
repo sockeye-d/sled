@@ -13,7 +13,7 @@ public:
 	GLSLLanguageParser();
 	~GLSLLanguageParser() override;
 
-	void parse(godot::String content);
+	void parse(const godot::String& p_content);
 };
 
 #endif // GLSLLANGUAGEPARSER_H

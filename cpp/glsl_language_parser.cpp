@@ -10,6 +10,4 @@ GLSLLanguageParser::GLSLLanguageParser() { print_line("constructed :)"); }
 
 GLSLLanguageParser::~GLSLLanguageParser() { print_line("destructed :("); }
 
-void GLSLLanguageParser::parse(String content) {
-
-}
+void GLSLLanguageParser::parse(const String& p_content) {}

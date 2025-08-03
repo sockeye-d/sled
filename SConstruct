@@ -2,8 +2,6 @@
 import os
 import sys
 
-SetOption('experimental', 'ninja')
-
 env = SConscript("godot-cpp/SConstruct")
 
 # For reference:
@@ -16,7 +14,7 @@ env = SConscript("godot-cpp/SConstruct")
 
 # tweak this if you want to use different folders, or more folders, to store your source code in.
 env.Append(CPPPATH=["cpp/"])
-env.Append(CXXFLAGS=["-std=c++20"])
+# env.Append(CXXFLAGS=["-std=c++20", "-fexceptions"])
 sources = Glob("cpp/*.cpp")
 
 if env["platform"] == "macos":

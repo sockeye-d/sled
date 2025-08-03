@@ -11,7 +11,7 @@ func _ready() -> void:
 	var tk := GLSLToken.new()
 	tk.content = "hi"
 	var tokenizer = GLSLTokenizer.create("21673 + 436++ == 5 ? yes : (no++ >> 5)")
-	tokenizer.tokenize()
+	#tokenizer.tokenize()
 	tokenizer.debug_print()
 	line_edit.grab_focus.call_deferred()
 	get_tree().quit.call_deferred()

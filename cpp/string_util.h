@@ -14,6 +14,8 @@ const inline godot::PackedStringArray uppercase_alphabet{
 	"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
 };
 const inline godot::PackedStringArray alphabet = lowercase_alphabet + uppercase_alphabet;
+const inline godot::PackedStringArray lower_alphanum = numbers + lowercase_alphabet;
+const inline godot::PackedStringArray upper_alphanum = numbers + uppercase_alphabet;
 const inline godot::PackedStringArray alphanum = numbers + alphabet;
 
 int64_t find_any(const godot::String& p_str, const godot::PackedStringArray& p_what, int64_t p_start = 0);

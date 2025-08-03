@@ -2,16 +2,18 @@
 #define GLSL_TOKENIZER_H
 
 #include "glsl_token.h"
-#include "godot_cpp/classes/object.hpp"
+#include "godot_cpp/classes/ref_counted.hpp"
 #include "string_util.h"
 
-class GLSLTokenizer : public godot::Object {
-	GDCLASS(GLSLTokenizer, godot::Object)
+class GLSLTokenizer : public godot::RefCounted {
+	GDCLASS(GLSLTokenizer, godot::RefCounted)
 
 	godot::String file{};
 	int64_t current_index{0};
 	bool skip_whitespace{false};
-	godot::Vector<GLSLToken> tokens{};
+	godot::Vector<GLSLToken*> tokens{};
+	bool error{};
+	godot::String error_message{};
 
 protected:
 	static void _bind_methods();
@@ -28,14 +30,20 @@ protected:
 										  const godot::PackedStringArray& p_allowed_chars = StringUtil::alphanum) const;
 	[[nodiscard]] int64_t find_next_nl() const;
 	[[nodiscard]] static bool is_valid_identifier(const godot::String& p_string);
-	[[nodiscard]] GLSLToken token(GLSLToken::Type p_type, const godot::String& p_string = "") const;
+	[[nodiscard]] GLSLToken* token(int p_type, const godot::String& p_string = "") const;
 
 public:
+	[[nodiscard]] bool has_error() const;
+	[[nodiscard]] godot::String get_error_message() const;
+
 	static GLSLTokenizer* create(const godot::String& p_file, bool p_skip_whitespace = false);
 	[[nodiscard]] godot::String get_file() const;
 	void debug_print() const;
 	void tokenize();
-	godot::Vector<GLSLToken> get_tokens();
+	godot::Vector<GLSLToken*> get_tokens();
+
+	GLSLTokenizer() = default;
+	~GLSLTokenizer() override = default;
 };
 
 #endif // GLSL_TOKENIZER_H
