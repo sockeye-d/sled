@@ -12,6 +12,7 @@ BreakConstructorInitializers: AfterColon
 BreakConstructorInitializersBeforeComma: false
 ColumnLimit: 120
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
+SeparateDefinitionBlocks: Always
 IncludeCategories:
   - Regex: '^<.*'
     Priority: 1
@@ -25,8 +26,8 @@ IndentWidth: 4
 InsertNewlineAtEOF: true
 MacroBlockBegin: ''
 MacroBlockEnd: ''
-MaxEmptyLinesToKeep: 2
-NamespaceIndentation: All
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: None
 PointerAlignment: Left
 SpaceInEmptyParentheses: false
 SpacesInAngles: false

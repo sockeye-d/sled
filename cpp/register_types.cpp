@@ -6,18 +6,22 @@
 #include <godot_cpp/godot.hpp>
 
 #include "glsl_language_parser.h"
+#include "glsl_token.h"
+#include "glsl_tokenizer.h"
 
 using namespace godot;
 
-void initialize_sled(ModuleInitializationLevel p_level) {
+void initialize_sled(const ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
 
 	GDREGISTER_RUNTIME_CLASS(GLSLLanguageParser);
+	// GDREGISTER_RUNTIME_CLASS(GLSLToken);
+	GDREGISTER_RUNTIME_CLASS(GLSLTokenizer);
 }
 
-void uninitialize_sled(ModuleInitializationLevel p_level) {
+void uninitialize_sled(const ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}

@@ -13,6 +13,7 @@ var last_velocity: Vector2
 
 func _ready() -> void:
 	velocity = Vector2.from_angle(randf_range(0.0, TAU)) * 500.0
+	(func(): position = get_parent_control().get_rect().get_center()).call_deferred()
 
 func _physics_process(delta: float) -> void:
 	var acceleration := (velocity - last_velocity) / delta
@@ -45,6 +46,9 @@ func _physics_process(delta: float) -> void:
 	
 	velocity = velocity.limit_length(80000.0)
 	position += velocity * delta
+	
+	var parent_rect := get_parent_control().get_rect()
+	position = position.clamp(Vector2.ZERO, parent_rect.size - size)
 
 
 func _gui_input(event: InputEvent) -> void:

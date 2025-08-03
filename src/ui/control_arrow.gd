@@ -44,7 +44,7 @@ func _validate_property(property: Dictionary) -> void:
 func _draw() -> void:
 	if start_control and end_control and start_control.is_inside_tree() and end_control.is_inside_tree():
 		if snap_mode == SnapMode.AUTOMATIC:
-			var d := end_control.get_rect().get_center() - start_control.get_rect().get_center()
+			var d := end_control.get_global_rect().get_center() - start_control.get_global_rect().get_center()
 			if absf(d.y) < absf(d.x):
 				start_x_snap = signf(d.x - 0.5) * 0.5 + 0.5
 				end_x_snap = 1.0 - start_x_snap
@@ -56,8 +56,8 @@ func _draw() -> void:
 				start_y_snap = signf(d.y - 0.5) * 0.5 + 0.5
 				end_y_snap = 1.0 - start_y_snap
 		
-		var start_pos := start_control.position + start_control.size * Vector2(start_x_snap, start_y_snap)
-		var end_pos := end_control.position + end_control.size * Vector2(end_x_snap, end_y_snap)
+		var start_pos := start_control.global_position + start_control.size * Vector2(start_x_snap, start_y_snap)
+		var end_pos := end_control.global_position + end_control.size * Vector2(end_x_snap, end_y_snap)
 		var start_end_vec := (end_pos - start_pos).normalized()
 		
 		var min_rect := Rect2(start_pos, end_pos - start_pos)

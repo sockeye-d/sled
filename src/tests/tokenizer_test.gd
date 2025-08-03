@@ -4,34 +4,17 @@ extends Control
 @export_multiline var test_string: String
 
 var root_control: ForceDirectedControl
+@onready var fdg_container: Control = %FDGContainer
+@onready var line_edit: LineEdit = %LineEdit
 
 func _ready() -> void:
-	var x := GLSLLanguageParser.new()
-	x.parse("hi")
-	
-	pass
-	#var parse_tree := GLSLLanguage.parse(test_string)
-	#print(test_string, " -> ", parse_tree)
-	#
-	#root_control = convert_node(parse_tree)
-	#root_control.connect_tree()
-	#add_child(root_control)
-	#root_control.position = Vector2(1152, 648) * 0.5
-	
-	#(func():
-		#var sprite_a := ForceDirectedControl.new()
-		#sprite_a.size = Vector2(100, 50)
-		##sprite_a.texture = load("res://src/assets/icons/icon.png")
-		#sprite_a.position = size * 0.5 - Vector2(100, 0)
-		#add_child(sprite_a)
-		#var sprite_b := ForceDirectedControl.new()
-		#sprite_b.size = Vector2(100, 50)
-		##sprite_b.texture = load("res://src/assets/icons/icon.png")
-		#sprite_b.position = size * 0.5 + Vector2(100, 0)
-		#add_child(sprite_b)
-		#sprite_a.connected_to.append(sprite_b)
-		#sprite_b.connected_to.append(sprite_a)
-	#).call_deferred()
+	var tk := GLSLToken.new()
+	tk.content = "hi"
+	var tokenizer = GLSLTokenizer.create("21673 + 436++ == 5 ? yes : (no++ >> 5)")
+	tokenizer.tokenize()
+	tokenizer.debug_print()
+	line_edit.grab_focus.call_deferred()
+	get_tree().quit.call_deferred()
 
 
 func convert_node(expr: Language.Expr) -> ForceDirectedControl:
@@ -134,9 +117,9 @@ func get_expr_node_children(expr: Language.Expr) -> Dictionary[String, Language.
 	elif expr is Language.BooleanLiteral:
 		return {}
 	elif expr is Language.BinaryExpr:
-		return {"left": expr.left, "right": expr.right}
+		return {"expr_left": expr.left, "expr_right": expr.right}
 	elif expr is Language.LeftUnaryExpr:
-		return {"exp": expr.exp}
+		return {"expr": expr.exp}
 	elif expr is Language.SubscriptExpr:
 		return {"[]": expr.subscript_exp}
 	elif expr is Language.FieldAccessExpr:
@@ -149,9 +132,9 @@ func get_expr_node_children(expr: Language.Expr) -> Dictionary[String, Language.
 			i += 1
 		return d
 	elif expr is Language.RightUnaryExpr:
-		return {"exp": expr.exp}
+		return {"expr": expr.exp}
 	elif expr is Language.TernaryExpr:
-		return {"left": expr.left, "middle": expr.middle, "right": expr.right}
+		return {"cond_expr": expr.left, "true_expr": expr.middle, "false_expr": expr.right}
 	else:
 		return {}
 
@@ -159,13 +142,13 @@ func get_expr_node_children(expr: Language.Expr) -> Dictionary[String, Language.
 func _on_line_edit_text_submitted(new_text: String) -> void:
 	var parse_tree := GLSLLanguage.parse(new_text)
 	print(new_text, " -> ", parse_tree)
-	find_children("", "ForceDirectedControl", true, false).map(func(e: Node): e.queue_free())
+	for c in fdg_container.find_children("", "ForceDirectedControl", true, false): c.queue_free()
 	root_control = convert_node(parse_tree)
 	root_control.connect_tree()
-	root_control.flatten_hierarchy(self)
-	for child in get_children():
-		if child is not ForceDirectedControl:
-			continue
-		child.position = get_rect().get_center()
+	root_control.flatten_hierarchy(fdg_container)
+	#for child in get_children():
+		#if child is not ForceDirectedControl:
+			#continue
+		#child.position = get_rect().get_center()
 	root_control.connect_parents()
-	add_child(root_control)
+	fdg_container.add_child(root_control)

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CLionExternalBuildManager">
+    <target id="65dac41e-8c64-48a1-a546-42455ef96b89" name="SCons" defaultType="TOOL">
+      <configuration id="8da3573b-7e84-45db-a63b-87a61846cfa5" name="SCons">
+        <build type="TOOL">
+          <tool actionId="Tool_External Tools_SCons build with compiledb" />
+        </build>
+      </configuration>
+    </target>
+  </component>
+</project>
