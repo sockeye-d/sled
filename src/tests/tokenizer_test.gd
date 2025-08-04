@@ -8,13 +8,12 @@ var root_control: ForceDirectedControl
 @onready var line_edit: LineEdit = %LineEdit
 
 func _ready() -> void:
-	var tk := GLSLToken.new()
-	tk.content = "hi"
 	var tokenizer = GLSLTokenizer.create("21673 + 436++ == 5 ? yes : (no++ >> 5)")
-	#tokenizer.tokenize()
+	#var tokenizer = GLSLTokenizer.create("abc abc")
+	tokenizer.tokenize()
 	tokenizer.debug_print()
-	line_edit.grab_focus.call_deferred()
-	get_tree().quit.call_deferred()
+	
+	#get_tree().quit()
 
 
 func convert_node(expr: Language.Expr) -> ForceDirectedControl:

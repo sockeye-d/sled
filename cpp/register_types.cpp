@@ -5,9 +5,9 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
-// #include "glsl_language_parser.h"
-// #include "glsl_token.h"
-// #include "glsl_tokenizer.h"
+#include "glsl_language_parser.h"
+#include "glsl_token.h"
+#include "glsl_tokenizer.h"
 
 using namespace godot;
 
@@ -16,9 +16,9 @@ void initialize_sled(const ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	// GDREGISTER_CLASS(GLSLLanguageParser);
-	// GDREGISTER_CLASS(GLSLToken);
-	// GDREGISTER_CLASS(GLSLTokenizer);
+	GDREGISTER_CLASS(GLSLLanguageParser);
+	GDREGISTER_CLASS(GLSLToken);
+	GDREGISTER_CLASS(GLSLTokenizer);
 }
 
 void uninitialize_sled(const ModuleInitializationLevel p_level) {

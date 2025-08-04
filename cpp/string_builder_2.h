@@ -3,7 +3,7 @@
 
 #include "godot_cpp/variant/packed_string_array.hpp"
 
-class StringBuilder {
+class StringBuilder2 {
 	godot::PackedStringArray strings{};
 
 public:

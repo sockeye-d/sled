@@ -540,10 +540,129 @@ class Token:
 # unary			-> ( "!" | "-" ) unary | primary
 # primary		-> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")"
 
+const token_type_map: Dictionary[GLSLToken.Type, Token.Type] = {
+	GLSLToken.TYPE_IDENTIFIER: Token.Type.IDENTIFIER,
+	GLSLToken.TYPE_FLT_LITERAL: Token.Type.LITERAL,
+	GLSLToken.TYPE_HEX_LITERAL: Token.Type.LITERAL,
+	GLSLToken.TYPE_INT_LITERAL: Token.Type.LITERAL,
+	GLSLToken.TYPE_OCT_LITERAL: Token.Type.LITERAL,
+	GLSLToken.TYPE_SCI_LITERAL: Token.Type.LITERAL,
+	GLSLToken.TYPE_STR_LITERAL: Token.Type.LITERAL,
+	GLSLToken.TYPE_UINT_LITERAL: Token.Type.LITERAL,
+	GLSLToken.TYPE_WHITESPACE: Token.Type.WHITESPACE,
+
+	GLSLToken.TYPE_PREPROCESSOR_KEYWORD: Token.Type.PREPROCESSOR_KEYWORD,
+	GLSLToken.TYPE_PREPROCESSOR_CONTENT: Token.Type.PREPROCESSOR_CONTENT,
+
+	GLSLToken.TYPE_OPEN_PAREN: Token.Type.OPEN_PAREN,
+	GLSLToken.TYPE_CLOSE_PAREN: Token.Type.CLOSE_PAREN,
+	GLSLToken.TYPE_OPEN_BRACKET: Token.Type.OPEN_BRACKET,
+	GLSLToken.TYPE_CLOSE_BRACKET: Token.Type.CLOSE_BRACKET,
+	GLSLToken.TYPE_OPEN_BRACE: Token.Type.OPEN_BRACE,
+	GLSLToken.TYPE_CLOSE_BRACE: Token.Type.CLOSE_BRACE,
+	GLSLToken.TYPE_DOT: Token.Type.DOT,
+	GLSLToken.TYPE_COMMA: Token.Type.COMMA,
+	GLSLToken.TYPE_SEMICOLON: Token.Type.SEMICOLON,
+
+	GLSLToken.TYPE_ADD: Token.Type.ADD,
+	GLSLToken.TYPE_MUL: Token.Type.MUL,
+	GLSLToken.TYPE_DIV: Token.Type.DIV,
+	GLSLToken.TYPE_SUB: Token.Type.SUB,
+	GLSLToken.TYPE_ADD_ADD: Token.Type.ADD_ADD,
+	GLSLToken.TYPE_SUB_SUB: Token.Type.SUB_SUB,
+	GLSLToken.TYPE_ADD_ASSIGN: Token.Type.ADD_ASSIGN,
+	GLSLToken.TYPE_MUL_ASSIGN: Token.Type.MUL_ASSIGN,
+	GLSLToken.TYPE_SUB_ASSIGN: Token.Type.SUB_ASSIGN,
+	GLSLToken.TYPE_DIV_ASSIGN: Token.Type.DIV_ASSIGN,
+
+	GLSLToken.TYPE_LESS_THAN: Token.Type.LESS_THAN,
+	GLSLToken.TYPE_GREATER_THAN: Token.Type.GREATER_THAN,
+	GLSLToken.TYPE_LESS_THAN_EQ: Token.Type.LESS_THAN_EQ,
+	GLSLToken.TYPE_GREATER_THAN_EQ: Token.Type.GREATER_THAN_EQ,
+
+	GLSLToken.TYPE_SHIFT_LEFT: Token.Type.SHIFT_LEFT,
+	GLSLToken.TYPE_SHIFT_RIGHT: Token.Type.SHIFT_RIGHT,
+	GLSLToken.TYPE_SHIFT_RIGHT_ASSIGN: Token.Type.SHIFT_RIGHT_ASSIGN,
+	GLSLToken.TYPE_SHIFT_LEFT_ASSIGN: Token.Type.SHIFT_LEFT_ASSIGN,
+
+	GLSLToken.TYPE_BITWISE_NOT: Token.Type.BITWISE_NOT,
+	GLSLToken.TYPE_BITWISE_NOT_ASSIGN: Token.Type.BITWISE_NOT_ASSIGN,
+	GLSLToken.TYPE_NOT: Token.Type.NOT,
+	GLSLToken.TYPE_NOT_EQUAL: Token.Type.NOT_EQUAL,
+	GLSLToken.TYPE_ASSIGN: Token.Type.ASSIGN,
+	GLSLToken.TYPE_EQUALS: Token.Type.EQUALS,
+
+	GLSLToken.TYPE_MOD: Token.Type.MOD,
+	GLSLToken.TYPE_MOD_ASSIGN: Token.Type.MOD_ASSIGN,
+
+	GLSLToken.TYPE_AND: Token.Type.AND,
+	GLSLToken.TYPE_BITWISE_AND: Token.Type.BITWISE_AND,
+	GLSLToken.TYPE_BITWISE_AND_ASSIGN: Token.Type.BITWISE_AND_ASSIGN,
+
+	GLSLToken.TYPE_XOR: Token.Type.XOR,
+	GLSLToken.TYPE_BITWISE_XOR: Token.Type.BITWISE_XOR,
+	GLSLToken.TYPE_BITWISE_XOR_ASSIGN: Token.Type.BITWISE_XOR_ASSIGN,
+
+	GLSLToken.TYPE_OR: Token.Type.OR,
+	GLSLToken.TYPE_BITWISE_OR: Token.Type.BITWISE_OR,
+	GLSLToken.TYPE_BITWISE_OR_ASSIGN: Token.Type.BITWISE_OR_ASSIGN,
+
+	GLSLToken.TYPE_TERNARY_CONDITION: Token.Type.TERNARY_CONDITION,
+	GLSLToken.TYPE_TERNARY_SWITCH: Token.Type.TERNARY_SWITCH,
+
+	GLSLToken.TYPE_KW_ATTRIBUTE: Token.Type.ATTRIBUTE,
+	GLSLToken.TYPE_KW_CONST: Token.Type.CONST,
+	GLSLToken.TYPE_KW_UNIFORM: Token.Type.UNIFORM,
+	GLSLToken.TYPE_KW_VARYING: Token.Type.VARYING,
+	GLSLToken.TYPE_KW_LAYOUT: Token.Type.LAYOUT,
+	GLSLToken.TYPE_KW_CENTROID: Token.Type.CENTROID,
+	GLSLToken.TYPE_KW_FLAT: Token.Type.FLAT,
+	GLSLToken.TYPE_KW_SMOOTH: Token.Type.SMOOTH,
+	GLSLToken.TYPE_KW_NOPERSPECTIVE: Token.Type.NOPERSPECTIVE,
+	GLSLToken.TYPE_KW_BREAK: Token.Type.BREAK,
+	GLSLToken.TYPE_KW_CONTINUE: Token.Type.CONTINUE,
+	GLSLToken.TYPE_KW_DO: Token.Type.DO,
+	GLSLToken.TYPE_KW_FOR: Token.Type.FOR,
+	GLSLToken.TYPE_KW_WHILE: Token.Type.WHILE,
+	GLSLToken.TYPE_KW_SWITCH: Token.Type.SWITCH,
+	GLSLToken.TYPE_KW_CASE: Token.Type.CASE,
+	GLSLToken.TYPE_KW_DEFAULT: Token.Type.DEFAULT,
+	GLSLToken.TYPE_KW_IF: Token.Type.IF,
+	GLSLToken.TYPE_KW_ELSE: Token.Type.ELSE,
+	GLSLToken.TYPE_KW_IN: Token.Type.IN,
+	GLSLToken.TYPE_KW_OUT: Token.Type.OUT,
+	GLSLToken.TYPE_KW_INOUT: Token.Type.INOUT,
+	GLSLToken.TYPE_KW_VOID: Token.Type.VOID,
+	GLSLToken.TYPE_KW_TRUE: Token.Type.TRUE,
+	GLSLToken.TYPE_KW_FALSE: Token.Type.FALSE,
+	GLSLToken.TYPE_KW_INVARIANT: Token.Type.INVARIANT,
+	GLSLToken.TYPE_KW_DISCARD: Token.Type.DISCARD,
+	GLSLToken.TYPE_KW_RETURN: Token.Type.RETURN,
+	GLSLToken.TYPE_KW_LOWP: Token.Type.LOWP,
+	GLSLToken.TYPE_KW_MEDIUMP: Token.Type.MEDIUMP,
+	GLSLToken.TYPE_KW_HIGHP: Token.Type.HIGHP,
+	GLSLToken.TYPE_KW_PRECISION: Token.Type.PRECISION,
+	GLSLToken.TYPE_KW_STRUCT: Token.Type.STRUCT,
+
+	GLSLToken.TYPE_COMMENT: Token.Type.COMMENT,
+	GLSLToken.TYPE_MULTILINE_COMMENT: Token.Type.MULTILINE_COMMENT,
+
+	GLSLToken.TYPE_EOF: Token.Type.EOF,
+
+	GLSLToken.TYPE_UNKNOWN: Token.Type.UNKNOWN,
+}
+
 static func parse(string: String) -> Language.Expr:
-	var tokenizer := Tokenizer.new(string)
+	var tokenizer := GLSLTokenizer.create(string)
 	tokenizer.skip_whitespace = true
-	var tokens: Array[Token] = tokenizer.tokenize()
+	tokenizer.tokenize()
+	var tokens: Array[Token]
+	for tk: GLSLToken in tokenizer.get_tokens():
+		tokens.append(Token.new(token_type_map[tk.type], tk.content, tk.source_index))
+	
+	var tokenizer2 = Tokenizer.new(string)
+	tokenizer2.skip_whitespace = true
+	var tokens2 := tokenizer2.tokenize()
 	
 	# this does like debug print stuff
 	if true:
@@ -552,14 +671,19 @@ static func parse(string: String) -> Language.Expr:
 		# ????
 		print_rich(
 			# header
-			"[table={3}]" + CELL + "Type[/cell]" + CELL + "Content[/cell]" + CELL + "Character index[/cell]"
-			+ "\n".join(tokens.map(
+			"[table={3}]" + CELL + "Type2[/cell]" + CELL + "Content[/cell]" + CELL + "Character index[/cell]"
+			+ "\n".join(tokens2.map(
 				func(e: GLSLLanguage.Token) -> String:
 					return (CELL + "%s[/cell]" + CELL + "%s[/cell]" + CELL + "%s[/cell]") % [
 						GLSLLanguage.Token.Type.find_key(e.type), "'" + bbc_escape.call(e.content.c_escape()) + "'", e.source_index
 					], # <- comma magically fixes errors
 			)) + "[/table]"
 		)
+	
+	for i in tokens.size():
+		assert(tokens[i].type == tokens2[i].type)
+		assert(tokens[i].content == tokens2[i].content)
+		assert(tokens[i].source_index == tokens2[i].source_index)
 	
 	return Parser.new(tokens).parse()
 
@@ -724,7 +848,7 @@ class Parser:
 			return expr
 		elif match_tk(Token.Type.IDENTIFIER):
 			return Language.Identifier.new(previous().content)
-		assert(false, "Unknown token type")
+		assert(false, "Unknown token type %s" % Token.Type.find_key(peek().type))
 		return null
 	
 	func argument() -> Array[Language.Expr]:
