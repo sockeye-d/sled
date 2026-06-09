@@ -40,7 +40,7 @@ var unfolded_count: int = 0
 func _ready() -> void:
 	EditorManager.simple_search_requested.connect(_on_search_requested)
 	EditorManager.regex_search_requested.connect(_on_search_requested)
-	
+
 	search_done.connect(display_results)
 
 
@@ -71,19 +71,19 @@ func display_results(results: SearchResults = current_results, is_new: bool = fa
 			header_items.append(header)
 			unfolded_count += 1
 		_create_result_item(items[result.file_path], result)
-	
+
 	progress_bar.hide()
 	if not results:
 		label.text = "No results found 😭"
 		label.show()
 	else:
 		label.hide()
-	
+
 	stats_label.text = "%s files searched in %.3fs" % [
 		results.files_searched,
 		results.get_elapsed_time(Stopwatch.TimeUnit.SECONDS),
 	]
-	
+
 	count_label.text = "%s results" % results.results.size()
 	fold_button.icon = fold_icon
 
@@ -93,35 +93,35 @@ func _create_header_item(file_path: String) -> TreeItem:
 	item.set_text(0, FileManager.get_short_path(file_path))
 	item.disable_folding = false
 	item.set_selectable(0, false)
-	
+
 	return item
 
 
 func _create_result_item(parent: TreeItem, result: SearchResult) -> TreeItem:
 	var item := results_tree.create_item(parent)
-	
+
 	item.set_metadata(0, result)
 	item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
 	item.set_custom_draw_callback(0, results_tree._item_custom_draw)
 	item.disable_folding = false
 	item.set_selectable(0, true)
-	
+
 	return item
 
 
 func _on_search_requested(folder_path: String, query, file_filter: String, casen: bool, recurse: bool) -> void:
 	if not search_thread.is_alive():
 		search_thread.start(_search_on_thread)
-	
+
 	EditorManager.change_search_visibility(true)
 	EditorManager.search_results_enabled.emit()
-	
+
 	stats_container.hide()
 	results_tree.clear()
 	label.text = "Searching"
 	label.show()
 	progress_bar.show()
-	
+
 	mut.lock()
 	search_data = {
 		"task": Task.FIND,
@@ -132,21 +132,21 @@ func _on_search_requested(folder_path: String, query, file_filter: String, casen
 		"recurse": recurse,
 	}
 	mut.unlock()
-	
+
 	sem.post()
 
 
 func _search_on_thread() -> void:
 	while true:
 		sem.wait()
-		
+
 		mut.lock()
 		var data_copy := search_data.duplicate()
 		mut.unlock()
-		
+
 		if data_copy.task == Task.EXIT:
 			break
-		
+
 		if data_copy.task == Task.FIND:
 			var search_results := _get_search_results(data_copy)
 			call_deferred_thread_group(&"display_results", search_results, true)
@@ -161,18 +161,18 @@ func _search_on_thread() -> void:
 					weights[result] = StringUtil.fuzzy_dist(result.file_path, q)
 					call_deferred_thread_group(&"_set_progress", false, float(index) / filtered_results.results.size())
 			)
-			
+
 			var old_filtered: Array[SearchResult] = old.results.filter(
 				func(result: SearchResult) -> bool:
 					return not is_nan(weights[result])
 			)
-			
+
 			old_filtered.sort_custom(
 				func(a: SearchResult, b: SearchResult) -> bool:
 					return weights[a] < weights[b]
 			)
-			
-			
+
+
 			filtered_results.results.assign(old_filtered)
 			call_deferred_thread_group(&"display_results", filtered_results, false)
 
@@ -189,7 +189,7 @@ func _get_search_results(data: Dictionary) -> SearchResults:
 	var file_filter: String = data.file_filter
 	var casen: bool = data.casen
 	var recurse: bool = data.recurse
-	
+
 	var results := SearchResults.new()
 	results.ticks_usec_start = Time.get_ticks_usec()
 	call_deferred_thread_group(&"_set_progress", true)
@@ -203,7 +203,7 @@ func _get_search_results(data: Dictionary) -> SearchResults:
 		files_searched += 1
 		call_deferred_thread_group(&"_set_progress", false, float(files_searched) / files.size())
 	results.ticks_usec_end = Time.get_ticks_usec()
-	
+
 	return results
 
 
@@ -250,9 +250,9 @@ func _on_search_filter_line_edit_text_changed(new_text: String) -> void:
 	if new_text == "":
 		display_results()
 		return
-	
+
 	progress_bar.show()
-	
+
 	mut.lock()
 	search_data = {
 		"task": Task.FILTER,
@@ -260,7 +260,7 @@ func _on_search_filter_line_edit_text_changed(new_text: String) -> void:
 		"query": new_text,
 	}
 	mut.unlock()
-	
+
 	sem.post()
 
 
@@ -271,8 +271,8 @@ class SearchResult extends RefCounted:
 	var line_start_index: int
 	var line_end_index: int
 	var relevant_line: String
-	
-	
+
+
 	func _init(_file_path: String, _start_index: int, _end_index: int, _relevant_line: String, _line_start_index: int, _line_end_index: int) -> void:
 		file_path = _file_path
 		start_index = _start_index
@@ -280,8 +280,8 @@ class SearchResult extends RefCounted:
 		relevant_line = _relevant_line
 		line_start_index = _line_start_index
 		line_end_index = _line_end_index
-	
-	
+
+
 	static func create_result(file_path: String, text: String, index_range: Vector2i) -> SearchResult:
 		var line_begin := text.rfind("\n", index_range[0]) + 1
 		var line_end := text.find("\n", index_range[1])
@@ -302,11 +302,11 @@ class SearchResults extends RefCounted:
 	var files_searched: int
 	var ticks_usec_start: int
 	var ticks_usec_end: int
-	
-	
+
+
 	func get_elapsed_time(unit: Stopwatch.TimeUnit = Stopwatch.TimeUnit.SECONDS) -> float:
 		return float(ticks_usec_end - ticks_usec_start) / unit
-	
+
 	func copy_empty() -> SearchResults:
 		var new := SearchResults.new()
 		new.files_searched = self.files_searched
@@ -317,15 +317,15 @@ class SearchResults extends RefCounted:
 
 func _on_fold_button_pressed() -> void:
 	var should_fold := unfolded_count > 0
-	
+
 	for item in header_items:
 		item.collapsed = should_fold
-	
+
 	if should_fold:
 		unfolded_count = 0
 	else:
 		unfolded_count = header_items.size()
-	
+
 	_set_fold_button_icon()
 
 

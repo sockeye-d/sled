@@ -54,7 +54,7 @@ func _property_get_revert(property: StringName) -> Variant:
 
 func run_init_script() -> void:
 	if not init_script_ran and init_script:
-		ScriptUtils.run(init_script, SettingInitScript.METHOD, [self])
+		init_script.on_init(self)
 		init_script_ran = true
 
 ## Returns whether a control was created or not

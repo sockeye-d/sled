@@ -1,11 +1,11 @@
 [gd_scene load_steps=9 format=3 uid="uid://dfkt6ernbrafa"]
 
-[ext_resource type="Script" path="res://src/ui/menu_bar/menu_bar.gd" id="1_j76tb"]
-[ext_resource type="Script" path="res://src/ui/menu_bar/file.gd" id="2_6qdxv"]
-[ext_resource type="Script" path="res://src/ui/menu_bar/open_recent.gd" id="3_errp1"]
-[ext_resource type="Script" path="res://src/ui/menu_bar/view.gd" id="4_7pvbc"]
-[ext_resource type="Script" path="res://src/ui/menu_bar/edit.gd" id="4_bpaeo"]
-[ext_resource type="Script" path="res://src/ui/menu_bar/help.gd" id="6_7xxr2"]
+[ext_resource type="Script" uid="uid://mqrnt3jo7qkj" path="res://src/ui/menu_bar/menu_bar.gd" id="1_j76tb"]
+[ext_resource type="Script" uid="uid://rxvf6frsc8ks" path="res://src/ui/menu_bar/file.gd" id="2_6qdxv"]
+[ext_resource type="Script" uid="uid://b2h2iugvpym5x" path="res://src/ui/menu_bar/open_recent.gd" id="3_errp1"]
+[ext_resource type="Script" uid="uid://c1u6wx4wckame" path="res://src/ui/menu_bar/view.gd" id="4_7pvbc"]
+[ext_resource type="Script" uid="uid://bra0xcorufr4m" path="res://src/ui/menu_bar/edit.gd" id="4_bpaeo"]
+[ext_resource type="Script" uid="uid://cu280pq8eyqww" path="res://src/ui/menu_bar/help.gd" id="6_7xxr2"]
 [ext_resource type="PackedScene" uid="uid://bqbwgc0np2nmd" path="res://src/ui/menu_bar/about_sled_window.tscn" id="7_la7ai"]
 [ext_resource type="PackedScene" uid="uid://b0s2lt0ijy6kc" path="res://src/ui/menu_bar/statistics_window.tscn" id="8_nemhs"]
 
@@ -76,7 +76,6 @@ script = ExtResource("6_7xxr2")
 
 [node name="AboutSledWindow" parent="." instance=ExtResource("7_la7ai")]
 unique_name_in_owner = true
-size = Vector2i(283, 705)
 visible = false
 
 [node name="StatisticsWindow" parent="." instance=ExtResource("8_nemhs")]

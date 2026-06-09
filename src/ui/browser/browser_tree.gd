@@ -87,9 +87,9 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	var item_paths: PackedStringArray
 	for item in items:
 		item_paths.append(paths.get_value(item))
-	
+
 	var data := DragData.new(item_paths, items)
-	
+
 	#if data.begins_with(FileManager.absolute_base_path) and Settings.browser_drag_drop_mode == 2:
 		#data = data.trim_prefix(FileManager.absolute_base_path)
 		#data = '#include "%s"' % data
@@ -97,13 +97,13 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 		#data = data.trim_prefix(FileManager.current_path)
 	#else:
 		#return
-	
+
 	var preview: Label = Label.new()
 	for path in data.absolute_paths:
 		preview.text += FileManager.get_short_path(path) + "\n"
-	
+
 	set_drag_preview(preview)
-	
+
 	return data
 
 
@@ -164,25 +164,25 @@ func populate_tree(path: String, parent: TreeItem = null, first: bool = true) ->
 	var item := _create_folder_item(path, parent, first)
 	if first:
 		item.add_button(0, Icons.create("refresh"), BtnType.REFRESH)
-	
+
 	var da := DirAccess.open(path)
 	da.include_hidden = Settings.show_hidden_files
-	
+
 	for dir in da.get_directories():
 		populate_tree(path.path_join(dir), item, false)
-	
+
 	for file in da.get_files():
 		_create_file_item(path.path_join(file), item)
-	
+
 	get_root().get_child(0).set_deferred("collapsed", false)
-	
+
 	return item
 
 
 func repopulate_tree() -> void:
 	if last_path:
 		var scroll = get_scroll()
-		
+
 		if get_root():
 			get_root().free()
 		populate_tree(last_path)
@@ -213,21 +213,21 @@ func _create_file_item(path: String, parent: TreeItem) -> TreeItem:
 	var item := _create_item(
 		parent,
 		FileManager.get_icon(path.get_extension().to_lower()),
-		FileAccess.get_hidden_attribute(path),
+		File.is_hidden(path),
 	)
-	
-	item.set_text(0, path.get_file())
+
+	item.set_metadata(0, path.get_file())
 	item.set_tooltip_text(0, FileManager.get_short_path(path))
-	
+
 	_add_btn(item, BtnType.SHOW_IN_FILE_MANAGER)
 	_add_btn(item, BtnType.COPY_PATH)
 	_add_btn(item, BtnType.RENAME_FILE)
 	_add_btn(item, BtnType.DELETE_FILE)
-	
+
 	item.disable_folding = true
-	
+
 	paths.add(item, path)
-	
+
 	return item
 
 
@@ -235,12 +235,12 @@ func _create_folder_item(path: String, parent: TreeItem, first: bool = false) ->
 	var item :=_create_item(
 		parent,
 		null,
-		FileAccess.get_hidden_attribute(path),
+		File.is_hidden(path),
 	)
-	
-	item.set_text(0, path.get_file())
+
+	item.set_metadata(0, path.get_file())
 	item.set_tooltip_text(0, FileManager.get_short_path(path))
-	
+
 	_add_btn(item, BtnType.ADD_FILE)
 	_add_btn(item, BtnType.ADD_FOLDER)
 	_add_btn(item, BtnType.FOLDER_FIND)
@@ -249,9 +249,9 @@ func _create_folder_item(path: String, parent: TreeItem, first: bool = false) ->
 	if not first:
 		_add_btn(item, BtnType.RENAME_FOLDER)
 		_add_btn(item, BtnType.DELETE_FOLDER)
-	
+
 	paths.add(item, path)
-	
+
 	return item
 
 
@@ -261,9 +261,33 @@ func _add_btn(item: TreeItem, type: BtnType) -> void:
 
 func _create_item(parent: TreeItem, icon: Texture2D, is_hidden: bool) -> TreeItem:
 	var item := create_item(parent)
-	item.set_cell_mode(0, TreeItem.CELL_MODE_STRING)
+	item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
+	item.set_custom_draw_callback(0, _item_custom_draw.bind(is_hidden, icon.get_width() if icon else 0))
 	item.set_icon(0, icon)
 	return item
+
+func _item_custom_draw(item: TreeItem, rect: Rect2, is_hidden: bool, icon_width: float) -> void:
+	if rect.size.x < 0.0:
+		return
+	var f := get_theme_font(&"font")
+	var f_size := get_theme_font_size(&"font_size") if has_theme_font_size(&"font_size") else get_theme_default_font_size()
+	var text: String = item.get_metadata(0)
+	var ascent := f.get_ascent(f_size)
+	var text_mod: float = Settings.hidden_file_text_brightness if is_hidden else 1.0
+	var str_pos := Vector2(
+		rect.position.x + get_theme_constant(&"h_separation") + (icon_width if item.get_child_count() == 0 else 0.0),
+		rect.get_center().y + ascent / 2.0
+	)
+	draw_string(
+		f,
+		str_pos,
+		text,
+		HORIZONTAL_ALIGNMENT_LEFT,
+		maxf(rect.size.x, 1),
+		f_size,
+		EditorThemeManager.theme.get_color(&"font_color", &"Tree") * Color(Color.WHITE, text_mod),
+		TextServer.JUSTIFICATION_CONSTRAIN_ELLIPSIS,
+	)
 
 
 func _on_empty_clicked(_position: Vector2, _mouse_button_index: int) -> void:
@@ -337,7 +361,7 @@ func _rename_item(item: TreeItem, title: String) -> void:
 		var new_path: String = path.get_base_dir().path_join(new_name)
 		var err: Error = DirAccess.rename_absolute(path, new_path)
 		if not err:
-			item.set_text(0, new_name)
+			item.set_metadata(0, new_name)
 			paths.add(item, path.get_base_dir().path_join(new_name))
 		NotificationManager.notify_if_err(err, "'%s' renamed to '%s' successfully" % [path.get_file(), new_name], "'%s' failed to be renamed to '%s'" % [path.get_file(), new_name])
 	dialog.queue_free()
@@ -368,7 +392,7 @@ func _on_add_file_dialog_confirmed_data(filename: String, create_matching_file: 
 
 
 func _add_file_from_path(filename: String, add_include_guard: bool) -> void:
-	var path := new_file_folder_path.path_join(filename)	
+	var path := new_file_folder_path.path_join(filename)
 	var string: String = ""
 	if add_include_guard:
 		var format := {
@@ -426,8 +450,8 @@ func _is_item_folder(item: TreeItem) -> bool:
 class DragData:
 	var absolute_paths: PackedStringArray
 	var items: Array[TreeItem]
-	
-	
+
+
 	func _init(_absolute_paths: PackedStringArray, _items: Array[TreeItem]) -> void:
 		absolute_paths = _absolute_paths
 		items = _items

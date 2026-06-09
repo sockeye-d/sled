@@ -1,7 +1,7 @@
 extends SettingInitScript
 
 
-func on_init(item: SettingItem) -> void:
+static func on_init(item: SettingItem) -> void:
 	item.options.clear()
 	item.options.append("Default")
 	var fonts: Array[String]

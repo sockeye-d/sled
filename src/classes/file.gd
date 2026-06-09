@@ -14,13 +14,17 @@ static func save_variant(path: String, variant) -> Error:
 
 static func load_variant(path: String, default = null) -> Variant:
 	var fa := FileAccess.open(path, FileAccess.READ)
-	
+
 	if fa == null:
 		return default
-	
+
 	return JSON.parse_string(FileAccess.get_file_as_string(path))
 
 
 static func get_text(path: String, skip_cr: bool = true) -> String:
 	var handle = FileAccess.open(path, FileAccess.READ)
 	return handle.get_as_text(skip_cr) if handle else ""
+
+
+static func is_hidden(path: String) -> bool:
+	return path.get_file().begins_with(".") or FileAccess.get_hidden_attribute(path)

@@ -4,7 +4,7 @@ class_name GLSLLanguage extends Language
 static func _static_init() -> void:
 	comment_regions = ["//", "/* */"]
 	string_regions = ["\"", "\'"]
-	
+
 	keywords = _create_icons([
 		"attribute",
 		"const",
@@ -60,12 +60,12 @@ class Tokenizer:
 	var file: String
 	var current_index: int
 	var skip_whitespace: bool = false
-	
-	
+
+
 	func _init(_file: String) -> void:
 		file = _file
-	
-	
+
+
 	func tokenize() -> Array[Token]:
 		var tokens: Array[Token]
 		while current_index < file.length():
@@ -77,8 +77,8 @@ class Tokenizer:
 					tokens.append(tk)
 		tokens.append(token(Token.Type.EOF))
 		return tokens
-	
-	
+
+
 	func get_token() -> Array[Token]:
 		var c := current()
 		var next_word := get_next_word()
@@ -324,58 +324,58 @@ class Tokenizer:
 				tk.append(token(Token.Type.WHITESPACE, consume()))
 			_:
 				tk.append(token(Token.Type.UNKNOWN, consume()))
-		
+
 		return tk
-	
-	
+
+
 	func current(length := 1) -> String:
 		return file.substr(current_index, length)
-	
-	
+
+
 	func valid(length := 1) -> bool:
 		return current_index + length - 1 < file.length()
-	
-	
+
+
 	func peek(offset := 1, length := 1) -> String:
 		return file.substr(current_index + offset, length)
-	
-	
+
+
 	func consume(length := 1) -> String:
 		current_index += length
 		return file.substr(current_index - length, length)
-	
-	
+
+
 	func consume_word(allowed_chars := StringUtil.NUMBERS + StringUtil.ALPHABET) -> String:
 		return consume(get_next_word_length(0, allowed_chars))
-	
-	
+
+
 	func consume_whitespace() -> String:
 		return consume_word(StringUtil.WHITESPACE)
-	
+
 	## returns [b]offset[/b] not index
 	func find_next(what: String) -> int:
 		return get_offset(file.find(what, current_index))
-	
+
 	## returns [b]offset[/b] not index
 	func find_next_nl(offset := 0) -> int:
 		var index := offset
 		while valid(index) and not is_line_break(index):
 			index += 1
 		return index
-	
-	
+
+
 	func is_line_break(offset := 0) -> bool:
 		if peek(offset) != "\n":
 			return false
 		if peek(offset - 1) == "\\":
 			return false
 		return true
-	
-	
+
+
 	func get_offset(index: int) -> int:
 		return index - current_index
-	
-	
+
+
 	func is_valid_identifier(string: String) -> bool:
 		if not string:
 			return false
@@ -384,8 +384,8 @@ class Tokenizer:
 		if StringUtil.find_any(string, StringUtil.WHITESPACE) != -1:
 			return false
 		return true
-	
-	
+
+
 	func get_next_word(offset := 0, allowed_chars := StringUtil.NUMBERS + StringUtil.ALPHABET) -> String:
 		var index := offset
 		while file[current_index + index] in allowed_chars:
@@ -393,8 +393,8 @@ class Tokenizer:
 			if not valid(index + 1):
 				break
 		return file.substr(current_index, index)
-	
-	
+
+
 	func get_next_word_length(offset := 0, allowed_chars := StringUtil.NUMBERS + StringUtil.ALPHABET) -> int:
 		var index := offset
 		while file[current_index + index] in allowed_chars:
@@ -402,20 +402,20 @@ class Tokenizer:
 			if not valid(index):
 				break
 		return index
-	
-	
+
+
 	func token(type: Token.Type, content: String = "") -> Token:
 		return Token.new(type, content, current_index)
-	
+
 class Token:
 	enum Type {
 		IDENTIFIER,
 		LITERAL,
 		WHITESPACE,
-		
+
 		PREPROCESSOR_KEYWORD,
 		PREPROCESSOR_CONTENT,
-		
+
 		OPEN_PAREN,
 		CLOSE_PAREN,
 		OPEN_BRACKET,
@@ -505,30 +505,30 @@ class Token:
 		HIGHP,
 		PRECISION,
 		STRUCT,
-		
+
 		COMMENT,
 		MULTILINE_COMMENT,
-		
+
 		EOF,
 
 		UNKNOWN,
 	}
-	
+
 	var type: Type
 	var content: String
 	var source_index: int
-	
-	
+
+
 	func _init(_type: Type, _content: String, _source_index: int) -> void:
 		self.type = _type
 		self.content = _content
 		self.source_index = _source_index
-	
-	
+
+
 	func _to_string() -> String:
 		return "%s '%s' @ %s" % [Type.find_key(type), content.c_escape(), source_index]
-	
-	
+
+
 	func is_type(compare_type: Type) -> bool:
 		return type == compare_type
 
@@ -659,11 +659,11 @@ static func parse(string: String) -> Language.Expr:
 	var tokens: Array[Token]
 	for tk: GLSLToken in tokenizer.get_tokens():
 		tokens.append(Token.new(token_type_map[tk.type], tk.content, tk.source_index))
-	
+
 	var tokenizer2 = Tokenizer.new(string)
 	tokenizer2.skip_whitespace = true
 	var tokens2 := tokenizer2.tokenize()
-	
+
 	# this does like debug print stuff
 	if true:
 		var bbc_escape := func(t: String) -> String: return t.replace("[", "🥔👈").replace("]", "👉🥔").replace("🥔👈", "[lb]").replace("👉🥔", "[rb]")
@@ -679,12 +679,12 @@ static func parse(string: String) -> Language.Expr:
 					], # <- comma magically fixes errors
 			)) + "[/table]"
 		)
-	
+
 	for i in tokens.size():
 		assert(tokens[i].type == tokens2[i].type)
 		assert(tokens[i].content == tokens2[i].content)
 		assert(tokens[i].source_index == tokens2[i].source_index)
-	
+
 	return Parser.new(tokens).parse()
 
 
@@ -692,16 +692,16 @@ static func parse(string: String) -> Language.Expr:
 class Parser:
 	var tokens: Array[Token]
 	var current: int = 0
-	
+
 	func _init(tokens: Array[Token] = []) -> void:
 		self.tokens = tokens
-	
+
 	func parse() -> Language.Expr:
 		return expression()
-	
+
 	func expression() -> Language.Expr:
 		return assignment()
-	
+
 	func assignment() -> Language.Expr:
 		var expr := selection()
 		if match_any_tk([
@@ -718,10 +718,10 @@ class Parser:
 				Token.Type.BITWISE_XOR_ASSIGN,
 				Token.Type.BITWISE_OR_ASSIGN,
 			]):
-			
+
 			expr = Language.BinaryExpr.new(expr, tk2binaryop(previous().type), expression())
 		return expr
-	
+
 	func selection() -> Language.Expr:
 		var expr := logical_or()
 		if match_tk(Token.Type.TERNARY_CONDITION):
@@ -730,49 +730,49 @@ class Parser:
 			var on_false := selection()
 			expr = Language.TernaryExpr.new(expr, on_true, on_false)
 		return expr
-	
+
 	func logical_or() -> Language.Expr:
 		var expr := logical_xor()
 		while match_tk(Token.Type.OR):
 			expr = Language.BinaryExpr.new(expr, Language.BinaryExpr.Op.OR, logical_xor())
 		return expr
-	
+
 	func logical_xor() -> Language.Expr:
 		var expr := logical_and()
 		while match_tk(Token.Type.XOR):
 			expr = Language.BinaryExpr.new(expr, Language.BinaryExpr.Op.XOR, logical_and())
 		return expr
-	
+
 	func logical_and() -> Language.Expr:
 		var expr := bitwise_xor()
 		while match_tk(Token.Type.AND):
 			expr = Language.BinaryExpr.new(expr, Language.BinaryExpr.Op.AND, bitwise_xor())
 		return expr
-	
+
 	func bitwise_xor() -> Language.Expr:
 		var expr := bitwise_or()
 		while match_tk(Token.Type.BITWISE_XOR):
 			expr = Language.BinaryExpr.new(expr, Language.BinaryExpr.Op.BITWISE_XOR, bitwise_or())
 		return expr
-	
+
 	func bitwise_or() -> Language.Expr:
 		var expr := bitwise_and()
 		while match_tk(Token.Type.BITWISE_OR):
 			expr = Language.BinaryExpr.new(expr, Language.BinaryExpr.Op.BITWISE_OR, bitwise_and())
 		return expr
-	
+
 	func bitwise_and() -> Language.Expr:
 		var expr := equality()
 		while match_tk(Token.Type.BITWISE_AND):
 			expr = Language.BinaryExpr.new(expr, Language.BinaryExpr.Op.BITWISE_AND, equality())
 		return expr
-	
+
 	func equality() -> Language.Expr:
 		var expr := comparison()
 		while match_any_tk([Token.Type.NOT_EQUAL, Token.Type.EQUALS]):
 			expr = Language.BinaryExpr.new(expr, tk2binaryop(previous().type), comparison())
 		return expr
-	
+
 	func comparison() -> Language.Expr:
 		var expr := bitshift()
 		while match_any_tk([
@@ -781,25 +781,25 @@ class Parser:
 			]):
 			expr = Language.BinaryExpr.new(expr, tk2binaryop(previous().type), bitshift())
 		return expr
-	
+
 	func bitshift() -> Language.Expr:
 		var expr := term()
 		while match_any_tk([Token.Type.SHIFT_LEFT, Token.Type.SHIFT_RIGHT]):
 			expr = Language.BinaryExpr.new(expr, tk2binaryop(previous().type), term())
 		return expr
-	
+
 	func term() -> Language.Expr:
 		var expr := factor()
 		while match_any_tk([Token.Type.ADD, Token.Type.SUB]):
 			expr = Language.BinaryExpr.new(expr, tk2binaryop(previous().type), factor())
 		return expr
-	
+
 	func factor() -> Language.Expr:
 		var expr := left_unary()
 		while match_any_tk([Token.Type.MUL, Token.Type.DIV, Token.Type.MOD]):
 			expr = Language.BinaryExpr.new(expr, tk2binaryop(previous().type), left_unary())
 		return expr
-	
+
 	func left_unary() -> Language.Expr:
 		if match_any_tk([
 				Token.Type.SUB, Token.Type.ADD,
@@ -809,7 +809,7 @@ class Parser:
 			var op := tk2unaryleftop(previous().type)
 			return Language.LeftUnaryExpr.new(right_unary(), op)
 		return right_unary()
-	
+
 	func right_unary() -> Language.Expr:
 		var expr := fn_call()
 		if match_any_tk([Token.Type.SUB_SUB, Token.Type.ADD_ADD]):
@@ -821,7 +821,7 @@ class Parser:
 		elif match_tk(Token.Type.DOT):
 			expr = Language.FieldAccessExpr.new(expr, right_unary())
 		return expr
-	
+
 	func fn_call() -> Language.Expr:
 		var expr := primary()
 		if match_tk(Token.Type.OPEN_PAREN):
@@ -832,7 +832,7 @@ class Parser:
 			expr = Language.FunctionCallExpr.new(expr, args)
 			assert(match_tk(Token.Type.CLOSE_PAREN), "Expect ')' after function call")
 		return expr
-	
+
 	func primary() -> Language.Expr:
 		if match_tk(Token.Type.LITERAL):
 			return Language.NumberLiteral.new(previous().content)
@@ -842,7 +842,7 @@ class Parser:
 			return Language.BooleanLiteral.new(false)
 		elif match_tk(Token.Type.OPEN_PAREN):
 			var expr := expression()
-			
+
 			# need real error solution; see panic mode
 			assert(match_tk(Token.Type.CLOSE_PAREN), "Must have closing parenthesis")
 			return expr
@@ -850,41 +850,41 @@ class Parser:
 			return Language.Identifier.new(previous().content)
 		assert(false, "Unknown token type %s" % Token.Type.find_key(peek().type))
 		return null
-	
+
 	func argument() -> Array[Language.Expr]:
 		var exprs: Array[Language.Expr] = [expression()]
 		while match_tk(Token.Type.COMMA):
 			exprs.append(expression())
 		return exprs
-	
+
 	func match_tk(token_type: Token.Type) -> bool:
 		if check(token_type):
 			advance()
 			return true
 		return false
-	
+
 	func match_any_tk(token_types: Array[Token.Type]) -> bool:
 		for token_type in token_types:
 			if check(token_type):
 				advance()
 				return true
 		return false
-	
+
 	func advance() -> void:
 		current += 1
-	
+
 	func peek() -> Token:
 		return tokens[current]
-	
+
 	func check(token_type: Token.Type) -> bool:
 		return peek().type == token_type
-	
+
 	func is_at_end() -> bool:
 		return peek().type == Token.Type.EOF
-	
+
 	func previous() -> Token:
 		return tokens[current - 1]
-	
+
 	func tk2binaryop(token_type: Token.Type) -> Language.BinaryExpr.Op:
 		const map: Dictionary[Token.Type, Language.BinaryExpr.Op] = {
 			Token.Type.ADD: Language.BinaryExpr.Op.ADD,
@@ -928,7 +928,7 @@ class Parser:
 			Token.Type.BITWISE_OR_ASSIGN: Language.BinaryExpr.Op.BITWISE_OR_ASSIGN,
 		}
 		return map[token_type]
-	
+
 	func tk2unaryleftop(token_type: Token.Type) -> Language.LeftUnaryExpr.Op:
 		const map: Dictionary[Token.Type, Language.LeftUnaryExpr.Op] = {
 			Token.Type.NOT: Language.LeftUnaryExpr.Op.NOT,
@@ -937,7 +937,7 @@ class Parser:
 			Token.Type.SUB_SUB: Language.LeftUnaryExpr.Op.SUB_SUB,
 		}
 		return map[token_type]
-	
+
 	func tk2unaryrightop(token_type: Token.Type) -> Language.RightUnaryExpr.Op:
 		const map: Dictionary[Token.Type, Language.RightUnaryExpr.Op] = {
 			Token.Type.ADD_ADD: Language.RightUnaryExpr.Op.ADD_ADD,

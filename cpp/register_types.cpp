@@ -16,9 +16,10 @@ void initialize_sled(const ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	GDREGISTER_CLASS(GLSLLanguageParser);
+	GDREGISTER_CLASS(GLSLParser);
 	GDREGISTER_CLASS(GLSLToken);
 	GDREGISTER_CLASS(GLSLTokenizer);
+	GDREGISTER_CLASS(NumberLiteral2);
 }
 
 void uninitialize_sled(const ModuleInitializationLevel p_level) {

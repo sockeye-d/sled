@@ -12,7 +12,7 @@ func _ready() -> void:
 	#var tokenizer = GLSLTokenizer.create("abc abc")
 	tokenizer.tokenize()
 	tokenizer.debug_print()
-	
+
 	#get_tree().quit()
 
 
@@ -88,7 +88,7 @@ func convert_node(expr: Language.Expr) -> ForceDirectedControl:
 		content = "?:"
 	elif expr is Language.Identifier:
 		content = expr.content
-	
+
 	var node := make_node(content)
 	var children := get_expr_node_children(expr)
 	for child_label in children:

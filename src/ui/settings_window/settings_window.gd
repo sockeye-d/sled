@@ -95,7 +95,7 @@ func populate_setting_categories() -> void:
 	settings.clear()
 	for setting_category in setting_categories:
 		add_setting_category(setting_category)
-		
+
 		for setting in setting_category.settings:
 			settings[setting.identifier] = setting.value if setting.value else setting._get_default_value()
 			if setting.setting_changed.get_connections().size() == 0:
@@ -105,21 +105,21 @@ func populate_setting_categories() -> void:
 							setting_changed.emit(setting.identifier, new_value)
 							)
 			settings_items[setting.identifier] = setting
-	
+
 	population_complete.emit()
 
 
 func add_setting_category(category: SettingCategory) -> void:
 	var category_button = HighlightButton.new()
-	
+
 	category_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	category_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	category_button.text = category.name
 	category_button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	
+
 	if category_container:
 		category_container.add_child(category_button)
-	
+
 	category_button.pressed.connect(func():
 		if category.name != current_category:
 			current_category = category.name
@@ -132,19 +132,19 @@ func populate_settings(category: SettingCategory) -> void:
 	var removed_nodes := NodeUtil.remove_children(setting_option_container, true, false, func(node: Node) -> bool: return not node.has_meta(&"item_control"))
 	for node in removed_nodes:
 		node.queue_free()
-	
+
 	for setting in category.settings:
 		setting.create_control()
 		setting.run_init_script.call_deferred()
 		setting.control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		
+
 		var label_button = HighlightButton.new()
 		label_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		label_button.text = setting.name
 		label_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		label_button.tooltip_text = setting.tooltip
 		label_button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		
+
 		var reset_button = HighlightButton.new()
 		reset_button.icon = Icons.create("reset_value")
 		reset_button.tooltip_text = "Reset to default"
@@ -152,7 +152,7 @@ func populate_settings(category: SettingCategory) -> void:
 		reset_button.pressed.connect(func():
 			setting.value = setting._get_default_value()
 		)
-		
+
 		var container = HBoxContainer.new()
 		container.add_child(label_button)
 		container.add_child(reset_button)
@@ -161,10 +161,10 @@ func populate_settings(category: SettingCategory) -> void:
 			if reset_button:
 				reset_button.visible = not new_value == setting._get_default_value()
 		)
-		
+
 		if setting is DividerSettingItem:
 			label_button.add_theme_font_override(&"font", Fonts.main_font_bold)
-		
+
 		setting_option_container.add_child(container)
 
 

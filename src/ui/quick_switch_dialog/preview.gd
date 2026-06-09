@@ -27,7 +27,7 @@ func load_theme(file: String = "") -> void:
 
 func load_file(path: String) -> void:
 	text = FileAccess.get_file_as_string(path)
-	
+
 	if (
 		Settings.syntax_highlighting_enabled
 		and path.get_extension().to_lower() in Settings.get_arr(&"syntax_highlighted_files")

@@ -6,4 +6,4 @@ tags=application
 [version]
 isMono=false
 repo=/godotengine/godot-builds
-tagName=4.5-beta4
+tagName=4.5.1-stable
